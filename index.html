@@ -238,7 +238,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
-const SUPABASE_KEY = "sb_publishable_...";
+const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -248,7 +248,7 @@ async function carregarProdutos() {
     .select('*');
 
   if (error) {
-    console.error('Erro ao buscar produtos:', error);
+    console.error('Erro completo ao buscar produtos:', JSON.stringify(error, null, 2));
     return;
   }
 
