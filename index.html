@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Etiquetas Eat Kitchen</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    .header {
+      background: #123b6d;
+      color: white;
+      padding: 18px 24px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 14px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .preview {
+      background: #eef6e8;
+      border: 1px solid #d8e6cd;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 280px;
+    }
+
+    .preview-title {
+      text-align: center;
+      font-size: 34px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .preview-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .preview-block {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .btn.secondary {
+      background: #475569;
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-title {
+        font-size: 28px;
+      }
+
+      .preview-row,
+      .preview-block {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Sistema de Etiquetas Eat Kitchen</div>
+
+  <div class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>Painel Operacional</h2>
+
+        <div class="field">
+          <label>Responsável</label>
+          <select id="responsavel">
+            <option>Marcelo</option>
+            <option>Operação CAIS</option>
+            <option>Operação DINARTE</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Grupo do produto</label>
+          <select id="grupo">
+            <option>Bar</option>
+            <option>24 horas</option>
+            <option>Fogão</option>
+            <option>Estoque seco</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Nome do produto</label>
+          <input id="produto" value="Demi glace" />
+        </div>
+
+        <div class="field">
+          <label>Opção de validade (dias)</label>
+          <input id="validadeDias" type="number" value="30" />
+        </div>
+
+        <div class="field">
+          <label>Data de produção</label>
+          <input id="dataProducao" type="date" />
+        </div>
+
+        <div class="field">
+          <label>Hora de produção</label>
+          <input id="horaProducao" type="time" />
+        </div>
+
+        <div class="field">
+          <label>Quantidade de etiquetas</label>
+          <input id="quantidade" type="number" value="1" min="1" />
+        </div>
+
+        <div class="field">
+          <label>Lote manual</label>
+          <input id="lote" />
+        </div>
+
+        <div class="field">
+          <label>Conservação</label>
+          <input id="conservacao" value="Congelado" />
+        </div>
+
+        <div class="field">
+          <label>Observação</label>
+          <textarea id="observacao" rows="3"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
+          <button class="btn secondary" onclick="limparCampos()">Limpar</button>
+        </div>
+
+        <div class="note">
+          Esta é a primeira versão visual do sistema. No próximo passo vamos ligar ao banco.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Preview da Etiqueta</h2>
+
+        <div class="preview">
+          <div class="preview-title" id="pvProduto">Demi glace</div>
+
+          <div class="preview-row">
+            <span id="pvData">24/03/2026</span>
+            <span id="pvValidade">Validade: 23/04/2026</span>
+          </div>
+
+          <div class="preview-row">
+            <span id="pvHora">11:13</span>
+            <span id="pvResponsavel">Marcelo</span>
+          </div>
+
+          <div class="preview-block" id="pvConservacao">Congelado</div>
+          <div class="preview-block">Cozinha Eat Kitchen</div>
+          <div class="preview-block" id="pvObservacao">Observação:</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatarDataBR(dataISO) {
+      if (!dataISO) return "";
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function calcularValidade(dataISO, dias) {
+      if (!dataISO || !dias) return "";
+      const data = new Date(dataISO + "T00:00:00");
+      data.setDate(data.getDate() + Number(dias));
+
+      const dia = String(data.getDate()).padStart(2, "0");
+      const mes = String(data.getMonth() + 1).padStart(2, "0");
+      const ano = data.getFullYear();
+
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function atualizarPreview() {
+      const responsavel = document.getElementById("responsavel").value;
+      const produto = document.getElementById("produto").value;
+      const validadeDias = document.getElementById("validadeDias").value;
+      const dataProducao = document.getElementById("dataProducao").value;
+      const horaProducao = document.getElementById("horaProducao").value;
+      const conservacao = document.getElementById("conservacao").value;
+      const observacao = document.getElementById("observacao").value;
+
+      document.getElementById("pvProduto").textContent = produto || "-";
+      document.getElementById("pvData").textContent = formatarDataBR(dataProducao) || "-";
+      document.getElementById("pvValidade").textContent = "Validade: " + (calcularValidade(dataProducao, validadeDias) || "-");
+      document.getElementById("pvHora").textContent = horaProducao || "-";
+      document.getElementById("pvResponsavel").textContent = responsavel || "-";
+      document.getElementById("pvConservacao").textContent = conservacao || "-";
+      document.getElementById("pvObservacao").textContent = "Observação: " + (observacao || "");
+    }
+
+    function limparCampos() {
+      document.getElementById("produto").value = "";
+      document.getElementById("validadeDias").value = "1";
+      document.getElementById("dataProducao").value = "";
+      document.getElementById("horaProducao").value = "";
+      document.getElementById("quantidade").value = "1";
+      document.getElementById("lote").value = "";
+      document.getElementById("conservacao").value = "";
+      document.getElementById("observacao").value = "";
+      atualizarPreview();
+    }
+
+    atualizarPreview();
+  </script>
+</body>
+</html>
