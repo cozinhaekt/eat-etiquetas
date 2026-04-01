@@ -393,7 +393,19 @@ async function gerarImpressao() {
     atualizarPreview();
     return;
   }
+function preencherDataHoraAtual() {
+  const hoje = new Date();
 
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoje.getDate()).padStart(2, "0");
+
+  const horas = String(hoje.getHours()).padStart(2, "0");
+  const minutos = String(hoje.getMinutes()).padStart(2, "0");
+
+  document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
+  document.getElementById("horaProducao").value = `${horas}:${minutos}`;
+}
   const validadesUnicas = [...new Set(
     encontrados
       .map(item => item.validade_dias)
