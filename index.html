@@ -5,133 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sistema de Etiquetas Eat Kitchen</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      color: #1f2937;
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; color: #1f2937; }
+    .header { background: #123b6d; color: white; padding: 18px 24px; font-size: 28px; font-weight: bold; }
+    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    .grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; }
+    .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .card h2 { margin-top: 0; font-size: 22px; }
+    .field { display: flex; flex-direction: column; margin-bottom: 14px; }
+    .field label { font-size: 14px; margin-bottom: 6px; font-weight: bold; }
+    .field input, .field select, .field textarea {
+      padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;
     }
-
-    .header {
-      background: #123b6d;
-      color: white;
-      padding: 18px 24px;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 24px auto;
-      padding: 0 16px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 24px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    }
-
-    .card h2 {
-      margin-top: 0;
-      font-size: 22px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 14px;
-    }
-
-    .field label {
-      font-size: 14px;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      padding: 10px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .preview {
-      background: #eef6e8;
-      border: 1px solid #d8e6cd;
-      border-radius: 10px;
-      padding: 20px;
-      min-height: 280px;
-    }
-
-    .preview-title {
-      text-align: center;
-      font-size: 34px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    .preview-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 20px;
-    }
-
-    .preview-block {
-      margin-bottom: 12px;
-      font-size: 20px;
-    }
-
-    .actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 12px;
-    }
-
-    .btn {
-      background: #0f766e;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .btn.secondary {
-      background: #475569;
-    }
-
-    .note {
-      margin-top: 14px;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
+    .preview { background: #eef6e8; border: 1px solid #d8e6cd; border-radius: 10px; padding: 20px; min-height: 280px; }
+    .preview-title { text-align: center; font-size: 34px; font-weight: bold; margin-bottom: 20px; }
+    .preview-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 20px; }
+    .preview-block { margin-bottom: 12px; font-size: 20px; }
+    .actions { margin-top: 20px; display: flex; gap: 12px; }
+    .btn { background: #0f766e; color: white; border: none; padding: 12px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .btn.secondary { background: #475569; }
+    .note { margin-top: 14px; font-size: 13px; color: #6b7280; }
     @media (max-width: 900px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .preview-title {
-        font-size: 28px;
-      }
-
-      .preview-row,
-      .preview-block {
-        font-size: 18px;
-      }
+      .grid { grid-template-columns: 1fr; }
+      .preview-title { font-size: 28px; }
+      .preview-row, .preview-block { font-size: 18px; }
     }
   </style>
 </head>
@@ -197,14 +93,13 @@
           <textarea id="observacao" rows="3"></textarea>
         </div>
 
-       <div class="actions">
-  <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
-  <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
-  <button class="btn secondary" onclick="limparCampos()">Limpar</button>
-</div>
-        <div class="note">
-          Esta é a primeira versão visual do sistema. No próximo passo vamos ligar ao banco.
+        <div class="actions">
+          <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
+          <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
+          <button class="btn secondary" onclick="limparCampos()">Limpar</button>
         </div>
+
+        <div class="note">Versão de teste conectada ao print server local.</div>
       </div>
 
       <div class="card">
@@ -235,117 +130,92 @@
   <script>
     const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
     const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
+    const PRINT_SERVER_URL = "http://192.168.2.179:5000/print";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     let produtosCache = [];
-async function gerarImpressao() {
-  const responsavel = document.getElementById("responsavel").value;
-  const grupo = document.getElementById("grupo").value;
-  const produto = document.getElementById("produto").value;
-  const validadeDias = document.getElementById("validadeDias").value;
-  const dataProducao = document.getElementById("dataProducao").value;
-  const horaProducao = document.getElementById("horaProducao").value;
-  const quantidade = document.getElementById("quantidade").value;
-  const lote = document.getElementById("lote").value;
-  const conservacao = document.getElementById("conservacao").value;
-  const observacao = document.getElementById("observacao").value;
 
-  if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
-    alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
-    return;
-  }
+    function preencherDataHoraAtual() {
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+      const dia = String(hoje.getDate()).padStart(2, "0");
+      const horas = String(hoje.getHours()).padStart(2, "0");
+      const minutos = String(hoje.getMinutes()).padStart(2, "0");
 
-  const payloadPrintServer = {
-    produto: produto,
-    data: dataProducao,
-    validade: validadeDias,
-    hora: horaProducao,
-    responsavel: responsavel,
-    conservacao: conservacao,
-    observacao: observacao,
-    quantidade: quantidade,
-    lote: lote
-  };
+      document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
+      document.getElementById("horaProducao").value = `${horas}:${minutos}`;
+    }
 
-  try {
-    await fetch("http://192.168.2.179:5000/print", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payloadPrintServer)
-    });
+    function formatarDataBR(dataISO) {
+      if (!dataISO) return "-";
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
 
-    alert("Impressão enviada!");
-  } catch (erro) {
-    console.error("Erro ao enviar para o print server:", erro);
-    alert("Erro ao enviar para impressão.");
-  }
-}
+    function calcularValidade(dataISO, dias) {
+      if (!dataISO || !dias) return "-";
+      const data = new Date(dataISO + "T00:00:00");
+      data.setDate(data.getDate() + Number(dias));
+      const dia = String(data.getDate()).padStart(2, "0");
+      const mes = String(data.getMonth() + 1).padStart(2, "0");
+      const ano = data.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
 
-  const payloadPrintServer = {
-    produto: produto,
-    data: dataProducao,
-    validade: validadeDias,
-    hora: horaProducao,
-    responsavel: responsavel,
-    conservacao: conservacao,
-    observacao: observacao,
-    quantidade: quantidade,
-    lote: lote
-  };
+    function atualizarPreview() {
+      const responsavel = document.getElementById("responsavel").value;
+      const produto = document.getElementById("produto").value;
+      const validadeDias = document.getElementById("validadeDias").value;
+      const dataProducao = document.getElementById("dataProducao").value;
+      const horaProducao = document.getElementById("horaProducao").value;
+      const conservacao = document.getElementById("conservacao").value;
+      const observacao = document.getElementById("observacao").value;
 
-  try {
-    await fetch("http://192.168.2.179:5000/print", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payloadPrintServer)
-    });
+      document.getElementById("pvProduto").textContent = produto || "-";
+      document.getElementById("pvData").textContent = formatarDataBR(dataProducao);
+      document.getElementById("pvValidade").textContent = "Validade: " + calcularValidade(dataProducao, validadeDias);
+      document.getElementById("pvHora").textContent = horaProducao || "-";
+      document.getElementById("pvResponsavel").textContent = responsavel || "-";
+      document.getElementById("pvConservacao").textContent = conservacao || "-";
+      document.getElementById("pvObservacao").textContent = "Observação: " + (observacao || "");
+    }
 
-    alert("Impressão enviada!");
-  } catch (erro) {
-    console.error("Erro ao enviar para o print server:", erro);
-    alert("Salvou no banco, mas não conseguiu enviar para o servidor de impressão.");
-  }
+    function limparSelecaoProduto() {
+      document.getElementById("produto").value = "";
+      document.getElementById("validadeDias").innerHTML = "";
+      document.getElementById("conservacao").value = "";
+      atualizarPreview();
+    }
 
-    async function carregarProdutos() {
-      const { data, error } = await supabaseClient
-        .from('produtos')
-        .select('*')
-        .order('nome_produto', { ascending: true });
-
-      if (error) {
-        console.error('Erro ao buscar produtos:', JSON.stringify(error, null, 2));
-        return;
-      }
-
-      console.log('Produtos carregados:', data);
-
-      produtosCache = data || [];
-      carregarGrupos();
+    function limparCampos() {
+      document.getElementById("grupo").value = "";
+      document.getElementById("produto").innerHTML = "";
+      document.getElementById("validadeDias").innerHTML = "";
+      document.getElementById("quantidade").value = "1";
+      document.getElementById("lote").value = "";
+      document.getElementById("conservacao").value = "";
+      document.getElementById("observacao").value = "";
+      preencherDataHoraAtual();
       preencherProdutosFiltrados();
+      atualizarPreview();
     }
 
     function carregarGrupos() {
-      const selectGrupo = document.getElementById('grupo');
-      selectGrupo.innerHTML = '';
+      const selectGrupo = document.getElementById("grupo");
+      selectGrupo.innerHTML = "";
 
-      const optionInicial = document.createElement('option');
-      optionInicial.value = '';
-      optionInicial.textContent = 'Selecione um grupo';
+      const optionInicial = document.createElement("option");
+      optionInicial.value = "";
+      optionInicial.textContent = "Selecione um grupo";
       selectGrupo.appendChild(optionInicial);
 
       const gruposUnicos = [...new Set(
-        produtosCache
-          .map(item => item.categoria)
-          .filter(Boolean)
-      )].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        produtosCache.map(item => item.categoria).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
       gruposUnicos.forEach((grupo) => {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.value = grupo;
         option.textContent = grupo;
         selectGrupo.appendChild(option);
@@ -358,33 +228,28 @@ async function gerarImpressao() {
     }
 
     function preencherProdutosFiltrados() {
-      const selectGrupo = document.getElementById('grupo');
-      const selectProduto = document.getElementById('produto');
+      const selectGrupo = document.getElementById("grupo");
+      const selectProduto = document.getElementById("produto");
       const grupoSelecionado = selectGrupo.value;
 
-      selectProduto.innerHTML = '';
+      selectProduto.innerHTML = "";
 
-      const optionInicial = document.createElement('option');
-      optionInicial.value = '';
-      optionInicial.textContent = 'Selecione um produto';
+      const optionInicial = document.createElement("option");
+      optionInicial.value = "";
+      optionInicial.textContent = "Selecione um produto";
       selectProduto.appendChild(optionInicial);
 
       let produtosFiltrados = produtosCache;
-
       if (grupoSelecionado) {
-        produtosFiltrados = produtosCache.filter(
-          item => item.categoria === grupoSelecionado
-        );
+        produtosFiltrados = produtosCache.filter(item => item.categoria === grupoSelecionado);
       }
 
       const nomesUnicos = [...new Set(
-        produtosFiltrados
-          .map(item => item.nome_produto)
-          .filter(Boolean)
-      )].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        produtosFiltrados.map(item => item.nome_produto).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
       nomesUnicos.forEach((nome) => {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.value = nome;
         option.textContent = nome;
         selectProduto.appendChild(option);
@@ -396,184 +261,156 @@ async function gerarImpressao() {
     }
 
     function preencherValidadesDoProduto() {
-  const grupo = document.getElementById('grupo').value;
-  const produto = document.getElementById('produto').value;
-  const selectValidade = document.getElementById('validadeDias');
+      const grupo = document.getElementById("grupo").value;
+      const produto = document.getElementById("produto").value;
+      const selectValidade = document.getElementById("validadeDias");
 
-  selectValidade.innerHTML = '';
-  document.getElementById('conservacao').value = '';
+      selectValidade.innerHTML = "";
+      document.getElementById("conservacao").value = "";
 
-  if (!produto) {
-    atualizarPreview();
-    return;
-  }
+      if (!produto) {
+        atualizarPreview();
+        return;
+      }
 
-  let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
+      if (grupo) {
+        encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
+      }
 
-  if (grupo) {
-    encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
-  }
+      if (!encontrados.length) {
+        atualizarPreview();
+        return;
+      }
 
-  if (!encontrados.length) {
-    atualizarPreview();
-    return;
-  }
-function preencherDataHoraAtual() {
-  const hoje = new Date();
+      const validadesUnicas = [...new Set(
+        encontrados
+          .map(item => item.validade_dias)
+          .filter(v => v !== null && v !== undefined && v !== "")
+          .map(v => String(v).trim())
+      )].sort((a, b) => Number(a) - Number(b));
 
-  const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoje.getDate()).padStart(2, "0");
+      const optionInicial = document.createElement("option");
+      optionInicial.value = "";
+      optionInicial.textContent = "Selecione a validade";
+      selectValidade.appendChild(optionInicial);
 
-  const horas = String(hoje.getHours()).padStart(2, "0");
-  const minutos = String(hoje.getMinutes()).padStart(2, "0");
+      validadesUnicas.forEach((validade) => {
+        const option = document.createElement("option");
+        option.value = validade;
+        option.textContent = validade;
+        selectValidade.appendChild(option);
+      });
 
-  document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
-  document.getElementById("horaProducao").value = `${horas}:${minutos}`;
-}
-  const validadesUnicas = [...new Set(
-    encontrados
-      .map(item => item.validade_dias)
-      .filter(v => v !== null && v !== undefined && v !== '')
-      .map(v => String(v).trim())
-  )].sort((a, b) => Number(a) - Number(b));
+      if (validadesUnicas.length === 1) {
+        selectValidade.value = validadesUnicas[0];
+        preencherConservacao();
+      } else {
+        atualizarPreview();
+      }
+    }
 
-  const optionInicial = document.createElement('option');
-  optionInicial.value = '';
-  optionInicial.textContent = 'Selecione a validade';
-  selectValidade.appendChild(optionInicial);
+    function preencherConservacao() {
+      const grupo = document.getElementById("grupo").value;
+      const produto = document.getElementById("produto").value;
+      const validade = document.getElementById("validadeDias").value;
 
-  validadesUnicas.forEach((validade) => {
-    const option = document.createElement('option');
-    option.value = validade;
-    option.textContent = validade;
-    selectValidade.appendChild(option);
-  });
+      if (!produto || !validade) {
+        document.getElementById("conservacao").value = "";
+        atualizarPreview();
+        return;
+      }
 
-  if (validadesUnicas.length === 1) {
-    selectValidade.value = validadesUnicas[0];
-    preencherConservacao();
-  } else {
-    atualizarPreview();
-  }
-}
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
+      if (grupo) {
+        encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
+      }
 
-   function preencherConservacao() {
-  const grupo = document.getElementById('grupo').value;
-  const produto = document.getElementById('produto').value;
-  const validade = document.getElementById('validadeDias').value;
+      encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(validade).trim());
 
-  if (!produto || !validade) {
-    document.getElementById('conservacao').value = '';
-    atualizarPreview();
-    return;
-  }
+      if (!encontrados.length) {
+        document.getElementById("conservacao").value = "";
+        atualizarPreview();
+        return;
+      }
 
-  let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
-
-  if (grupo) {
-    encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
-  }
-
-  encontrados = encontrados.filter(
-    item => String(item.validade_dias).trim() === String(validade).trim()
-  );
-
-  if (!encontrados.length) {
-    document.getElementById('conservacao').value = '';
-    atualizarPreview();
-    return;
-  }
-
-  document.getElementById('conservacao').value = encontrados[0].conservacao || '';
-  atualizarPreview();
-}
-
-    function limparSelecaoProduto() {
-      document.getElementById('produto').value = '';
-      document.getElementById('validadeDias').innerHTML = '';
-      document.getElementById('conservacao').value = '';
+      document.getElementById("conservacao").value = encontrados[0].conservacao || "";
       atualizarPreview();
     }
-function preencherDataHoraAtual() {
-  const hoje = new Date();
 
-  const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoje.getDate()).padStart(2, "0");
+    async function carregarProdutos() {
+      const { data, error } = await supabaseClient
+        .from("produtos")
+        .select("*")
+        .order("nome_produto", { ascending: true });
 
-  const horas = String(hoje.getHours()).padStart(2, "0");
-  const minutos = String(hoje.getMinutes()).padStart(2, "0");
+      if (error) {
+        console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
+        return;
+      }
 
-  document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
-  document.getElementById("horaProducao").value = `${horas}:${minutos}`;
-}
-    function formatarDataBR(dataISO) {
-      if (!dataISO) return "";
-      const [ano, mes, dia] = dataISO.split("-");
-      return `${dia}/${mes}/${ano}`;
+      console.log("Produtos carregados:", data);
+      produtosCache = data || [];
+      carregarGrupos();
+      preencherProdutosFiltrados();
     }
 
-    function calcularValidade(dataISO, dias) {
-      if (!dataISO || !dias) return "";
-      const data = new Date(dataISO + "T00:00:00");
-      data.setDate(data.getDate() + Number(dias));
-
-      const dia = String(data.getDate()).padStart(2, "0");
-      const mes = String(data.getMonth() + 1).padStart(2, "0");
-      const ano = data.getFullYear();
-
-      return `${dia}/${mes}/${ano}`;
-    }
-function calcularValidadeISO(dataISO, dias) {
-  if (!dataISO || !dias) return null;
-
-  const data = new Date(dataISO + "T00:00:00");
-  data.setDate(data.getDate() + Number(dias));
-
-  const ano = data.getFullYear();
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-    function atualizarPreview() {
+    async function gerarImpressao() {
       const responsavel = document.getElementById("responsavel").value;
+      const grupo = document.getElementById("grupo").value;
       const produto = document.getElementById("produto").value;
       const validadeDias = document.getElementById("validadeDias").value;
       const dataProducao = document.getElementById("dataProducao").value;
       const horaProducao = document.getElementById("horaProducao").value;
+      const quantidade = document.getElementById("quantidade").value;
+      const lote = document.getElementById("lote").value;
       const conservacao = document.getElementById("conservacao").value;
       const observacao = document.getElementById("observacao").value;
 
-      document.getElementById("pvProduto").textContent = produto || "-";
-      document.getElementById("pvData").textContent = formatarDataBR(dataProducao) || "-";
-      document.getElementById("pvValidade").textContent = "Validade: " + (calcularValidade(dataProducao, validadeDias) || "-");
-      document.getElementById("pvHora").textContent = horaProducao || "-";
-      document.getElementById("pvResponsavel").textContent = responsavel || "-";
-      document.getElementById("pvConservacao").textContent = conservacao || "-";
-      document.getElementById("pvObservacao").textContent = "Observação: " + (observacao || "");
+      if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
+        alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+        return;
+      }
+
+      const payloadPrintServer = {
+        produto,
+        data: dataProducao,
+        validade: validadeDias,
+        hora: horaProducao,
+        responsavel,
+        conservacao,
+        observacao,
+        quantidade,
+        lote
+      };
+
+      try {
+        const resposta = await fetch(PRINT_SERVER_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payloadPrintServer)
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Falha ao enviar para o servidor de impressão.");
+        }
+
+        alert("Impressão enviada!");
+      } catch (erro) {
+        console.error("Erro ao enviar para o print server:", erro);
+        alert("Erro ao enviar para impressão.");
+      }
     }
 
-    function limparCampos() {
-      document.getElementById("grupo").value = "";
-      document.getElementById("produto").innerHTML = "";
-      document.getElementById("validadeDias").innerHTML = "";
-      document.getElementById("quantidade").value = "1";
-      document.getElementById("lote").value = "";
-      document.getElementById("conservacao").value = "";
-      document.getElementById("observacao").value = "";
-
-      preencherProdutosFiltrados();
-      atualizarPreview();
-    }
-
-    document.getElementById('validadeDias').addEventListener('change', () => {
+    document.getElementById("validadeDias").addEventListener("change", () => {
       preencherConservacao();
     });
-preencherDataHoraAtual();
-carregarProdutos();
-atualizarPreview();
+
+    preencherDataHoraAtual();
+    carregarProdutos();
+    atualizarPreview();
   </script>
 </body>
 </html>
