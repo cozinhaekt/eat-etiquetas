@@ -163,9 +163,9 @@
 </div>
 
         <div class="field">
-          <label>Opção de validade (dias)</label>
-          <input id="validadeDias" type="number" value="30" />
-        </div>
+  <label>Opção de validade (dias)</label>
+  <select id="validadeDias"></select>
+</div>
 
         <div class="field">
           <label>Data de produção</label>
@@ -284,42 +284,84 @@ function carregarGrupos() {
   });
 }
 
-function preencherProdutosFiltrados() {
-  const selectGrupo = document.getElementById('grupo');
-  const selectProduto = document.getElementById('produto');
-  const grupoSelecionado = selectGrupo.value;
+function preencherDadosProduto() {
+  const grupo = document.getElementById('grupo').value;
+  const produto = document.getElementById('produto').value;
+  const selectValidade = document.getElementById('validadeDias');
 
-  selectProduto.innerHTML = '';
+  if (!produto) {
+    selectValidade.innerHTML = '';
+    document.getElementById('conservacao').value = '';
+    atualizarPreview();
+    return;
+  }
+
+  let encontrados = produtosCache.filter(item => item.nome_produto === produto);
+
+  if (grupo) {
+    encontrados = encontrados.filter(item => item.categoria === grupo);
+  }
+
+  if (!encontrados.length) {
+    selectValidade.innerHTML = '';
+    document.getElementById('conservacao').value = '';
+    atualizarPreview();
+    return;
+  }
+function preencherConservacao() {
+  const grupo = document.getElementById('grupo').value;
+  const produto = document.getElementById('produto').value;
+  const validade = document.getElementById('validadeDias').value;
+
+  if (!produto || !validade) {
+    document.getElementById('conservacao').value = '';
+    atualizarPreview();
+    return;
+  }
+
+  let encontrados = produtosCache.filter(item => item.nome_produto === produto);
+
+  if (grupo) {
+    encontrados = encontrados.filter(item => item.categoria === grupo);
+  }
+
+  encontrados = encontrados.filter(item => String(item.validade_dias) === String(validade));
+
+  if (!encontrados.length) {
+    document.getElementById('conservacao').value = '';
+    atualizarPreview();
+    return;
+  }
+
+  document.getElementById('conservacao').value = encontrados[0].conservacao || '';
+  atualizarPreview();
+}
+  const validadesUnicas = [...new Set(
+    encontrados
+      .map(item => item.validade_dias)
+      .filter(v => v !== null && v !== undefined && v !== '')
+  )].sort((a, b) => Number(a) - Number(b));
+
+  selectValidade.innerHTML = '';
 
   const optionInicial = document.createElement('option');
   optionInicial.value = '';
-  optionInicial.textContent = 'Selecione um produto';
-  selectProduto.appendChild(optionInicial);
+  optionInicial.textContent = 'Selecione a validade';
+  selectValidade.appendChild(optionInicial);
 
-  let produtosFiltrados = produtosCache;
-
-  if (grupoSelecionado) {
-    produtosFiltrados = produtosCache.filter(
-      item => item.categoria === grupoSelecionado
-    );
-  }
-
-  const nomesUnicos = [...new Set(
-    produtosFiltrados
-      .map(item => item.nome_produto)
-      .filter(Boolean)
-  )].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-
-  nomesUnicos.forEach((nome) => {
+  validadesUnicas.forEach((validade) => {
     const option = document.createElement('option');
-    option.value = nome;
-    option.textContent = nome;
-    selectProduto.appendChild(option);
+    option.value = validade;
+    option.textContent = validade;
+    selectValidade.appendChild(option);
   });
 
-  selectProduto.onchange = () => {
-    preencherDadosProduto();
-  };
+  if (validadesUnicas.length === 1) {
+    selectValidade.value = validadesUnicas[0];
+  }
+
+  preencherConservacao();
+  atualizarPreview();
 }
 
 function preencherDadosProduto() {
