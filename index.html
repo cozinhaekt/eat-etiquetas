@@ -237,6 +237,25 @@
   </div>
 
   <script>
+    const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_...";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function carregarProdutos() {
+  const { data, error } = await supabaseClient
+    .from('produtos')
+    .select('*');
+
+  if (error) {
+    console.error('Erro ao buscar produtos:', error);
+    return;
+  }
+
+  console.log('Produtos carregados:', data);
+}
+
+carregarProdutos();
     function formatarDataBR(dataISO) {
       if (!dataISO) return "";
       const [ano, mes, dia] = dataISO.split("-");
