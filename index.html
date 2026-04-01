@@ -256,30 +256,33 @@ async function gerarImpressao() {
     return;
   }
 
-  const payloadBanco = {
-    grupo_produto: grupo,
-    nome_produto: produto,
-    opcao_validade: Number(validadeDias),
-    data_producao: dataProducao,
-    hora_producao: horaProducao,
-    quantidade_etiquetas: Number(quantidade || 1),
-    lote_manual: lote || null,
-    conservacao: conservacao || null,
-    data_validade_calculada: calcularValidadeISO(dataProducao, validadeDias),
-    modelo_etiqueta: "PADRAO_6X4",
-    observacao_padrao: observacao || null,
-    status_impressao: "pendente"
+  const payloadPrintServer = {
+    produto: produto,
+    data: dataProducao,
+    validade: validadeDias,
+    hora: horaProducao,
+    responsavel: responsavel,
+    conservacao: conservacao,
+    observacao: observacao,
+    quantidade: quantidade,
+    lote: lote
   };
 
-  const { error } = await supabaseClient
-    .from("solicitacoes_impressao")
-    .insert([payloadBanco]);
+  try {
+    await fetch("http://192.168.2.179:5000/print", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payloadPrintServer)
+    });
 
-  if (error) {
-    console.error("Erro ao salvar impressão no banco:", error);
-    alert("Erro ao salvar impressão no banco.");
-    return;
+    alert("Impressão enviada!");
+  } catch (erro) {
+    console.error("Erro ao enviar para o print server:", erro);
+    alert("Erro ao enviar para impressão.");
   }
+}
 
   const payloadPrintServer = {
     produto: produto,
@@ -307,36 +310,7 @@ async function gerarImpressao() {
     console.error("Erro ao enviar para o print server:", erro);
     alert("Salvou no banco, mas não conseguiu enviar para o servidor de impressão.");
   }
-}
-  const dataValidadeCalculada = calcularValidadeISO(dataProducao, validadeDias);
 
-  const payload = {
-    grupo_produto: grupo,
-    nome_produto: produto,
-    opcao_validade: Number(validadeDias),
-    data_producao: dataProducao,
-    hora_producao: horaProducao,
-    quantidade_etiquetas: Number(quantidade || 1),
-    lote_manual: lote || null,
-    conservacao: conservacao || null,
-    data_validade_calculada: dataValidadeCalculada,
-    modelo_etiqueta: "PADRAO_6X4",
-    observacao_padrao: observacao || null,
-    status_impressao: "pendente"
-  };
-
-  const { error } = await supabaseClient
-    .from("solicitacoes_impressao")
-    .insert([payload]);
-
-  if (error) {
-    console.error("Erro ao salvar impressão:", error);
-    alert("Erro ao gerar impressão. Abre o console e me manda o print.");
-    return;
-  }
-
-  alert("Solicitação de impressão gerada com sucesso!");
-}
     async function carregarProdutos() {
       const { data, error } = await supabaseClient
         .from('produtos')
