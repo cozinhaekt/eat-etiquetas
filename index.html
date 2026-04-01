@@ -202,7 +202,6 @@
   <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
   <button class="btn secondary" onclick="limparCampos()">Limpar</button>
 </div>
-
         <div class="note">
           Esta é a primeira versão visual do sistema. No próximo passo vamos ligar ao banco.
         </div>
@@ -286,11 +285,6 @@ async function gerarImpressao() {
 
   alert("Solicitação de impressão gerada com sucesso!");
 }
-    <div class="actions">
-  <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
-  <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
-  <button class="btn secondary" onclick="limparCampos()">Limpar</button>
-</div>
     async function carregarProdutos() {
       const { data, error } = await supabaseClient
         .from('produtos')
