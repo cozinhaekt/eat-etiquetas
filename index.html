@@ -470,7 +470,19 @@ function preencherDataHoraAtual() {
       document.getElementById('conservacao').value = '';
       atualizarPreview();
     }
+function preencherDataHoraAtual() {
+  const hoje = new Date();
 
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoje.getDate()).padStart(2, "0");
+
+  const horas = String(hoje.getHours()).padStart(2, "0");
+  const minutos = String(hoje.getMinutes()).padStart(2, "0");
+
+  document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
+  document.getElementById("horaProducao").value = `${horas}:${minutos}`;
+}
     function formatarDataBR(dataISO) {
       if (!dataISO) return "";
       const [ano, mes, dia] = dataISO.split("-");
@@ -522,8 +534,6 @@ function calcularValidadeISO(dataISO, dias) {
       document.getElementById("grupo").value = "";
       document.getElementById("produto").innerHTML = "";
       document.getElementById("validadeDias").innerHTML = "";
-      document.getElementById("dataProducao").value = "";
-      document.getElementById("horaProducao").value = "";
       document.getElementById("quantidade").value = "1";
       document.getElementById("lote").value = "";
       document.getElementById("conservacao").value = "";
@@ -536,9 +546,9 @@ function calcularValidadeISO(dataISO, dias) {
     document.getElementById('validadeDias').addEventListener('change', () => {
       preencherConservacao();
     });
-
-    carregarProdutos();
-    atualizarPreview();
+preencherDataHoraAtual();
+carregarProdutos();
+atualizarPreview();
   </script>
 </body>
 </html>
