@@ -197,7 +197,7 @@
           <textarea id="observacao" rows="3"></textarea>
         </div>
 
-        <div class="actions">
+       <div class="actions">
   <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
   <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
   <button class="btn secondary" onclick="limparCampos()">Limpar</button>
@@ -286,6 +286,11 @@ async function gerarImpressao() {
 
   alert("Solicitação de impressão gerada com sucesso!");
 }
+    <div class="actions">
+  <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
+  <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
+  <button class="btn secondary" onclick="limparCampos()">Limpar</button>
+</div>
     async function carregarProdutos() {
       const { data, error } = await supabaseClient
         .from('produtos')
