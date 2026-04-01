@@ -283,7 +283,43 @@ function carregarGrupos() {
     preencherProdutosFiltrados();
   });
 }
+function preencherProdutosFiltrados() {
+  const selectGrupo = document.getElementById('grupo');
+  const selectProduto = document.getElementById('produto');
+  const grupoSelecionado = selectGrupo.value;
 
+  selectProduto.innerHTML = '';
+
+  const optionInicial = document.createElement('option');
+  optionInicial.value = '';
+  optionInicial.textContent = 'Selecione um produto';
+  selectProduto.appendChild(optionInicial);
+
+  let produtosFiltrados = produtosCache;
+
+  if (grupoSelecionado) {
+    produtosFiltrados = produtosCache.filter(
+      item => item.categoria === grupoSelecionado
+    );
+  }
+
+  const nomesUnicos = [...new Set(
+    produtosFiltrados
+      .map(item => item.nome_produto)
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+  nomesUnicos.forEach((nome) => {
+    const option = document.createElement('option');
+    option.value = nome;
+    option.textContent = nome;
+    selectProduto.appendChild(option);
+  });
+
+  selectProduto.onchange = () => {
+    preencherDadosProduto();
+  };
+}
 function preencherDadosProduto() {
   const grupo = document.getElementById('grupo').value;
   const produto = document.getElementById('produto').value;
