@@ -198,9 +198,10 @@
         </div>
 
         <div class="actions">
-          <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
-          <button class="btn secondary" onclick="limparCampos()">Limpar</button>
-        </div>
+  <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
+  <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
+  <button class="btn secondary" onclick="limparCampos()">Limpar</button>
+</div>
 
         <div class="note">
           Esta é a primeira versão visual do sistema. No próximo passo vamos ligar ao banco.
@@ -239,7 +240,52 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let produtosCache = [];
+async function gerarImpressao() {
+  const responsavel = document.getElementById("responsavel").value;
+  const grupo = document.getElementById("grupo").value;
+  const produto = document.getElementById("produto").value;
+  const validadeDias = document.getElementById("validadeDias").value;
+  const dataProducao = document.getElementById("dataProducao").value;
+  const horaProducao = document.getElementById("horaProducao").value;
+  const quantidade = document.getElementById("quantidade").value;
+  const lote = document.getElementById("lote").value;
+  const conservacao = document.getElementById("conservacao").value;
+  const observacao = document.getElementById("observacao").value;
 
+  if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
+    alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+    return;
+  }
+
+  const dataValidadeCalculada = calcularValidadeISO(dataProducao, validadeDias);
+
+  const payload = {
+    grupo_produto: grupo,
+    nome_produto: produto,
+    opcao_validade: Number(validadeDias),
+    data_producao: dataProducao,
+    hora_producao: horaProducao,
+    quantidade_etiquetas: Number(quantidade || 1),
+    lote_manual: lote || null,
+    conservacao: conservacao || null,
+    data_validade_calculada: dataValidadeCalculada,
+    modelo_etiqueta: "PADRAO_6X4",
+    observacao_padrao: observacao || null,
+    status_impressao: "pendente"
+  };
+
+  const { error } = await supabaseClient
+    .from("solicitacoes_impressao")
+    .insert([payload]);
+
+  if (error) {
+    console.error("Erro ao salvar impressão:", error);
+    alert("Erro ao gerar impressão. Abre o console e me manda o print.");
+    return;
+  }
+
+  alert("Solicitação de impressão gerada com sucesso!");
+}
     async function carregarProdutos() {
       const { data, error } = await supabaseClient
         .from('produtos')
@@ -430,7 +476,18 @@
 
       return `${dia}/${mes}/${ano}`;
     }
+function calcularValidadeISO(dataISO, dias) {
+  if (!dataISO || !dias) return null;
 
+  const data = new Date(dataISO + "T00:00:00");
+  data.setDate(data.getDate() + Number(dias));
+
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
+
+  return `${ano}-${mes}-${dia}`;
+}
     function atualizarPreview() {
       const responsavel = document.getElementById("responsavel").value;
       const produto = document.getElementById("produto").value;
