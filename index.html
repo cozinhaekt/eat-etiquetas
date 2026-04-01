@@ -162,10 +162,10 @@
           </select>
         </div>
 
-        <div class="field">
-          <label>Nome do produto</label>
-          <input id="produto" value="Demi glace" />
-        </div>
+       <div class="field">
+  <label>Nome do produto</label>
+  <select id="produto"></select>
+</div>
 
         <div class="field">
           <label>Opção de validade (dias)</label>
@@ -245,7 +245,8 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function carregarProdutos() {
   const { data, error } = await supabaseClient
     .from('produtos')
-    .select('*');
+    .select('*')
+    .order('nome_produto', { ascending: true });
 
   if (error) {
     console.error('Erro completo ao buscar produtos:', JSON.stringify(error, null, 2));
@@ -253,6 +254,25 @@ async function carregarProdutos() {
   }
 
   console.log('Produtos carregados:', data);
+
+  const selectProduto = document.getElementById('produto');
+  selectProduto.innerHTML = '';
+
+  const opcionInicial = document.createElement('option');
+  opcionInicial.value = '';
+  opcionInicial.textContent = 'Selecione um produto';
+  selectProduto.appendChild(opcionInicial);
+
+  data.forEach((item) => {
+    const option = document.createElement('option');
+    option.value = item.nome_produto;
+    option.textContent = item.nome_produto;
+    selectProduto.appendChild(option);
+  });
+
+  selectProduto.addEventListener('change', () => {
+    document.getElementById('pvProduto').textContent = selectProduto.value || '-';
+  });
 }
 
 carregarProdutos();
