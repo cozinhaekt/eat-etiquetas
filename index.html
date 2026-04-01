@@ -238,24 +238,23 @@ const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let produtosCache = [];
 
-  const selectProduto = document.getElementById('produto');
-  selectProduto.innerHTML = '';
+async function carregarProdutos() {
+  const { data, error } = await supabaseClient
+    .from('produtos')
+    .select('*')
+    .order('nome_produto', { ascending: true });
 
-  const opcionInicial = document.createElement('option');
-  opcionInicial.value = '';
-  opcionInicial.textContent = 'Selecione um produto';
-  selectProduto.appendChild(opcionInicial);
+  if (error) {
+    console.error('Erro completo ao buscar produtos:', JSON.stringify(error, null, 2));
+    return;
+  }
 
-  data.forEach((item) => {
-    const option = document.createElement('option');
-    option.value = item.nome_produto;
-    option.textContent = item.nome_produto;
-    selectProduto.appendChild(option);
-  });
+  console.log('Produtos carregados:', data);
 
-  selectProduto.addEventListener('change', () => {
-    document.getElementById('pvProduto').textContent = selectProduto.value || '-';
-  });
+  produtosCache = data || [];
+
+  carregarGrupos();
+  preencherProdutosFiltrados();
 }
 
 function carregarGrupos() {
@@ -284,7 +283,8 @@ function carregarGrupos() {
     preencherProdutosFiltrados();
   });
 }
-    function preencherProdutosFiltrados() {
+
+function preencherProdutosFiltrados() {
   const selectGrupo = document.getElementById('grupo');
   const selectProduto = document.getElementById('produto');
   const grupoSelecionado = selectGrupo.value;
@@ -321,7 +321,8 @@ function carregarGrupos() {
     preencherDadosProduto();
   };
 }
-    function preencherDadosProduto() {
+
+function preencherDadosProduto() {
   const grupo = document.getElementById('grupo').value;
   const produto = document.getElementById('produto').value;
 
@@ -352,6 +353,8 @@ function carregarGrupos() {
 
   atualizarPreview();
 }
+
+carregarProdutos();
     function formatarDataBR(dataISO) {
       if (!dataISO) return "";
       const [ano, mes, dia] = dataISO.split("-");
