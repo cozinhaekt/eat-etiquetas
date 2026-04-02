@@ -135,7 +135,7 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     let produtosCache = [];
 
-    function removerAcentos(texto) {
+   function removerAcentos(texto) {
   if (!texto) return "";
 
   const mapa = {
@@ -149,11 +149,10 @@
     "Ó": "O", "Ò": "O", "Ô": "O", "Õ": "O", "Ö": "O",
     "ú": "u", "ù": "u", "û": "u", "ü": "u",
     "Ú": "U", "Ù": "U", "Û": "U", "Ü": "U",
-    "ç": "c", "Ç": "C",
-    "ñ": "n", "Ñ": "N"
+    "ç": "c", "Ç": "C"
   };
 
-  return texto.replace(/[^\u0000-\u007E]/g, function(letra) {
+  return String(texto).replace(/[^\u0000-\u007E]/g, function(letra) {
     return mapa[letra] || letra;
   });
 }
@@ -405,7 +404,6 @@
         lote_manual: removerAcentos(lote) || null,
         conservacao: removerAcentos(conservacao) || null,
         observacao_padrao: removerAcentos(observacao) || null,
-        responsavel: removerAcentos(responsavel),
         status_impressao: "pendente"
       };
 
