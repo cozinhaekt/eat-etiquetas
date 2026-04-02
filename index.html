@@ -127,292 +127,297 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
-  const PRINT_SERVER_URL = "http://192.168.2.179:5000/print";
+  <script>
+    const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
+    const PRINT_SERVER_URL = "http://192.168.2.179:5000/print";
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let produtosCache = [];
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let produtosCache = [];
 
-  function preencherDataHoraAtual() {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    const dia = String(hoje.getDate()).padStart(2, "0");
-    const horas = String(hoje.getHours()).padStart(2, "0");
-    const minutos = String(hoje.getMinutes()).padStart(2, "0");
+    function removerAcentos(texto) {
+      return (texto || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
 
-    document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
-    document.getElementById("horaProducao").value = `${horas}:${minutos}`;
-  }
+    function preencherDataHoraAtual() {
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+      const dia = String(hoje.getDate()).padStart(2, "0");
+      const horas = String(hoje.getHours()).padStart(2, "0");
+      const minutos = String(hoje.getMinutes()).padStart(2, "0");
 
-  function formatarDataBR(dataISO) {
-    if (!dataISO) return "-";
-    const [ano, mes, dia] = dataISO.split("-");
-    return `${dia}/${mes}/${ano}`;
-  }
+      document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
+      document.getElementById("horaProducao").value = `${horas}:${minutos}`;
+    }
 
-  function calcularValidade(dataISO, dias) {
-    if (!dataISO || !dias) return "-";
-    const data = new Date(dataISO + "T00:00:00");
-    data.setDate(data.getDate() + Number(dias));
-    const dia = String(data.getDate()).padStart(2, "0");
-    const mes = String(data.getMonth() + 1).padStart(2, "0");
-    const ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
-  }
+    function formatarDataBR(dataISO) {
+      if (!dataISO) return "-";
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
 
-  function atualizarPreview() {
-    const responsavel = document.getElementById("responsavel").value;
-    const produto = document.getElementById("produto").value;
-    const validadeDias = document.getElementById("validadeDias").value;
-    const dataProducao = document.getElementById("dataProducao").value;
-    const horaProducao = document.getElementById("horaProducao").value;
-    const conservacao = document.getElementById("conservacao").value;
-    const observacao = document.getElementById("observacao").value;
+    function calcularValidade(dataISO, dias) {
+      if (!dataISO || !dias) return "-";
+      const data = new Date(dataISO + "T00:00:00");
+      data.setDate(data.getDate() + Number(dias));
+      const dia = String(data.getDate()).padStart(2, "0");
+      const mes = String(data.getMonth() + 1).padStart(2, "0");
+      const ano = data.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
 
-    document.getElementById("pvProduto").textContent = produto || "-";
-    document.getElementById("pvData").textContent = formatarDataBR(dataProducao);
-    document.getElementById("pvValidade").textContent = "Validade: " + calcularValidade(dataProducao, validadeDias);
-    document.getElementById("pvHora").textContent = horaProducao || "-";
-    document.getElementById("pvResponsavel").textContent = responsavel || "-";
-    document.getElementById("pvConservacao").textContent = conservacao || "-";
-    document.getElementById("pvObservacao").textContent = "Observação: " + (observacao || "");
-  }
+    function atualizarPreview() {
+      const responsavel = document.getElementById("responsavel").value;
+      const produto = document.getElementById("produto").value;
+      const validadeDias = document.getElementById("validadeDias").value;
+      const dataProducao = document.getElementById("dataProducao").value;
+      const horaProducao = document.getElementById("horaProducao").value;
+      const conservacao = document.getElementById("conservacao").value;
+      const observacao = document.getElementById("observacao").value;
 
-  function limparSelecaoProduto() {
-    document.getElementById("produto").value = "";
-    document.getElementById("validadeDias").innerHTML = "";
-    document.getElementById("conservacao").value = "";
-    atualizarPreview();
-  }
+      document.getElementById("pvProduto").textContent = produto || "-";
+      document.getElementById("pvData").textContent = formatarDataBR(dataProducao);
+      document.getElementById("pvValidade").textContent = "Validade: " + calcularValidade(dataProducao, validadeDias);
+      document.getElementById("pvHora").textContent = horaProducao || "-";
+      document.getElementById("pvResponsavel").textContent = responsavel || "-";
+      document.getElementById("pvConservacao").textContent = conservacao || "-";
+      document.getElementById("pvObservacao").textContent = "Observação: " + (observacao || "");
+    }
 
-  function limparCampos() {
-    document.getElementById("grupo").value = "";
-    document.getElementById("produto").innerHTML = "";
-    document.getElementById("validadeDias").innerHTML = "";
-    document.getElementById("quantidade").value = "1";
-    document.getElementById("lote").value = "";
-    document.getElementById("conservacao").value = "";
-    document.getElementById("observacao").value = "";
-    preencherDataHoraAtual();
-    preencherProdutosFiltrados();
-    atualizarPreview();
-  }
+    function limparSelecaoProduto() {
+      document.getElementById("produto").value = "";
+      document.getElementById("validadeDias").innerHTML = "";
+      document.getElementById("conservacao").value = "";
+      atualizarPreview();
+    }
 
-  function carregarGrupos() {
-    const selectGrupo = document.getElementById("grupo");
-    selectGrupo.innerHTML = "";
-
-    const optionInicial = document.createElement("option");
-    optionInicial.value = "";
-    optionInicial.textContent = "Selecione um grupo";
-    selectGrupo.appendChild(optionInicial);
-
-    const gruposUnicos = [...new Set(
-      produtosCache.map(item => item.categoria).filter(Boolean)
-    )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-    gruposUnicos.forEach((grupo) => {
-      const option = document.createElement("option");
-      option.value = grupo;
-      option.textContent = grupo;
-      selectGrupo.appendChild(option);
-    });
-
-    selectGrupo.onchange = () => {
+    function limparCampos() {
+      document.getElementById("grupo").value = "";
+      document.getElementById("produto").innerHTML = "";
+      document.getElementById("validadeDias").innerHTML = "";
+      document.getElementById("quantidade").value = "1";
+      document.getElementById("lote").value = "";
+      document.getElementById("conservacao").value = "";
+      document.getElementById("observacao").value = "";
+      preencherDataHoraAtual();
       preencherProdutosFiltrados();
-      limparSelecaoProduto();
-    };
-  }
-
-  function preencherProdutosFiltrados() {
-    const selectGrupo = document.getElementById("grupo");
-    const selectProduto = document.getElementById("produto");
-    const grupoSelecionado = selectGrupo.value;
-
-    selectProduto.innerHTML = "";
-
-    const optionInicial = document.createElement("option");
-    optionInicial.value = "";
-    optionInicial.textContent = "Selecione um produto";
-    selectProduto.appendChild(optionInicial);
-
-    let produtosFiltrados = produtosCache;
-    if (grupoSelecionado) {
-      produtosFiltrados = produtosCache.filter(item => item.categoria === grupoSelecionado);
-    }
-
-    const nomesUnicos = [...new Set(
-      produtosFiltrados.map(item => item.nome_produto).filter(Boolean)
-    )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-    nomesUnicos.forEach((nome) => {
-      const option = document.createElement("option");
-      option.value = nome;
-      option.textContent = nome;
-      selectProduto.appendChild(option);
-    });
-
-    selectProduto.onchange = () => {
-      preencherValidadesDoProduto();
-    };
-  }
-
-  function preencherValidadesDoProduto() {
-    const grupo = document.getElementById("grupo").value;
-    const produto = document.getElementById("produto").value;
-    const selectValidade = document.getElementById("validadeDias");
-
-    selectValidade.innerHTML = "";
-    document.getElementById("conservacao").value = "";
-
-    if (!produto) {
       atualizarPreview();
-      return;
     }
 
-    let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
-    if (grupo) {
-      encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
+    function carregarGrupos() {
+      const selectGrupo = document.getElementById("grupo");
+      selectGrupo.innerHTML = "";
+
+      const optionInicial = document.createElement("option");
+      optionInicial.value = "";
+      optionInicial.textContent = "Selecione um grupo";
+      selectGrupo.appendChild(optionInicial);
+
+      const gruposUnicos = [...new Set(
+        produtosCache.map(item => item.categoria).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      gruposUnicos.forEach((grupo) => {
+        const option = document.createElement("option");
+        option.value = grupo;
+        option.textContent = grupo;
+        selectGrupo.appendChild(option);
+      });
+
+      selectGrupo.onchange = () => {
+        preencherProdutosFiltrados();
+        limparSelecaoProduto();
+      };
     }
 
-    if (!encontrados.length) {
+    function preencherProdutosFiltrados() {
+      const selectGrupo = document.getElementById("grupo");
+      const selectProduto = document.getElementById("produto");
+      const grupoSelecionado = selectGrupo.value;
+
+      selectProduto.innerHTML = "";
+
+      const optionInicial = document.createElement("option");
+      optionInicial.value = "";
+      optionInicial.textContent = "Selecione um produto";
+      selectProduto.appendChild(optionInicial);
+
+      let produtosFiltrados = produtosCache;
+      if (grupoSelecionado) {
+        produtosFiltrados = produtosCache.filter(item => item.categoria === grupoSelecionado);
+      }
+
+      const nomesUnicos = [...new Set(
+        produtosFiltrados.map(item => item.nome_produto).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      nomesUnicos.forEach((nome) => {
+        const option = document.createElement("option");
+        option.value = nome;
+        option.textContent = nome;
+        selectProduto.appendChild(option);
+      });
+
+      selectProduto.onchange = () => {
+        preencherValidadesDoProduto();
+      };
+    }
+
+    function preencherValidadesDoProduto() {
+      const grupo = document.getElementById("grupo").value;
+      const produto = document.getElementById("produto").value;
+      const selectValidade = document.getElementById("validadeDias");
+
+      selectValidade.innerHTML = "";
+      document.getElementById("conservacao").value = "";
+
+      if (!produto) {
+        atualizarPreview();
+        return;
+      }
+
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
+      if (grupo) {
+        encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
+      }
+
+      if (!encontrados.length) {
+        atualizarPreview();
+        return;
+      }
+
+      const validadesUnicas = [...new Set(
+        encontrados
+          .map(item => item.validade_dias)
+          .filter(v => v !== null && v !== undefined && v !== "")
+          .map(v => String(v).trim())
+      )].sort((a, b) => Number(a) - Number(b));
+
+      const optionInicial = document.createElement("option");
+      optionInicial.value = "";
+      optionInicial.textContent = "Selecione a validade";
+      selectValidade.appendChild(optionInicial);
+
+      validadesUnicas.forEach((validade) => {
+        const option = document.createElement("option");
+        option.value = validade;
+        option.textContent = validade;
+        selectValidade.appendChild(option);
+      });
+
+      if (validadesUnicas.length === 1) {
+        selectValidade.value = validadesUnicas[0];
+        preencherConservacao();
+      } else {
+        atualizarPreview();
+      }
+    }
+
+    function preencherConservacao() {
+      const grupo = document.getElementById("grupo").value;
+      const produto = document.getElementById("produto").value;
+      const validade = document.getElementById("validadeDias").value;
+
+      if (!produto || !validade) {
+        document.getElementById("conservacao").value = "";
+        atualizarPreview();
+        return;
+      }
+
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
+      if (grupo) {
+        encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
+      }
+
+      encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(validade).trim());
+
+      if (!encontrados.length) {
+        document.getElementById("conservacao").value = "";
+        atualizarPreview();
+        return;
+      }
+
+      document.getElementById("conservacao").value = encontrados[0].conservacao || "";
       atualizarPreview();
-      return;
     }
 
-    const validadesUnicas = [...new Set(
-      encontrados
-        .map(item => item.validade_dias)
-        .filter(v => v !== null && v !== undefined && v !== "")
-        .map(v => String(v).trim())
-    )].sort((a, b) => Number(a) - Number(b));
+    async function carregarProdutos() {
+      const { data, error } = await supabaseClient
+        .from("produtos")
+        .select("*")
+        .order("nome_produto", { ascending: true });
 
-    const optionInicial = document.createElement("option");
-    optionInicial.value = "";
-    optionInicial.textContent = "Selecione a validade";
-    selectValidade.appendChild(optionInicial);
+      if (error) {
+        console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
+        return;
+      }
 
-    validadesUnicas.forEach((validade) => {
-      const option = document.createElement("option");
-      option.value = validade;
-      option.textContent = validade;
-      selectValidade.appendChild(option);
-    });
+      console.log("Produtos carregados:", data);
+      produtosCache = data || [];
+      carregarGrupos();
+      preencherProdutosFiltrados();
+    }
 
-    if (validadesUnicas.length === 1) {
-      selectValidade.value = validadesUnicas[0];
+    async function gerarImpressao() {
+      const responsavel = document.getElementById("responsavel").value;
+      const grupo = document.getElementById("grupo").value;
+      const produto = document.getElementById("produto").value;
+      const validadeDias = document.getElementById("validadeDias").value;
+      const dataProducao = document.getElementById("dataProducao").value;
+      const horaProducao = document.getElementById("horaProducao").value;
+      const quantidade = document.getElementById("quantidade").value;
+      const lote = document.getElementById("lote").value;
+      const conservacao = document.getElementById("conservacao").value;
+      const observacao = document.getElementById("observacao").value;
+
+      if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
+        alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+        return;
+      }
+
+      const payloadBanco = {
+        grupo_produto: removerAcentos(grupo),
+        nome_produto: removerAcentos(produto),
+        opcao_validade: Number(validadeDias),
+        data_producao: dataProducao,
+        hora_producao: horaProducao,
+        quantidade_etiquetas: Number(quantidade || 1),
+        lote_manual: removerAcentos(lote) || null,
+        conservacao: removerAcentos(conservacao) || null,
+        observacao_padrao: removerAcentos(observacao) || null,
+        responsavel: removerAcentos(responsavel),
+        status_impressao: "pendente"
+      };
+
+      try {
+        const { error } = await supabaseClient
+          .from("solicitacoes_impressao")
+          .insert([payloadBanco]);
+
+        if (error) {
+          console.error("Erro ao salvar impressão no banco:", error);
+          alert("Erro ao gerar impressão.");
+          return;
+        }
+
+        alert("Solicitação de impressão enviada para a fila!");
+      } catch (erro) {
+        console.error("Erro geral:", erro);
+        alert("Erro ao gerar impressão.");
+      }
+    }
+
+    document.getElementById("validadeDias").addEventListener("change", () => {
       preencherConservacao();
-    } else {
-      atualizarPreview();
-    }
-  }
+    });
 
-  function preencherConservacao() {
-    const grupo = document.getElementById("grupo").value;
-    const produto = document.getElementById("produto").value;
-    const validade = document.getElementById("validadeDias").value;
-
-    if (!produto || !validade) {
-      document.getElementById("conservacao").value = "";
-      atualizarPreview();
-      return;
-    }
-
-    let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
-    if (grupo) {
-      encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
-    }
-
-    encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(validade).trim());
-
-    if (!encontrados.length) {
-      document.getElementById("conservacao").value = "";
-      atualizarPreview();
-      return;
-    }
-
-    document.getElementById("conservacao").value = encontrados[0].conservacao || "";
+    preencherDataHoraAtual();
+    carregarProdutos();
     atualizarPreview();
-  }
-
-  async function carregarProdutos() {
-    const { data, error } = await supabaseClient
-      .from("produtos")
-      .select("*")
-      .order("nome_produto", { ascending: true });
-
-    if (error) {
-      console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
-      return;
-    }
-
-    console.log("Produtos carregados:", data);
-    produtosCache = data || [];
-    carregarGrupos();
-    preencherProdutosFiltrados();
-  }
-
-  async function gerarImpressao() {
-  const responsavel = document.getElementById("responsavel").value;
-  const grupo = document.getElementById("grupo").value;
-  const produto = document.getElementById("produto").value;
-  const validadeDias = document.getElementById("validadeDias").value;
-  const dataProducao = document.getElementById("dataProducao").value;
-  const horaProducao = document.getElementById("horaProducao").value;
-  const quantidade = document.getElementById("quantidade").value;
-  const lote = document.getElementById("lote").value;
-  const conservacao = document.getElementById("conservacao").value;
-  const observacao = document.getElementById("observacao").value;
-
-  if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
-    alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
-    return;
-  }
-function removerAcentos(texto) {
-  return texto
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-  const payloadBanco = {
-    grupo_produto: grupo,
-    nome_produto: produto,
-    opcao_validade: Number(validadeDias),
-    data_producao: dataProducao,
-    hora_producao: horaProducao,
-    quantidade_etiquetas: Number(quantidade || 1),
-    lote_manual: lote || null,
-    conservacao: conservacao || null,
-    observacao_padrao: observacao || null,
-    status_impressao: "pendente"
-  };
-
-  try {
-    const { error } = await supabaseClient
-      .from("solicitacoes_impressao")
-      .insert([payloadBanco]);
-
-    if (error) {
-      console.error("Erro ao salvar impressão no banco:", error);
-      alert("Erro ao gerar impressão.");
-      return;
-    }
-
-    alert("Solicitação de impressão enviada para a fila!");
-  } catch (erro) {
-    console.error("Erro geral:", erro);
-    alert("Erro ao gerar impressão.");
-  }
-}
-
-  document.getElementById("validadeDias").addEventListener("change", () => {
-    preencherConservacao();
-  });
-
-  preencherDataHoraAtual();
-  carregarProdutos();
-  atualizarPreview();
-</script>
+  </script>
+</body>
+</html>
 
