@@ -371,7 +371,11 @@
     alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
     return;
   }
-
+function removerAcentos(texto) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
   const payloadBanco = {
     grupo_produto: grupo,
     nome_produto: produto,
