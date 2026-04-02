@@ -13,44 +13,156 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f6f9;
+      background: #f4f6f8;
       color: #1f2937;
     }
 
-    .header {
+    .topbar {
       background: linear-gradient(90deg, #123b6d, #0f4c81);
       color: white;
-      padding: 20px 24px;
-      font-size: 30px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-title {
+      font-size: 26px;
       font-weight: bold;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+
+    .topbar-subtitle {
+      font-size: 13px;
+      opacity: 0.9;
     }
 
     .container {
       max-width: 1180px;
-      margin: 28px auto;
-      padding: 0 16px;
+      margin: 24px auto;
+      padding: 0 16px 32px;
     }
 
-    .grid {
+    .layout {
       display: grid;
-      grid-template-columns: 400px 1fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 24px;
       align-items: start;
     }
 
     .card {
       background: white;
-      border-radius: 16px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
       padding: 22px;
-      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
     }
 
-    .card h2 {
-      margin-top: 0;
+    .wizard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 18px;
-      font-size: 24px;
+      flex-wrap: wrap;
+    }
+
+    .wizard-title {
+      font-size: 26px;
+      font-weight: bold;
       color: #0f172a;
+    }
+
+    .step-chip {
+      background: #e2e8f0;
+      color: #334155;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .progress {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .progress-step {
+      height: 8px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      transition: 0.2s ease;
+    }
+
+    .progress-step.active {
+      background: #ff5a52;
+    }
+
+    .step-screen {
+      display: none;
+    }
+
+    .step-screen.active {
+      display: block;
+    }
+
+    .step-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0 0 8px;
+      color: #0f172a;
+    }
+
+    .step-text {
+      margin: 0 0 18px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .grid-cards.products {
+      grid-template-columns: repeat(2, 1fr);
+      max-height: 430px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .select-card {
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px 14px;
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: bold;
+      color: #0f172a;
+      user-select: none;
+    }
+
+    .select-card:hover {
+      transform: translateY(-1px);
+      border-color: #ffb4af;
+      box-shadow: 0 6px 14px rgba(255, 90, 82, 0.12);
+    }
+
+    .select-card.selected {
+      background: #ff5a52;
+      color: white;
+      border-color: #ff5a52;
+      box-shadow: 0 8px 18px rgba(255, 90, 82, 0.20);
     }
 
     .field {
@@ -60,20 +172,20 @@
     }
 
     .field label {
-      font-size: 14px;
-      margin-bottom: 6px;
+      font-size: 13px;
       font-weight: bold;
+      margin-bottom: 6px;
       color: #334155;
     }
 
     .field input,
     .field select,
     .field textarea {
-      padding: 11px 12px;
       border: 1px solid #cbd5e1;
-      border-radius: 10px;
+      border-radius: 12px;
+      padding: 12px 12px;
       font-size: 14px;
-      background: #fff;
+      background: white;
       transition: 0.2s ease;
     }
 
@@ -81,8 +193,16 @@
     .field select:focus,
     .field textarea:focus {
       outline: none;
-      border-color: #0f766e;
-      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.10);
+      border-color: #ff5a52;
+      box-shadow: 0 0 0 3px rgba(255, 90, 82, 0.12);
+    }
+
+    .search-box {
+      margin-bottom: 14px;
+    }
+
+    .search-box input {
+      width: 100%;
     }
 
     .field-row {
@@ -92,19 +212,28 @@
     }
 
     .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
       margin-top: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      flex-wrap: wrap;
+    }
+
+    .actions-left,
+    .actions-right {
+      display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .btn {
       border: none;
-      padding: 13px 16px;
-      border-radius: 10px;
-      cursor: pointer;
+      border-radius: 12px;
+      padding: 12px 16px;
       font-size: 14px;
       font-weight: bold;
+      cursor: pointer;
       transition: 0.2s ease;
     }
 
@@ -112,142 +241,143 @@
       transform: translateY(-1px);
     }
 
-    .btn.preview {
+    .btn.primary {
+      background: #ff5a52;
+      color: white;
+    }
+
+    .btn.secondary {
       background: #334155;
       color: white;
     }
 
-    .btn.print {
-      background: #0f766e;
-      color: white;
-    }
-
-    .btn.clear {
+    .btn.light {
       background: #e2e8f0;
       color: #0f172a;
     }
 
-    .note {
-      margin-top: 14px;
-      font-size: 13px;
-      color: #64748b;
-      line-height: 1.5;
+    .btn.success {
+      background: #0f766e;
+      color: white;
     }
 
-    .preview-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .preview-label {
-      background: #f8fff4;
-      border: 2px solid #d9e7ce;
+    .summary-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 16px;
-      padding: 22px;
-      min-height: 320px;
+      padding: 18px;
     }
 
-    .preview-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 18px;
+    .summary-title {
+      margin: 0 0 16px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #0f172a;
     }
 
-    .preview-title {
-      font-size: 38px;
+    .summary-product {
+      font-size: 34px;
       font-weight: bold;
       line-height: 1.05;
       color: #0f172a;
+      margin-bottom: 14px;
       word-break: break-word;
-      flex: 1;
     }
 
-    .preview-badge {
-      background: #0f766e;
+    .summary-badge {
+      display: inline-block;
+      background: #ff5a52;
       color: white;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
       font-weight: bold;
-      white-space: nowrap;
-    }
-
-    .preview-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 18px;
       margin-bottom: 18px;
     }
 
-    .info-box {
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .summary-box {
       background: white;
-      border: 1px solid #dbe7d2;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 12px;
     }
 
-    .info-label {
+    .summary-label {
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
       color: #64748b;
-      margin-bottom: 4px;
+      text-transform: uppercase;
       font-weight: bold;
+      margin-bottom: 4px;
     }
 
-    .info-value {
-      font-size: 21px;
+    .summary-value {
+      font-size: 18px;
       font-weight: bold;
       color: #111827;
       word-break: break-word;
     }
 
-    .preview-section {
-      margin-bottom: 12px;
-      padding: 12px 14px;
-      background: rgba(255,255,255,0.65);
+    .summary-extra {
+      margin-top: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .summary-extra-box {
+      background: white;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
-      border: 1px solid #e2eadb;
+      padding: 12px;
     }
 
-    .preview-section-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #64748b;
-      margin-bottom: 4px;
-      font-weight: bold;
-    }
-
-    .preview-section-value {
+    .aside-title {
       font-size: 22px;
-      color: #0f172a;
       font-weight: bold;
+      margin: 0 0 16px;
+      color: #0f172a;
+    }
+
+    .mini-summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .mini-label {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .mini-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #0f172a;
       word-break: break-word;
     }
 
-    .preview-footer {
-      margin-top: 18px;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      color: #334155;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
     .status-box {
+      margin-top: 18px;
       padding: 14px 16px;
       border-radius: 12px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e3a8a;
       font-size: 14px;
       display: none;
+      border: 1px solid transparent;
     }
 
     .status-box.show {
@@ -266,164 +396,230 @@
       color: #991b1b;
     }
 
+    .hint {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
     @media (max-width: 980px) {
-      .grid {
+      .layout {
         grid-template-columns: 1fr;
       }
 
-      .actions {
-        grid-template-columns: 1fr;
-      }
-
+      .grid-cards,
+      .grid-cards.products,
+      .summary-grid,
       .field-row {
         grid-template-columns: 1fr;
       }
 
-      .preview-top {
-        flex-direction: column;
+      .summary-product {
+        font-size: 28px;
       }
 
-      .preview-badge {
-        align-self: flex-start;
-      }
-
-      .preview-info {
-        grid-template-columns: 1fr;
-      }
-
-      .preview-title {
-        font-size: 30px;
+      .step-title {
+        font-size: 24px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="header">Sistema de Etiquetas Eat Kitchen</div>
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Sistema de Etiquetas Eat Kitchen</div>
+      <div class="topbar-subtitle">Fluxo operacional em etapas</div>
+    </div>
+  </div>
 
   <div class="container">
-    <div class="grid">
+    <div class="layout">
       <div class="card">
-        <h2>Painel Operacional</h2>
-
-        <div class="field">
-          <label>Responsável</label>
-          <select id="responsavel">
-            <option>Marcelo</option>
-            <option>Operação CAIS</option>
-            <option>Operação DINARTE</option>
-          </select>
+        <div class="wizard-header">
+          <div class="wizard-title">Nova impressão</div>
+          <div class="step-chip" id="stepChip">Etapa 1 de 5</div>
         </div>
 
-        <div class="field">
-          <label>Grupo do produto</label>
-          <select id="grupo"></select>
+        <div class="progress">
+          <div class="progress-step" id="progress1"></div>
+          <div class="progress-step" id="progress2"></div>
+          <div class="progress-step" id="progress3"></div>
+          <div class="progress-step" id="progress4"></div>
+          <div class="progress-step" id="progress5"></div>
         </div>
 
-        <div class="field">
-          <label>Nome do produto</label>
-          <select id="produto"></select>
+        <div class="step-screen active" id="step1">
+          <h2 class="step-title">Selecionar responsável</h2>
+          <p class="step-text">Escolha quem está gerando a etiqueta nesta operação.</p>
+
+          <div class="grid-cards" id="responsaveisCards"></div>
         </div>
 
-        <div class="field">
-          <label>Opção de validade (dias)</label>
-          <select id="validadeDias"></select>
+        <div class="step-screen" id="step2">
+          <h2 class="step-title">Selecionar grupo</h2>
+          <p class="step-text">Escolha o grupo do produto para filtrar os itens.</p>
+
+          <div class="grid-cards" id="gruposCards"></div>
         </div>
 
-        <div class="field-row">
-          <div class="field">
-            <label>Data de produção</label>
-            <input id="dataProducao" type="date" />
+        <div class="step-screen" id="step3">
+          <h2 class="step-title">Selecionar produto</h2>
+          <p class="step-text">Busque e escolha o produto que será impresso.</p>
+
+          <div class="field search-box">
+            <input id="buscaProduto" type="text" placeholder="Buscar produto..." />
+          </div>
+
+          <div class="grid-cards products" id="produtosCards"></div>
+        </div>
+
+        <div class="step-screen" id="step4">
+          <h2 class="step-title">Selecionar validade</h2>
+          <p class="step-text">Escolha a validade disponível para este produto.</p>
+
+          <div class="grid-cards" id="validadesCards"></div>
+
+          <div class="hint" id="conservacaoHint"></div>
+        </div>
+
+        <div class="step-screen" id="step5">
+          <h2 class="step-title">Finalizar impressão</h2>
+          <p class="step-text">Revise os dados antes de enviar para a fila.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Data de produção</label>
+              <input id="dataProducao" type="date" />
+            </div>
+
+            <div class="field">
+              <label>Hora de produção</label>
+              <input id="horaProducao" type="time" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Quantidade de etiquetas</label>
+              <input id="quantidade" type="number" value="1" min="1" />
+            </div>
+
+            <div class="field">
+              <label>Lote manual</label>
+              <input id="lote" type="text" placeholder="Opcional" />
+            </div>
           </div>
 
           <div class="field">
-            <label>Hora de produção</label>
-            <input id="horaProducao" type="time" />
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label>Quantidade de etiquetas</label>
-            <input id="quantidade" type="number" value="1" min="1" />
+            <label>Conservação</label>
+            <input id="conservacao" type="text" readonly />
           </div>
 
           <div class="field">
-            <label>Lote manual</label>
-            <input id="lote" placeholder="Opcional" />
+            <label>Observação</label>
+            <textarea id="observacao" rows="3" placeholder="Opcional"></textarea>
           </div>
-        </div>
 
-        <div class="field">
-          <label>Conservação</label>
-          <input id="conservacao" readonly />
-        </div>
+          <div class="summary-card">
+            <div class="summary-title">Resumo da etiqueta</div>
+            <div class="summary-product" id="pvProduto">-</div>
+            <div class="summary-badge" id="pvBadge">-</div>
 
-        <div class="field">
-          <label>Observação</label>
-          <textarea id="observacao" rows="3" placeholder="Opcional"></textarea>
+            <div class="summary-grid">
+              <div class="summary-box">
+                <div class="summary-label">Responsável</div>
+                <div class="summary-value" id="pvResponsavel">-</div>
+              </div>
+
+              <div class="summary-box">
+                <div class="summary-label">Grupo</div>
+                <div class="summary-value" id="pvGrupo">-</div>
+              </div>
+
+              <div class="summary-box">
+                <div class="summary-label">Data de produção</div>
+                <div class="summary-value" id="pvData">-</div>
+              </div>
+
+              <div class="summary-box">
+                <div class="summary-label">Hora</div>
+                <div class="summary-value" id="pvHora">-</div>
+              </div>
+
+              <div class="summary-box">
+                <div class="summary-label">Conservação</div>
+                <div class="summary-value" id="pvConservacao">-</div>
+              </div>
+
+              <div class="summary-box">
+                <div class="summary-label">Validade</div>
+                <div class="summary-value" id="pvValidade">-</div>
+              </div>
+            </div>
+
+            <div class="summary-extra">
+              <div class="summary-extra-box" id="pvLoteBox" style="display:none;">
+                <div class="summary-label">Lote</div>
+                <div class="summary-value" id="pvLote">-</div>
+              </div>
+
+              <div class="summary-extra-box" id="pvObsBox" style="display:none;">
+                <div class="summary-label">Observação</div>
+                <div class="summary-value" id="pvObservacao">-</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="actions">
-          <button class="btn preview" onclick="atualizarPreview()">Atualizar preview</button>
-          <button class="btn print" onclick="gerarImpressao()">Gerar impressão</button>
-          <button class="btn clear" onclick="limparCampos()">Limpar</button>
-        </div>
+          <div class="actions-left">
+            <button class="btn light" id="btnVoltar" onclick="voltarEtapa()">Voltar</button>
+            <button class="btn light" onclick="reiniciarFluxo()">Reiniciar</button>
+          </div>
 
-        <div class="note">
-          Sistema conectado ao Supabase e à fila de impressão local.
+          <div class="actions-right">
+            <button class="btn primary" id="btnProximo" onclick="proximaEtapa()">Próximo</button>
+            <button class="btn success" id="btnImprimir" onclick="gerarImpressao()" style="display:none;">Imprimir</button>
+          </div>
         </div>
 
         <div id="statusBox" class="status-box"></div>
       </div>
 
       <div class="card">
-        <h2>Preview da Etiqueta</h2>
+        <h3 class="aside-title">Resumo da seleção</h3>
 
-        <div class="preview-wrapper">
-          <div class="preview-label">
-            <div class="preview-top">
-              <div class="preview-title" id="pvProduto">-</div>
-              <div class="preview-badge" id="pvValidadeBadge">-</div>
-            </div>
+        <div class="mini-summary">
+          <div class="mini-item">
+            <div class="mini-label">Responsável</div>
+            <div class="mini-value" id="sideResponsavel">-</div>
+          </div>
 
-            <div class="preview-info">
-              <div class="info-box">
-                <div class="info-label">Data de produção</div>
-                <div class="info-value" id="pvData">-</div>
-              </div>
+          <div class="mini-item">
+            <div class="mini-label">Grupo</div>
+            <div class="mini-value" id="sideGrupo">-</div>
+          </div>
 
-              <div class="info-box">
-                <div class="info-label">Hora</div>
-                <div class="info-value" id="pvHora">-</div>
-              </div>
+          <div class="mini-item">
+            <div class="mini-label">Produto</div>
+            <div class="mini-value" id="sideProduto">-</div>
+          </div>
 
-              <div class="info-box">
-                <div class="info-label">Responsável</div>
-                <div class="info-value" id="pvResponsavel">-</div>
-              </div>
+          <div class="mini-item">
+            <div class="mini-label">Validade</div>
+            <div class="mini-value" id="sideValidade">-</div>
+          </div>
 
-              <div class="info-box">
-                <div class="info-label">Conservação</div>
-                <div class="info-value" id="pvConservacao">-</div>
-              </div>
-            </div>
-
-            <div class="preview-section" id="pvLoteBox" style="display: none;">
-              <div class="preview-section-title">Lote</div>
-              <div class="preview-section-value" id="pvLote">-</div>
-            </div>
-
-            <div class="preview-section" id="pvObservacaoBox" style="display: none;">
-              <div class="preview-section-title">Observação</div>
-              <div class="preview-section-value" id="pvObservacao">-</div>
-            </div>
-
-            <div class="preview-footer">
-              <span>Cozinha Eat Kitchen</span>
-              <span id="pvValidadeData">Validade: -</span>
-            </div>
+          <div class="mini-item">
+            <div class="mini-label">Conservação</div>
+            <div class="mini-value" id="sideConservacao">-</div>
           </div>
         </div>
+
+        <p class="hint">
+          Nesta versão, o fluxo foi reorganizado em etapas. Na próxima fase, a gente encaixa login por casa, unidade e roteamento por Raspberry/impressora.
+        </p>
       </div>
     </div>
   </div>
@@ -434,7 +630,28 @@
     const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let produtosCache = [];
+    let etapaAtual = 1;
+
+    const estado = {
+      responsavel: "",
+      grupo: "",
+      produto: "",
+      validadeDias: "",
+      conservacao: "",
+      dataProducao: "",
+      horaProducao: "",
+      quantidade: "1",
+      lote: "",
+      observacao: ""
+    };
+
+    const responsaveis = [
+      "Marcelo",
+      "Operação CAIS",
+      "Operação DINARTE"
+    ];
 
     function mostrarStatus(tipo, mensagem) {
       const box = document.getElementById("statusBox");
@@ -478,8 +695,11 @@
       const horas = String(hoje.getHours()).padStart(2, "0");
       const minutos = String(hoje.getMinutes()).padStart(2, "0");
 
-      document.getElementById("dataProducao").value = `${ano}-${mes}-${dia}`;
-      document.getElementById("horaProducao").value = `${horas}:${minutos}`;
+      estado.dataProducao = `${ano}-${mes}-${dia}`;
+      estado.horaProducao = `${horas}:${minutos}`;
+
+      document.getElementById("dataProducao").value = estado.dataProducao;
+      document.getElementById("horaProducao").value = estado.horaProducao;
     }
 
     function formatarDataBR(dataISO) {
@@ -498,203 +718,302 @@
       return `${dia}/${mes}/${ano}`;
     }
 
-    function atualizarPreview() {
-      const responsavel = document.getElementById("responsavel").value;
-      const produto = document.getElementById("produto").value;
-      const validadeDias = document.getElementById("validadeDias").value;
-      const dataProducao = document.getElementById("dataProducao").value;
-      const horaProducao = document.getElementById("horaProducao").value;
-      const conservacao = document.getElementById("conservacao").value;
-      const observacao = document.getElementById("observacao").value.trim();
-      const lote = document.getElementById("lote").value.trim();
+    function atualizarUIEtapa() {
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById("step" + i).classList.toggle("active", i === etapaAtual);
+        document.getElementById("progress" + i).classList.toggle("active", i <= etapaAtual);
+      }
 
-      document.getElementById("pvProduto").textContent = produto || "-";
-      document.getElementById("pvData").textContent = formatarDataBR(dataProducao);
-      document.getElementById("pvHora").textContent = horaProducao || "-";
-      document.getElementById("pvResponsavel").textContent = responsavel || "-";
-      document.getElementById("pvConservacao").textContent = conservacao || "-";
+      document.getElementById("stepChip").textContent = "Etapa " + etapaAtual + " de 5";
+      document.getElementById("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
+      document.getElementById("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
+      document.getElementById("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
 
-      const validadeCalculada = calcularValidade(dataProducao, validadeDias);
-      document.getElementById("pvValidadeData").textContent = "Validade: " + validadeCalculada;
-      document.getElementById("pvValidadeBadge").textContent = validadeDias ? validadeDias + " dia(s)" : "-";
+      atualizarResumoLateral();
+      atualizarPreviewFinal();
+    }
+
+    function validarEtapaAtual() {
+      if (etapaAtual === 1 && !estado.responsavel) {
+        mostrarStatus("error", "Selecione um responsável para continuar.");
+        return false;
+      }
+
+      if (etapaAtual === 2 && !estado.grupo) {
+        mostrarStatus("error", "Selecione um grupo para continuar.");
+        return false;
+      }
+
+      if (etapaAtual === 3 && !estado.produto) {
+        mostrarStatus("error", "Selecione um produto para continuar.");
+        return false;
+      }
+
+      if (etapaAtual === 4 && !estado.validadeDias) {
+        mostrarStatus("error", "Selecione uma validade para continuar.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function proximaEtapa() {
+      limparStatus();
+
+      if (!validarEtapaAtual()) return;
+
+      if (etapaAtual < 5) {
+        etapaAtual++;
+        atualizarUIEtapa();
+      }
+    }
+
+    function voltarEtapa() {
+      limparStatus();
+
+      if (etapaAtual > 1) {
+        etapaAtual--;
+        atualizarUIEtapa();
+      }
+    }
+
+    function reiniciarFluxo() {
+      estado.responsavel = "";
+      estado.grupo = "";
+      estado.produto = "";
+      estado.validadeDias = "";
+      estado.conservacao = "";
+      estado.quantidade = "1";
+      estado.lote = "";
+      estado.observacao = "";
+      etapaAtual = 1;
+
+      preencherDataHoraAtual();
+
+      document.getElementById("quantidade").value = "1";
+      document.getElementById("lote").value = "";
+      document.getElementById("observacao").value = "";
+      document.getElementById("conservacao").value = "";
+      document.getElementById("buscaProduto").value = "";
+
+      renderResponsaveis();
+      renderGrupos();
+      renderProdutos();
+      renderValidades();
+      atualizarUIEtapa();
+      limparStatus();
+    }
+
+    function atualizarResumoLateral() {
+      document.getElementById("sideResponsavel").textContent = estado.responsavel || "-";
+      document.getElementById("sideGrupo").textContent = estado.grupo || "-";
+      document.getElementById("sideProduto").textContent = estado.produto || "-";
+      document.getElementById("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+      document.getElementById("sideConservacao").textContent = estado.conservacao || "-";
+    }
+
+    function atualizarPreviewFinal() {
+      document.getElementById("pvProduto").textContent = estado.produto || "-";
+      document.getElementById("pvBadge").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+      document.getElementById("pvResponsavel").textContent = estado.responsavel || "-";
+      document.getElementById("pvGrupo").textContent = estado.grupo || "-";
+      document.getElementById("pvData").textContent = formatarDataBR(estado.dataProducao);
+      document.getElementById("pvHora").textContent = estado.horaProducao || "-";
+      document.getElementById("pvConservacao").textContent = estado.conservacao || "-";
+      document.getElementById("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
 
       const loteBox = document.getElementById("pvLoteBox");
-      const loteTexto = document.getElementById("pvLote");
-      if (lote) {
-        loteTexto.textContent = lote;
+      const loteText = document.getElementById("pvLote");
+      if (estado.lote && estado.lote.trim()) {
+        loteText.textContent = estado.lote;
         loteBox.style.display = "block";
       } else {
-        loteTexto.textContent = "";
+        loteText.textContent = "";
         loteBox.style.display = "none";
       }
 
-      const obsBox = document.getElementById("pvObservacaoBox");
-      const obsTexto = document.getElementById("pvObservacao");
-      if (observacao) {
-        obsTexto.textContent = observacao;
+      const obsBox = document.getElementById("pvObsBox");
+      const obsText = document.getElementById("pvObservacao");
+      if (estado.observacao && estado.observacao.trim()) {
+        obsText.textContent = estado.observacao;
         obsBox.style.display = "block";
       } else {
-        obsTexto.textContent = "";
+        obsText.textContent = "";
         obsBox.style.display = "none";
       }
     }
 
-    function limparSelecaoProduto() {
-      document.getElementById("produto").value = "";
-      document.getElementById("validadeDias").innerHTML = "";
-      document.getElementById("conservacao").value = "";
-      atualizarPreview();
+    function criarCard(texto, selecionado, onClick) {
+      const card = document.createElement("div");
+      card.className = "select-card" + (selecionado ? " selected" : "");
+      card.textContent = texto;
+      card.onclick = onClick;
+      return card;
     }
 
-    function limparCampos() {
-      document.getElementById("grupo").value = "";
-      document.getElementById("produto").innerHTML = "";
-      document.getElementById("validadeDias").innerHTML = "";
-      document.getElementById("quantidade").value = "1";
-      document.getElementById("lote").value = "";
-      document.getElementById("conservacao").value = "";
-      document.getElementById("observacao").value = "";
-      preencherDataHoraAtual();
-      preencherProdutosFiltrados();
-      atualizarPreview();
-      limparStatus();
+    function renderResponsaveis() {
+      const container = document.getElementById("responsaveisCards");
+      container.innerHTML = "";
+
+      responsaveis.forEach((nome) => {
+        container.appendChild(
+          criarCard(nome, estado.responsavel === nome, () => {
+            estado.responsavel = nome;
+            renderResponsaveis();
+            atualizarResumoLateral();
+            limparStatus();
+          })
+        );
+      });
     }
 
-    function carregarGrupos() {
-      const selectGrupo = document.getElementById("grupo");
-      selectGrupo.innerHTML = "";
-
-      const optionInicial = document.createElement("option");
-      optionInicial.value = "";
-      optionInicial.textContent = "Selecione um grupo";
-      selectGrupo.appendChild(optionInicial);
-
-      const gruposUnicos = [...new Set(
+    function getGruposUnicos() {
+      return [...new Set(
         produtosCache.map(item => item.categoria).filter(Boolean)
       )].sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-      gruposUnicos.forEach((grupo) => {
-        const option = document.createElement("option");
-        option.value = grupo;
-        option.textContent = grupo;
-        selectGrupo.appendChild(option);
-      });
-
-      selectGrupo.onchange = () => {
-        preencherProdutosFiltrados();
-        limparSelecaoProduto();
-      };
     }
 
-    function preencherProdutosFiltrados() {
-      const selectGrupo = document.getElementById("grupo");
-      const selectProduto = document.getElementById("produto");
-      const grupoSelecionado = selectGrupo.value;
+    function renderGrupos() {
+      const container = document.getElementById("gruposCards");
+      container.innerHTML = "";
 
-      selectProduto.innerHTML = "";
+      getGruposUnicos().forEach((grupo) => {
+        container.appendChild(
+          criarCard(grupo, estado.grupo === grupo, () => {
+            estado.grupo = grupo;
+            estado.produto = "";
+            estado.validadeDias = "";
+            estado.conservacao = "";
+            document.getElementById("conservacao").value = "";
+            document.getElementById("buscaProduto").value = "";
+            renderGrupos();
+            renderProdutos();
+            renderValidades();
+            atualizarResumoLateral();
+            limparStatus();
+          })
+        );
+      });
+    }
 
-      const optionInicial = document.createElement("option");
-      optionInicial.value = "";
-      optionInicial.textContent = "Selecione um produto";
-      selectProduto.appendChild(optionInicial);
+    function getProdutosFiltrados() {
+      let lista = produtosCache;
 
-      let produtosFiltrados = produtosCache;
-      if (grupoSelecionado) {
-        produtosFiltrados = produtosCache.filter(item => item.categoria === grupoSelecionado);
+      if (estado.grupo) {
+        lista = lista.filter(item => item.categoria === estado.grupo);
       }
 
-      const nomesUnicos = [...new Set(
-        produtosFiltrados.map(item => item.nome_produto).filter(Boolean)
+      const nomes = [...new Set(
+        lista.map(item => item.nome_produto).filter(Boolean)
       )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-      nomesUnicos.forEach((nome) => {
-        const option = document.createElement("option");
-        option.value = nome;
-        option.textContent = nome;
-        selectProduto.appendChild(option);
-      });
+      const busca = document.getElementById("buscaProduto").value.trim().toLowerCase();
+      if (!busca) return nomes;
 
-      selectProduto.onchange = () => {
-        preencherValidadesDoProduto();
-      };
+      return nomes.filter(nome => nome.toLowerCase().includes(busca));
     }
 
-    function preencherValidadesDoProduto() {
-      const grupo = document.getElementById("grupo").value;
-      const produto = document.getElementById("produto").value;
-      const selectValidade = document.getElementById("validadeDias");
+    function renderProdutos() {
+      const container = document.getElementById("produtosCards");
+      container.innerHTML = "";
 
-      selectValidade.innerHTML = "";
-      document.getElementById("conservacao").value = "";
+      const produtos = getProdutosFiltrados();
 
-      if (!produto) {
-        atualizarPreview();
+      if (!estado.grupo) {
+        container.innerHTML = "<div class='hint'>Selecione um grupo antes de escolher o produto.</div>";
         return;
       }
 
-      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
-      if (grupo) {
-        encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
-      }
-
-      if (!encontrados.length) {
-        atualizarPreview();
+      if (!produtos.length) {
+        container.innerHTML = "<div class='hint'>Nenhum produto encontrado para este filtro.</div>";
         return;
       }
 
-      const validadesUnicas = [...new Set(
+      produtos.forEach((produto) => {
+        container.appendChild(
+          criarCard(produto, estado.produto === produto, () => {
+            estado.produto = produto;
+            estado.validadeDias = "";
+            estado.conservacao = "";
+            document.getElementById("conservacao").value = "";
+            renderProdutos();
+            renderValidades();
+            atualizarResumoLateral();
+            limparStatus();
+          })
+        );
+      });
+    }
+
+    function getValidadesDoProduto() {
+      if (!estado.produto) return [];
+
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
+
+      if (estado.grupo) {
+        encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
+      }
+
+      return [...new Set(
         encontrados
           .map(item => item.validade_dias)
           .filter(v => v !== null && v !== undefined && v !== "")
           .map(v => String(v).trim())
       )].sort((a, b) => Number(a) - Number(b));
-
-      const optionInicial = document.createElement("option");
-      optionInicial.value = "";
-      optionInicial.textContent = "Selecione a validade";
-      selectValidade.appendChild(optionInicial);
-
-      validadesUnicas.forEach((validade) => {
-        const option = document.createElement("option");
-        option.value = validade;
-        option.textContent = validade;
-        selectValidade.appendChild(option);
-      });
-
-      if (validadesUnicas.length === 1) {
-        selectValidade.value = validadesUnicas[0];
-        preencherConservacao();
-      } else {
-        atualizarPreview();
-      }
     }
 
-    function preencherConservacao() {
-      const grupo = document.getElementById("grupo").value;
-      const produto = document.getElementById("produto").value;
-      const validade = document.getElementById("validadeDias").value;
+    function buscarConservacaoAtual() {
+      if (!estado.produto || !estado.validadeDias) return "";
 
-      if (!produto || !validade) {
-        document.getElementById("conservacao").value = "";
-        atualizarPreview();
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
+
+      if (estado.grupo) {
+        encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
+      }
+
+      encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(estado.validadeDias).trim());
+
+      if (!encontrados.length) return "";
+
+      return encontrados[0].conservacao || "";
+    }
+
+    function renderValidades() {
+      const container = document.getElementById("validadesCards");
+      const hint = document.getElementById("conservacaoHint");
+
+      container.innerHTML = "";
+      hint.textContent = "";
+
+      if (!estado.produto) {
+        container.innerHTML = "<div class='hint'>Selecione um produto antes de escolher a validade.</div>";
         return;
       }
 
-      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(produto));
-      if (grupo) {
-        encontrados = encontrados.filter(item => String(item.categoria) === String(grupo));
-      }
+      const validades = getValidadesDoProduto();
 
-      encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(validade).trim());
-
-      if (!encontrados.length) {
-        document.getElementById("conservacao").value = "";
-        atualizarPreview();
+      if (!validades.length) {
+        container.innerHTML = "<div class='hint'>Nenhuma validade disponível para este produto.</div>";
         return;
       }
 
-      document.getElementById("conservacao").value = encontrados[0].conservacao || "";
-      atualizarPreview();
+      validades.forEach((validade) => {
+        container.appendChild(
+          criarCard(validade + " dia(s)", estado.validadeDias === validade, () => {
+            estado.validadeDias = validade;
+            estado.conservacao = buscarConservacaoAtual();
+            document.getElementById("conservacao").value = estado.conservacao;
+            renderValidades();
+            atualizarResumoLateral();
+            atualizarPreviewFinal();
+            limparStatus();
+          })
+        );
+      });
+
+      if (estado.conservacao) {
+        hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
+      }
     }
 
     async function carregarProdutos() {
@@ -710,38 +1029,38 @@
       }
 
       produtosCache = data || [];
-      carregarGrupos();
-      preencherProdutosFiltrados();
+      renderGrupos();
+      renderProdutos();
+      renderValidades();
     }
 
     async function gerarImpressao() {
       limparStatus();
 
-      const grupo = document.getElementById("grupo").value;
-      const produto = document.getElementById("produto").value;
-      const validadeDias = document.getElementById("validadeDias").value;
-      const dataProducao = document.getElementById("dataProducao").value;
-      const horaProducao = document.getElementById("horaProducao").value;
-      const quantidade = document.getElementById("quantidade").value;
-      const lote = document.getElementById("lote").value;
-      const conservacao = document.getElementById("conservacao").value;
-      const observacao = document.getElementById("observacao").value;
+      estado.dataProducao = document.getElementById("dataProducao").value;
+      estado.horaProducao = document.getElementById("horaProducao").value;
+      estado.quantidade = document.getElementById("quantidade").value;
+      estado.lote = document.getElementById("lote").value;
+      estado.observacao = document.getElementById("observacao").value;
+      estado.conservacao = document.getElementById("conservacao").value;
 
-      if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
-        mostrarStatus("error", "Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+      atualizarPreviewFinal();
+
+      if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) {
+        mostrarStatus("error", "Preencha todas as etapas obrigatórias antes de imprimir.");
         return;
       }
 
       const payloadBanco = {
-        grupo_produto: removerAcentos(grupo),
-        nome_produto: removerAcentos(produto),
-        opcao_validade: Number(validadeDias),
-        data_producao: dataProducao,
-        hora_producao: horaProducao,
-        quantidade_etiquetas: Number(quantidade || 1),
-        lote_manual: removerAcentos(lote) || null,
-        conservacao: removerAcentos(conservacao) || null,
-        observacao_padrao: removerAcentos(observacao) || null,
+        grupo_produto: removerAcentos(estado.grupo),
+        nome_produto: removerAcentos(estado.produto),
+        opcao_validade: Number(estado.validadeDias),
+        data_producao: estado.dataProducao,
+        hora_producao: estado.horaProducao,
+        quantidade_etiquetas: Number(estado.quantidade || 1),
+        lote_manual: removerAcentos(estado.lote) || null,
+        conservacao: removerAcentos(estado.conservacao) || null,
+        observacao_padrao: removerAcentos(estado.observacao) || null,
         status_impressao: "pendente"
       };
 
@@ -756,27 +1075,43 @@
           return;
         }
 
-        mostrarStatus("success", "Solicitação de impressão enviada para a fila com sucesso.");
+        mostrarStatus("success", "Solicitação enviada para a fila com sucesso.");
       } catch (erro) {
         console.error("Erro geral:", erro);
         mostrarStatus("error", "Erro ao gerar impressão.");
       }
     }
 
-    document.getElementById("validadeDias").addEventListener("change", () => {
-      preencherConservacao();
+    document.getElementById("buscaProduto").addEventListener("input", renderProdutos);
+
+    document.getElementById("dataProducao").addEventListener("change", (e) => {
+      estado.dataProducao = e.target.value;
+      atualizarPreviewFinal();
     });
 
-    document.getElementById("lote").addEventListener("input", atualizarPreview);
-    document.getElementById("observacao").addEventListener("input", atualizarPreview);
-    document.getElementById("responsavel").addEventListener("change", atualizarPreview);
-    document.getElementById("dataProducao").addEventListener("change", atualizarPreview);
-    document.getElementById("horaProducao").addEventListener("change", atualizarPreview);
+    document.getElementById("horaProducao").addEventListener("change", (e) => {
+      estado.horaProducao = e.target.value;
+      atualizarPreviewFinal();
+    });
+
+    document.getElementById("quantidade").addEventListener("input", (e) => {
+      estado.quantidade = e.target.value;
+    });
+
+    document.getElementById("lote").addEventListener("input", (e) => {
+      estado.lote = e.target.value;
+      atualizarPreviewFinal();
+    });
+
+    document.getElementById("observacao").addEventListener("input", (e) => {
+      estado.observacao = e.target.value;
+      atualizarPreviewFinal();
+    });
 
     preencherDataHoraAtual();
+    renderResponsaveis();
     carregarProdutos();
-    atualizarPreview();
+    atualizarUIEtapa();
   </script>
 </body>
 </html>
-
