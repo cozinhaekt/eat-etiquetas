@@ -4,30 +4,296 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sistema de Etiquetas Eat Kitchen</title>
+
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; color: #1f2937; }
-    .header { background: #123b6d; color: white; padding: 18px 24px; font-size: 28px; font-weight: bold; }
-    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
-    .grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; }
-    .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-    .card h2 { margin-top: 0; font-size: 22px; }
-    .field { display: flex; flex-direction: column; margin-bottom: 14px; }
-    .field label { font-size: 14px; margin-bottom: 6px; font-weight: bold; }
-    .field input, .field select, .field textarea {
-      padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;
+    * {
+      box-sizing: border-box;
     }
-    .preview { background: #eef6e8; border: 1px solid #d8e6cd; border-radius: 10px; padding: 20px; min-height: 280px; }
-    .preview-title { text-align: center; font-size: 34px; font-weight: bold; margin-bottom: 20px; }
-    .preview-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 20px; }
-    .preview-block { margin-bottom: 12px; font-size: 20px; }
-    .actions { margin-top: 20px; display: flex; gap: 12px; }
-    .btn { background: #0f766e; color: white; border: none; padding: 12px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
-    .btn.secondary { background: #475569; }
-    .note { margin-top: 14px; font-size: 13px; color: #6b7280; }
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-      .preview-title { font-size: 28px; }
-      .preview-row, .preview-block { font-size: 18px; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f6f9;
+      color: #1f2937;
+    }
+
+    .header {
+      background: linear-gradient(90deg, #123b6d, #0f4c81);
+      color: white;
+      padding: 20px 24px;
+      font-size: 30px;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 28px auto;
+      padding: 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 24px;
+      color: #0f172a;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 14px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #334155;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      padding: 11px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+      transition: 0.2s ease;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #0f766e;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.10);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      padding: 13px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.preview {
+      background: #334155;
+      color: white;
+    }
+
+    .btn.print {
+      background: #0f766e;
+      color: white;
+    }
+
+    .btn.clear {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .preview-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .preview-label {
+      background: #f8fff4;
+      border: 2px solid #d9e7ce;
+      border-radius: 16px;
+      padding: 22px;
+      min-height: 320px;
+    }
+
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .preview-title {
+      font-size: 38px;
+      font-weight: bold;
+      line-height: 1.05;
+      color: #0f172a;
+      word-break: break-word;
+      flex: 1;
+    }
+
+    .preview-badge {
+      background: #0f766e;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .preview-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 18px;
+      margin-bottom: 18px;
+    }
+
+    .info-box {
+      background: white;
+      border: 1px solid #dbe7d2;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #64748b;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .info-value {
+      font-size: 21px;
+      font-weight: bold;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .preview-section {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.65);
+      border-radius: 12px;
+      border: 1px solid #e2eadb;
+    }
+
+    .preview-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #64748b;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .preview-section-value {
+      font-size: 22px;
+      color: #0f172a;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .preview-footer {
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: #334155;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .status-box {
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status-box.show {
+      display: block;
+    }
+
+    .status-box.success {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .status-box.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-top {
+        flex-direction: column;
+      }
+
+      .preview-badge {
+        align-self: flex-start;
+      }
+
+      .preview-info {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-title {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
@@ -63,24 +329,28 @@
           <select id="validadeDias"></select>
         </div>
 
-        <div class="field">
-          <label>Data de produção</label>
-          <input id="dataProducao" type="date" />
+        <div class="field-row">
+          <div class="field">
+            <label>Data de produção</label>
+            <input id="dataProducao" type="date" />
+          </div>
+
+          <div class="field">
+            <label>Hora de produção</label>
+            <input id="horaProducao" type="time" />
+          </div>
         </div>
 
-        <div class="field">
-          <label>Hora de produção</label>
-          <input id="horaProducao" type="time" />
-        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Quantidade de etiquetas</label>
+            <input id="quantidade" type="number" value="1" min="1" />
+          </div>
 
-        <div class="field">
-          <label>Quantidade de etiquetas</label>
-          <input id="quantidade" type="number" value="1" min="1" />
-        </div>
-
-        <div class="field">
-          <label>Lote manual</label>
-          <input id="lote" />
+          <div class="field">
+            <label>Lote manual</label>
+            <input id="lote" placeholder="Opcional" />
+          </div>
         </div>
 
         <div class="field">
@@ -90,37 +360,69 @@
 
         <div class="field">
           <label>Observação</label>
-          <textarea id="observacao" rows="3"></textarea>
+          <textarea id="observacao" rows="3" placeholder="Opcional"></textarea>
         </div>
 
         <div class="actions">
-          <button class="btn" onclick="atualizarPreview()">Atualizar preview</button>
-          <button class="btn" onclick="gerarImpressao()">Gerar impressão</button>
-          <button class="btn secondary" onclick="limparCampos()">Limpar</button>
+          <button class="btn preview" onclick="atualizarPreview()">Atualizar preview</button>
+          <button class="btn print" onclick="gerarImpressao()">Gerar impressão</button>
+          <button class="btn clear" onclick="limparCampos()">Limpar</button>
         </div>
 
-        <div class="note">Versão de teste conectada ao print server local.</div>
+        <div class="note">
+          Sistema conectado ao Supabase e à fila de impressão local.
+        </div>
+
+        <div id="statusBox" class="status-box"></div>
       </div>
 
       <div class="card">
         <h2>Preview da Etiqueta</h2>
 
-        <div class="preview">
-          <div class="preview-title" id="pvProduto">-</div>
+        <div class="preview-wrapper">
+          <div class="preview-label">
+            <div class="preview-top">
+              <div class="preview-title" id="pvProduto">-</div>
+              <div class="preview-badge" id="pvValidadeBadge">-</div>
+            </div>
 
-          <div class="preview-row">
-            <span id="pvData">-</span>
-            <span id="pvValidade">Validade: -</span>
+            <div class="preview-info">
+              <div class="info-box">
+                <div class="info-label">Data de produção</div>
+                <div class="info-value" id="pvData">-</div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-label">Hora</div>
+                <div class="info-value" id="pvHora">-</div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-label">Responsável</div>
+                <div class="info-value" id="pvResponsavel">-</div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-label">Conservação</div>
+                <div class="info-value" id="pvConservacao">-</div>
+              </div>
+            </div>
+
+            <div class="preview-section" id="pvLoteBox" style="display: none;">
+              <div class="preview-section-title">Lote</div>
+              <div class="preview-section-value" id="pvLote">-</div>
+            </div>
+
+            <div class="preview-section" id="pvObservacaoBox" style="display: none;">
+              <div class="preview-section-title">Observação</div>
+              <div class="preview-section-value" id="pvObservacao">-</div>
+            </div>
+
+            <div class="preview-footer">
+              <span>Cozinha Eat Kitchen</span>
+              <span id="pvValidadeData">Validade: -</span>
+            </div>
           </div>
-
-          <div class="preview-row">
-            <span id="pvHora">-</span>
-            <span id="pvResponsavel">-</span>
-          </div>
-
-          <div class="preview-block" id="pvConservacao">-</div>
-          <div class="preview-block">Cozinha Eat Kitchen</div>
-          <div class="preview-block" id="pvObservacao">Observação:</div>
         </div>
       </div>
     </div>
@@ -130,32 +432,43 @@
   <script>
     const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
     const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
-    const PRINT_SERVER_URL = "http://192.168.2.179:5000/print";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     let produtosCache = [];
 
-   function removerAcentos(texto) {
-  if (!texto) return "";
+    function mostrarStatus(tipo, mensagem) {
+      const box = document.getElementById("statusBox");
+      box.className = "status-box show " + tipo;
+      box.textContent = mensagem;
+    }
 
-  const mapa = {
-    "á": "a", "à": "a", "â": "a", "ã": "a", "ä": "a",
-    "Á": "A", "À": "A", "Â": "A", "Ã": "A", "Ä": "A",
-    "é": "e", "è": "e", "ê": "e", "ë": "e",
-    "É": "E", "È": "E", "Ê": "E", "Ë": "E",
-    "í": "i", "ì": "i", "î": "i", "ï": "i",
-    "Í": "I", "Ì": "I", "Î": "I", "Ï": "I",
-    "ó": "o", "ò": "o", "ô": "o", "õ": "o", "ö": "o",
-    "Ó": "O", "Ò": "O", "Ô": "O", "Õ": "O", "Ö": "O",
-    "ú": "u", "ù": "u", "û": "u", "ü": "u",
-    "Ú": "U", "Ù": "U", "Û": "U", "Ü": "U",
-    "ç": "c", "Ç": "C"
-  };
+    function limparStatus() {
+      const box = document.getElementById("statusBox");
+      box.className = "status-box";
+      box.textContent = "";
+    }
 
-  return String(texto).replace(/[^\u0000-\u007E]/g, function(letra) {
-    return mapa[letra] || letra;
-  });
-}
+    function removerAcentos(texto) {
+      if (!texto) return "";
+
+      const mapa = {
+        "á": "a", "à": "a", "â": "a", "ã": "a", "ä": "a",
+        "Á": "A", "À": "A", "Â": "A", "Ã": "A", "Ä": "A",
+        "é": "e", "è": "e", "ê": "e", "ë": "e",
+        "É": "E", "È": "E", "Ê": "E", "Ë": "E",
+        "í": "i", "ì": "i", "î": "i", "ï": "i",
+        "Í": "I", "Ì": "I", "Î": "I", "Ï": "I",
+        "ó": "o", "ò": "o", "ô": "o", "õ": "o", "ö": "o",
+        "Ó": "O", "Ò": "O", "Ô": "O", "Õ": "O", "Ö": "O",
+        "ú": "u", "ù": "u", "û": "u", "ü": "u",
+        "Ú": "U", "Ù": "U", "Û": "U", "Ü": "U",
+        "ç": "c", "Ç": "C"
+      };
+
+      return String(texto).replace(/[^\u0000-\u007E]/g, function(letra) {
+        return mapa[letra] || letra;
+      });
+    }
 
     function preencherDataHoraAtual() {
       const hoje = new Date();
@@ -192,15 +505,38 @@
       const dataProducao = document.getElementById("dataProducao").value;
       const horaProducao = document.getElementById("horaProducao").value;
       const conservacao = document.getElementById("conservacao").value;
-      const observacao = document.getElementById("observacao").value;
+      const observacao = document.getElementById("observacao").value.trim();
+      const lote = document.getElementById("lote").value.trim();
 
       document.getElementById("pvProduto").textContent = produto || "-";
       document.getElementById("pvData").textContent = formatarDataBR(dataProducao);
-      document.getElementById("pvValidade").textContent = "Validade: " + calcularValidade(dataProducao, validadeDias);
       document.getElementById("pvHora").textContent = horaProducao || "-";
       document.getElementById("pvResponsavel").textContent = responsavel || "-";
       document.getElementById("pvConservacao").textContent = conservacao || "-";
-      document.getElementById("pvObservacao").textContent = "Observação: " + (observacao || "");
+
+      const validadeCalculada = calcularValidade(dataProducao, validadeDias);
+      document.getElementById("pvValidadeData").textContent = "Validade: " + validadeCalculada;
+      document.getElementById("pvValidadeBadge").textContent = validadeDias ? validadeDias + " dia(s)" : "-";
+
+      const loteBox = document.getElementById("pvLoteBox");
+      const loteTexto = document.getElementById("pvLote");
+      if (lote) {
+        loteTexto.textContent = lote;
+        loteBox.style.display = "block";
+      } else {
+        loteTexto.textContent = "";
+        loteBox.style.display = "none";
+      }
+
+      const obsBox = document.getElementById("pvObservacaoBox");
+      const obsTexto = document.getElementById("pvObservacao");
+      if (observacao) {
+        obsTexto.textContent = observacao;
+        obsBox.style.display = "block";
+      } else {
+        obsTexto.textContent = "";
+        obsBox.style.display = "none";
+      }
     }
 
     function limparSelecaoProduto() {
@@ -221,6 +557,7 @@
       preencherDataHoraAtual();
       preencherProdutosFiltrados();
       atualizarPreview();
+      limparStatus();
     }
 
     function carregarGrupos() {
@@ -368,17 +705,18 @@
 
       if (error) {
         console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
+        mostrarStatus("error", "Erro ao carregar produtos.");
         return;
       }
 
-      console.log("Produtos carregados:", data);
       produtosCache = data || [];
       carregarGrupos();
       preencherProdutosFiltrados();
     }
 
     async function gerarImpressao() {
-      const responsavel = document.getElementById("responsavel").value;
+      limparStatus();
+
       const grupo = document.getElementById("grupo").value;
       const produto = document.getElementById("produto").value;
       const validadeDias = document.getElementById("validadeDias").value;
@@ -390,7 +728,7 @@
       const observacao = document.getElementById("observacao").value;
 
       if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
-        alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+        mostrarStatus("error", "Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
         return;
       }
 
@@ -414,20 +752,26 @@
 
         if (error) {
           console.error("Erro ao salvar impressão no banco:", error);
-          alert("Erro ao gerar impressão.");
+          mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
           return;
         }
 
-        alert("Solicitação de impressão enviada para a fila!");
+        mostrarStatus("success", "Solicitação de impressão enviada para a fila com sucesso.");
       } catch (erro) {
         console.error("Erro geral:", erro);
-        alert("Erro ao gerar impressão.");
+        mostrarStatus("error", "Erro ao gerar impressão.");
       }
     }
 
     document.getElementById("validadeDias").addEventListener("change", () => {
       preencherConservacao();
     });
+
+    document.getElementById("lote").addEventListener("input", atualizarPreview);
+    document.getElementById("observacao").addEventListener("input", atualizarPreview);
+    document.getElementById("responsavel").addEventListener("change", atualizarPreview);
+    document.getElementById("dataProducao").addEventListener("change", atualizarPreview);
+    document.getElementById("horaProducao").addEventListener("change", atualizarPreview);
 
     preencherDataHoraAtual();
     carregarProdutos();
