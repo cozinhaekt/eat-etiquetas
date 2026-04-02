@@ -356,53 +356,52 @@
   }
 
   async function gerarImpressao() {
-    const responsavel = document.getElementById("responsavel").value;
-    const grupo = document.getElementById("grupo").value;
-    const produto = document.getElementById("produto").value;
-    const validadeDias = document.getElementById("validadeDias").value;
-    const dataProducao = document.getElementById("dataProducao").value;
-    const horaProducao = document.getElementById("horaProducao").value;
-    const quantidade = document.getElementById("quantidade").value;
-    const lote = document.getElementById("lote").value;
-    const conservacao = document.getElementById("conservacao").value;
-    const observacao = document.getElementById("observacao").value;
+  const responsavel = document.getElementById("responsavel").value;
+  const grupo = document.getElementById("grupo").value;
+  const produto = document.getElementById("produto").value;
+  const validadeDias = document.getElementById("validadeDias").value;
+  const dataProducao = document.getElementById("dataProducao").value;
+  const horaProducao = document.getElementById("horaProducao").value;
+  const quantidade = document.getElementById("quantidade").value;
+  const lote = document.getElementById("lote").value;
+  const conservacao = document.getElementById("conservacao").value;
+  const observacao = document.getElementById("observacao").value;
 
-    if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
-      alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+  if (!grupo || !produto || !validadeDias || !dataProducao || !horaProducao) {
+    alert("Preencha grupo, produto, validade, data e hora antes de gerar a impressão.");
+    return;
+  }
+
+  const payloadBanco = {
+    grupo_produto: grupo,
+    nome_produto: produto,
+    opcao_validade: Number(validadeDias),
+    data_producao: dataProducao,
+    hora_producao: horaProducao,
+    quantidade_etiquetas: Number(quantidade || 1),
+    lote_manual: lote || null,
+    conservacao: conservacao || null,
+    observacao_padrao: observacao || null,
+    status_impressao: "pendente"
+  };
+
+  try {
+    const { error } = await supabaseClient
+      .from("solicitacoes_impressao")
+      .insert([payloadBanco]);
+
+    if (error) {
+      console.error("Erro ao salvar impressão no banco:", error);
+      alert("Erro ao gerar impressão.");
       return;
     }
 
-    const payloadPrintServer = {
-      produto: produto,
-      data: dataProducao,
-      validade: validadeDias,
-      hora: horaProducao,
-      responsavel: responsavel,
-      conservacao: conservacao,
-      observacao: observacao,
-      quantidade: quantidade,
-      lote: lote
-    };
-
-    try {
-      const resposta = await fetch(PRINT_SERVER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payloadPrintServer)
-      });
-
-      if (!resposta.ok) {
-        throw new Error("Falha ao enviar para o servidor de impressão.");
-      }
-
-      alert("Impressão enviada!");
-    } catch (erro) {
-      console.error("Erro ao enviar para o print server:", erro);
-      alert("Erro ao enviar para impressão.");
-    }
+    alert("Solicitação de impressão enviada para a fila!");
+  } catch (erro) {
+    console.error("Erro geral:", erro);
+    alert("Erro ao gerar impressão.");
   }
+}
 
   document.getElementById("validadeDias").addEventListener("change", () => {
     preencherConservacao();
