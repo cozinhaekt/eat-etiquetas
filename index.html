@@ -372,38 +372,6 @@
         return;
       }
 
-      const payloadPrintServer = {
-        produto,
-        data: dataProducao,
-        validade: validadeDias,
-        hora: horaProducao,
-        responsavel,
-        conservacao,
-        observacao,
-        quantidade,
-        lote
-      };
-
-      try {
-        const resposta = await fetch(PRINT_SERVER_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payloadPrintServer)
-        });
-
-        if (!resposta.ok) {
-          throw new Error("Falha ao enviar para o servidor de impressão.");
-        }
-
-        alert("Impressão enviada!");
-      } catch (erro) {
-        console.error("Erro ao enviar para o print server:", erro);
-        alert("Erro ao enviar para impressão.");
-      }
-    }
-
     document.getElementById("validadeDias").addEventListener("change", () => {
       preencherConservacao();
     });
