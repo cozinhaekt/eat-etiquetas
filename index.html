@@ -719,7 +719,7 @@
 
           <div class="actions">
             <div class="actions-left"><button class="btn light" onclick="limparFormUsuario()">Limpar</button></div>
-            <div class="actions-right"><button class="btn primary" onclick="salvarUsuarioDemo()">Salvar usuário</button></div>
+            <div class="actions-right"><button class="btn primary" onclick="salvarUsuarioReal()">Salvar usuário</button></div>
           </div>
 
           <div id="statusUsuarios" class="status-box"></div>
@@ -831,774 +831,803 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <script>
+    const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  let produtosCache = [];
-  let produtosAdminDB = [];
-  let etapaAtual = 1;
+    let produtosCache = [];
+    let etapaAtual = 1;
 
-  const estado = {
-    responsavel: "",
-    grupo: "",
-    produto: "",
-    validadeDias: "",
-    conservacao: "",
-    dataProducao: "",
-    horaProducao: "",
-    quantidade: "1",
-    lote: "",
-    observacao: ""
-  };
-
-  const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
-
-  const usuariosAdmin = [
-    { nome: "Marcelo", email: "marcelo@eatkitchen.com", perfil: "Admin geral", unidade: "CAIS", status: "Ativo" },
-    { nome: "Operação Dinarte", email: "dinarte@eatkitchen.com", perfil: "Operador", unidade: "DINARTE", status: "Ativo" }
-  ];
-
-  const unidadesAdmin = [
-    { nome: "CAIS", impressora: "ZD220 CAIS", host: "raspberry-cais.local", status: "Ativa" },
-    { nome: "DINARTE", impressora: "ZD220 DINARTE", host: "raspberry-dinarte.local", status: "Ativa" }
-  ];
-
-  const pageTitles = {
-    operacao: "Painel operacional de geração de etiquetas",
-    produtos: "Cadastro interno de produtos",
-    usuarios: "Gestão de usuários e perfis",
-    unidades: "Gestão de unidades, Raspberry e impressoras",
-    visao: "Mapa geral da próxima fase do sistema"
-  };
-
-  function qs(id) {
-    return document.getElementById(id);
-  }
-
-  function showStatus(id, type, message) {
-    const box = qs(id);
-    box.className = "status-box show " + type;
-    box.textContent = message;
-  }
-
-  function clearStatus(id) {
-    const box = qs(id);
-    if (!box) return;
-    box.className = "status-box";
-    box.textContent = "";
-  }
-
-  function mostrarStatus(tipo, mensagem) {
-    showStatus("statusBox", tipo, mensagem);
-  }
-
-  function limparStatus() {
-    clearStatus("statusBox");
-  }
-
-  function removerAcentos(texto) {
-    if (!texto) return "";
-    const mapa = {
-      "á":"a","à":"a","â":"a","ã":"a","ä":"a","Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A",
-      "é":"e","è":"e","ê":"e","ë":"e","É":"E","È":"E","Ê":"E","Ë":"E",
-      "í":"i","ì":"i","î":"i","ï":"i","Í":"I","Ì":"I","Î":"I","Ï":"I",
-      "ó":"o","ò":"o","ô":"o","õ":"o","ö":"o","Ó":"O","Ò":"O","Ô":"O","Õ":"O","Ö":"O",
-      "ú":"u","ù":"u","û":"u","ü":"u","Ú":"U","Ù":"U","Û":"U","Ü":"U",
-      "ç":"c","Ç":"C"
+    const estado = {
+      responsavel: "",
+      grupo: "",
+      produto: "",
+      validadeDias: "",
+      conservacao: "",
+      dataProducao: "",
+      horaProducao: "",
+      quantidade: "1",
+      lote: "",
+      observacao: ""
     };
-    return String(texto).replace(/[^\u0000-\u007E]/g, letra => mapa[letra] || letra);
-  }
 
-  function preencherDataHoraAtual() {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    const dia = String(hoje.getDate()).padStart(2, "0");
-    const horas = String(hoje.getHours()).padStart(2, "0");
-    const minutos = String(hoje.getMinutes()).padStart(2, "0");
+    const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
 
-    estado.dataProducao = `${ano}-${mes}-${dia}`;
-    estado.horaProducao = `${horas}:${minutos}`;
+    let usuariosDB = [];
+    let unidadesDB = [];
 
-    qs("dataProducao").value = estado.dataProducao;
-    qs("horaProducao").value = estado.horaProducao;
-  }
+    const pageTitles = {
+      operacao: "Painel operacional de geração de etiquetas",
+      produtos: "Cadastro interno de produtos",
+      usuarios: "Gestão de usuários e perfis",
+      unidades: "Gestão de unidades, Raspberry e impressoras",
+      visao: "Mapa geral da próxima fase do sistema"
+    };
 
-  function formatarDataBR(dataISO) {
-    if (!dataISO) return "-";
-    const [ano, mes, dia] = dataISO.split("-");
-    return `${dia}/${mes}/${ano}`;
-  }
+    function qs(id) { return document.getElementById(id); }
 
-  function calcularValidade(dataISO, dias) {
-    if (!dataISO || !dias) return "-";
-    const data = new Date(dataISO + "T00:00:00");
-    data.setDate(data.getDate() + Number(dias));
-    const dia = String(data.getDate()).padStart(2, "0");
-    const mes = String(data.getMonth() + 1).padStart(2, "0");
-    const ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
-  }
-
-  function atualizarUIEtapa() {
-    for (let i = 1; i <= 5; i++) {
-      qs("step" + i).classList.toggle("active", i === etapaAtual);
-      qs("progress" + i).classList.toggle("active", i <= etapaAtual);
+    function showStatus(id, type, message) {
+      const box = qs(id);
+      box.className = "status-box show " + type;
+      box.textContent = message;
     }
 
-    qs("stepChip").textContent = "Etapa " + etapaAtual + " de 5";
-    qs("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
-    qs("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
-    qs("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
-
-    atualizarResumoLateral();
-    atualizarPreviewFinal();
-  }
-
-  function validarEtapaAtual() {
-    if (etapaAtual === 1 && !estado.responsavel) {
-      mostrarStatus("error", "Selecione um responsável para continuar.");
-      return false;
+    function clearStatus(id) {
+      const box = qs(id);
+      if (!box) return;
+      box.className = "status-box";
+      box.textContent = "";
     }
 
-    if (etapaAtual === 2 && !estado.grupo) {
-      mostrarStatus("error", "Selecione um grupo para continuar.");
-      return false;
+    function mostrarStatus(tipo, mensagem) { showStatus("statusBox", tipo, mensagem); }
+    function limparStatus() { clearStatus("statusBox"); }
+
+    function removerAcentos(texto) {
+      if (!texto) return "";
+      const mapa = {
+        "á":"a","à":"a","â":"a","ã":"a","ä":"a","Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A",
+        "é":"e","è":"e","ê":"e","ë":"e","É":"E","È":"E","Ê":"E","Ë":"E",
+        "í":"i","ì":"i","î":"i","ï":"i","Í":"I","Ì":"I","Î":"I","Ï":"I",
+        "ó":"o","ò":"o","ô":"o","õ":"o","ö":"o","Ó":"O","Ò":"O","Ô":"O","Õ":"O","Ö":"O",
+        "ú":"u","ù":"u","û":"u","ü":"u","Ú":"U","Ù":"U","Û":"U","Ü":"U",
+        "ç":"c","Ç":"C"
+      };
+      return String(texto).replace(/[^\u0000-\u007E]/g, letra => mapa[letra] || letra);
     }
 
-    if (etapaAtual === 3 && !estado.produto) {
-      mostrarStatus("error", "Selecione um produto para continuar.");
-      return false;
+    function preencherDataHoraAtual() {
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+      const dia = String(hoje.getDate()).padStart(2, "0");
+      const horas = String(hoje.getHours()).padStart(2, "0");
+      const minutos = String(hoje.getMinutes()).padStart(2, "0");
+      estado.dataProducao = `${ano}-${mes}-${dia}`;
+      estado.horaProducao = `${horas}:${minutos}`;
+      qs("dataProducao").value = estado.dataProducao;
+      qs("horaProducao").value = estado.horaProducao;
     }
 
-    if (etapaAtual === 4 && !estado.validadeDias) {
-      mostrarStatus("error", "Selecione uma validade para continuar.");
-      return false;
+    function formatarDataBR(dataISO) {
+      if (!dataISO) return "-";
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano}`;
     }
 
-    return true;
-  }
+    function calcularValidade(dataISO, dias) {
+      if (!dataISO || !dias) return "-";
+      const data = new Date(dataISO + "T00:00:00");
+      data.setDate(data.getDate() + Number(dias));
+      const dia = String(data.getDate()).padStart(2, "0");
+      const mes = String(data.getMonth() + 1).padStart(2, "0");
+      const ano = data.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
 
-  function proximaEtapa() {
-    limparStatus();
-    if (!validarEtapaAtual()) return;
+    function atualizarUIEtapa() {
+      for (let i = 1; i <= 5; i++) {
+        qs("step" + i).classList.toggle("active", i === etapaAtual);
+        qs("progress" + i).classList.toggle("active", i <= etapaAtual);
+      }
+      qs("stepChip").textContent = "Etapa " + etapaAtual + " de 5";
+      qs("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
+      qs("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
+      qs("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
+      atualizarResumoLateral();
+      atualizarPreviewFinal();
+    }
 
-    if (etapaAtual < 5) {
-      etapaAtual++;
+    function validarEtapaAtual() {
+      if (etapaAtual === 1 && !estado.responsavel) return mostrarStatus("error", "Selecione um responsável para continuar."), false;
+      if (etapaAtual === 2 && !estado.grupo) return mostrarStatus("error", "Selecione um grupo para continuar."), false;
+      if (etapaAtual === 3 && !estado.produto) return mostrarStatus("error", "Selecione um produto para continuar."), false;
+      if (etapaAtual === 4 && !estado.validadeDias) return mostrarStatus("error", "Selecione uma validade para continuar."), false;
+      return true;
+    }
+
+    function proximaEtapa() { limparStatus(); if (validarEtapaAtual() && etapaAtual < 5) { etapaAtual++; atualizarUIEtapa(); } }
+    function voltarEtapa() { limparStatus(); if (etapaAtual > 1) { etapaAtual--; atualizarUIEtapa(); } }
+
+    function reiniciarFluxo() {
+      estado.responsavel = "";
+      estado.grupo = "";
+      estado.produto = "";
+      estado.validadeDias = "";
+      estado.conservacao = "";
+      estado.quantidade = "1";
+      estado.lote = "";
+      estado.observacao = "";
+      etapaAtual = 1;
+      preencherDataHoraAtual();
+      qs("quantidade").value = "1";
+      qs("lote").value = "";
+      qs("observacao").value = "";
+      qs("conservacao").value = "";
+      qs("buscaProduto").value = "";
+      renderResponsaveis();
+      renderGrupos();
+      renderProdutos();
+      renderValidades();
       atualizarUIEtapa();
-    }
-  }
-
-  function voltarEtapa() {
-    limparStatus();
-    if (etapaAtual > 1) {
-      etapaAtual--;
-      atualizarUIEtapa();
-    }
-  }
-
-  function reiniciarFluxo() {
-    estado.responsavel = "";
-    estado.grupo = "";
-    estado.produto = "";
-    estado.validadeDias = "";
-    estado.conservacao = "";
-    estado.quantidade = "1";
-    estado.lote = "";
-    estado.observacao = "";
-    etapaAtual = 1;
-
-    preencherDataHoraAtual();
-
-    qs("quantidade").value = "1";
-    qs("lote").value = "";
-    qs("observacao").value = "";
-    qs("conservacao").value = "";
-    qs("buscaProduto").value = "";
-
-    renderResponsaveis();
-    renderGrupos();
-    renderProdutos();
-    renderValidades();
-    atualizarUIEtapa();
-    limparStatus();
-  }
-
-  function atualizarResumoLateral() {
-    qs("sideResponsavel").textContent = estado.responsavel || "-";
-    qs("sideGrupo").textContent = estado.grupo || "-";
-    qs("sideProduto").textContent = estado.produto || "-";
-    qs("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
-    qs("sideConservacao").textContent = estado.conservacao || "-";
-    qs("sideData").textContent = formatarDataBR(estado.dataProducao);
-    qs("sideHora").textContent = estado.horaProducao || "-";
-    qs("sideQuantidade").textContent = estado.quantidade || "1";
-    qs("sideLote").textContent = estado.lote && estado.lote.trim() ? estado.lote : "-";
-  }
-
-  function atualizarPreviewFinal() {
-    qs("pvProduto").textContent = estado.produto || "-";
-    qs("pvBadge").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
-    qs("pvResponsavel").textContent = estado.responsavel || "-";
-    qs("pvGrupo").textContent = estado.grupo || "-";
-    qs("pvData").textContent = formatarDataBR(estado.dataProducao);
-    qs("pvHora").textContent = estado.horaProducao || "-";
-    qs("pvConservacao").textContent = estado.conservacao || "-";
-    qs("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
-    qs("pvQuantidade").textContent = estado.quantidade || "1";
-
-    const loteBox = qs("pvLoteBox");
-    if (estado.lote && estado.lote.trim()) {
-      qs("pvLote").textContent = estado.lote;
-      loteBox.style.display = "block";
-    } else {
-      qs("pvLote").textContent = "";
-      loteBox.style.display = "none";
+      limparStatus();
     }
 
-    const obsBox = qs("pvObsBox");
-    if (estado.observacao && estado.observacao.trim()) {
-      qs("pvObservacao").textContent = estado.observacao;
-      obsBox.style.display = "block";
-    } else {
-      qs("pvObservacao").textContent = "";
-      obsBox.style.display = "none";
+    function atualizarResumoLateral() {
+      qs("sideResponsavel").textContent = estado.responsavel || "-";
+      qs("sideGrupo").textContent = estado.grupo || "-";
+      qs("sideProduto").textContent = estado.produto || "-";
+      qs("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+      qs("sideConservacao").textContent = estado.conservacao || "-";
+      qs("sideData").textContent = formatarDataBR(estado.dataProducao);
+      qs("sideHora").textContent = estado.horaProducao || "-";
+      qs("sideQuantidade").textContent = estado.quantidade || "1";
+      qs("sideLote").textContent = estado.lote && estado.lote.trim() ? estado.lote : "-";
     }
-  }
 
-  function criarCard(texto, selecionado, onClick) {
-    const card = document.createElement("div");
-    card.className = "select-card" + (selecionado ? " selected" : "");
-    card.textContent = texto;
-    card.onclick = onClick;
-    return card;
-  }
+    function atualizarPreviewFinal() {
+      qs("pvProduto").textContent = estado.produto || "-";
+      qs("pvBadge").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+      qs("pvResponsavel").textContent = estado.responsavel || "-";
+      qs("pvGrupo").textContent = estado.grupo || "-";
+      qs("pvData").textContent = formatarDataBR(estado.dataProducao);
+      qs("pvHora").textContent = estado.horaProducao || "-";
+      qs("pvConservacao").textContent = estado.conservacao || "-";
+      qs("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
+      qs("pvQuantidade").textContent = estado.quantidade || "1";
+      const loteBox = qs("pvLoteBox");
+      if (estado.lote && estado.lote.trim()) { qs("pvLote").textContent = estado.lote; loteBox.style.display = "block"; } else { qs("pvLote").textContent = ""; loteBox.style.display = "none"; }
+      const obsBox = qs("pvObsBox");
+      if (estado.observacao && estado.observacao.trim()) { qs("pvObservacao").textContent = estado.observacao; obsBox.style.display = "block"; } else { qs("pvObservacao").textContent = ""; obsBox.style.display = "none"; }
+    }
 
-  function renderResponsaveis() {
-    const container = qs("responsaveisCards");
-    container.innerHTML = "";
+    function criarCard(texto, selecionado, onClick) {
+      const card = document.createElement("div");
+      card.className = "select-card" + (selecionado ? " selected" : "");
+      card.textContent = texto;
+      card.onclick = onClick;
+      return card;
+    }
 
-    responsaveis.forEach(nome => {
-      container.appendChild(
-        criarCard(nome, estado.responsavel === nome, () => {
+    function renderResponsaveis() {
+      const container = qs("responsaveisCards");
+      container.innerHTML = "";
+      responsaveis.forEach(nome => {
+        container.appendChild(criarCard(nome, estado.responsavel === nome, () => {
           estado.responsavel = nome;
-          renderResponsaveis();
-          atualizarResumoLateral();
-          limparStatus();
-        })
-      );
-    });
-  }
-
-  function getGruposUnicos() {
-    return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))]
-      .sort((a, b) => a.localeCompare(b, "pt-BR"));
-  }
-
-  function renderGrupos() {
-    const container = qs("gruposCards");
-    container.innerHTML = "";
-
-    getGruposUnicos().forEach(grupo => {
-      container.appendChild(
-        criarCard(grupo, estado.grupo === grupo, () => {
-          estado.grupo = grupo;
-          estado.produto = "";
-          estado.validadeDias = "";
-          estado.conservacao = "";
-          qs("conservacao").value = "";
-          qs("buscaProduto").value = "";
-          renderGrupos();
-          renderProdutos();
-          renderValidades();
-          atualizarResumoLateral();
-          limparStatus();
-        })
-      );
-    });
-  }
-
-  function getProdutosFiltrados() {
-    let lista = produtosCache;
-
-    if (estado.grupo) {
-      lista = lista.filter(item => item.categoria === estado.grupo);
-    }
-
-    const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))]
-      .sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-    const busca = qs("buscaProduto").value.trim().toLowerCase();
-    if (!busca) return nomes;
-
-    return nomes.filter(nome => nome.toLowerCase().includes(busca));
-  }
-
-  function renderProdutos() {
-    const container = qs("produtosCards");
-    container.innerHTML = "";
-
-    const produtos = getProdutosFiltrados();
-
-    if (!estado.grupo) {
-      container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
-      return;
-    }
-
-    if (!produtos.length) {
-      container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
-      return;
-    }
-
-    produtos.forEach(produto => {
-      container.appendChild(
-        criarCard(produto, estado.produto === produto, () => {
-          estado.produto = produto;
-          estado.validadeDias = "";
-          estado.conservacao = "";
-          qs("conservacao").value = "";
-          renderProdutos();
-          renderValidades();
-          atualizarResumoLateral();
-          limparStatus();
-        })
-      );
-    });
-  }
-
-  function getValidadesDoProduto() {
-    if (!estado.produto) return [];
-
-    let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
-
-    if (estado.grupo) {
-      encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
-    }
-
-    return [...new Set(
-      encontrados
-        .map(item => item.validade_dias)
-        .filter(v => v !== null && v !== undefined && v !== "")
-        .map(v => String(v).trim())
-    )].sort((a, b) => Number(a) - Number(b));
-  }
-
-  function buscarConservacaoAtual() {
-    if (!estado.produto || !estado.validadeDias) return "";
-
-    let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
-
-    if (estado.grupo) {
-      encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
-    }
-
-    encontrados = encontrados.filter(
-      item => String(item.validade_dias).trim() === String(estado.validadeDias).trim()
-    );
-
-    if (!encontrados.length) return "";
-
-    return encontrados[0].conservacao || "";
-  }
-
-  function renderValidades() {
-    const container = qs("validadesCards");
-    const hint = qs("conservacaoHint");
-    container.innerHTML = "";
-    hint.textContent = "";
-
-    if (!estado.produto) {
-      container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
-      return;
-    }
-
-    const validades = getValidadesDoProduto();
-
-    if (!validades.length) {
-      container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
-      return;
-    }
-
-    validades.forEach(validade => {
-      container.appendChild(
-        criarCard(validade + " dia(s)", estado.validadeDias === validade, () => {
-          estado.validadeDias = validade;
-          estado.conservacao = buscarConservacaoAtual();
-          qs("conservacao").value = estado.conservacao;
-          renderValidades();
-          atualizarResumoLateral();
-          atualizarPreviewFinal();
-          limparStatus();
-        })
-      );
-    });
-
-    if (estado.conservacao) {
-      hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
-    }
-  }
-
-  async function carregarProdutosOperacao() {
-    const { data, error } = await supabaseClient
-      .from("produtos_admin")
-      .select(`
-        id,
-        nome_produto,
-        categoria,
-        status,
-        unidade,
-        produto_validades (
-          id,
-          validade_dias,
-          conservacao
-        )
-      `)
-      .eq("status", "Ativo")
-      .order("nome_produto", { ascending: true });
-
-    if (error) {
-      console.error("Erro ao carregar produtos da operação:", error);
-      mostrarStatus("error", "Erro ao carregar produtos.");
-      return;
-    }
-
-    const listaAchatada = [];
-
-    (data || []).forEach(produto => {
-      const validades = produto.produto_validades || [];
-
-      validades.forEach(validade => {
-        listaAchatada.push({
-          categoria: produto.categoria,
-          nome_produto: produto.nome_produto,
-          validade_dias: validade.validade_dias,
-          conservacao: validade.conservacao,
-          unidade: produto.unidade
-        });
+          renderResponsaveis(); atualizarResumoLateral(); limparStatus();
+        }));
       });
-    });
+    }
 
-    produtosCache = listaAchatada;
-    renderGrupos();
-    renderProdutos();
-    renderValidades();
-  }
+    function getGruposUnicos() {
+      return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+    }
 
-  async function carregarProdutosAdmin() {
-    clearStatus("statusProdutos");
+    function renderGrupos() {
+      const container = qs("gruposCards");
+      container.innerHTML = "";
+      getGruposUnicos().forEach(grupo => {
+        container.appendChild(criarCard(grupo, estado.grupo === grupo, () => {
+          estado.grupo = grupo; estado.produto = ""; estado.validadeDias = ""; estado.conservacao = "";
+          qs("conservacao").value = ""; qs("buscaProduto").value = "";
+          renderGrupos(); renderProdutos(); renderValidades(); atualizarResumoLateral(); limparStatus();
+        }));
+      });
+    }
 
-    const { data, error } = await supabaseClient
-      .from("produtos_admin")
-      .select(`
-        id,
-        nome_produto,
-        categoria,
-        status,
-        unidade,
-        produto_validades (
+    function getProdutosFiltrados() {
+      let lista = produtosCache;
+      if (estado.grupo) lista = lista.filter(item => item.categoria === estado.grupo);
+      const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+      const busca = qs("buscaProduto").value.trim().toLowerCase();
+      return !busca ? nomes : nomes.filter(nome => nome.toLowerCase().includes(busca));
+    }
+
+    function renderProdutos() {
+      const container = qs("produtosCards");
+      container.innerHTML = "";
+      const produtos = getProdutosFiltrados();
+      if (!estado.grupo) return container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
+      if (!produtos.length) return container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
+      produtos.forEach(produto => {
+        container.appendChild(criarCard(produto, estado.produto === produto, () => {
+          estado.produto = produto; estado.validadeDias = ""; estado.conservacao = ""; qs("conservacao").value = "";
+          renderProdutos(); renderValidades(); atualizarResumoLateral(); limparStatus();
+        }));
+      });
+    }
+
+    function getValidadesDoProduto() {
+      if (!estado.produto) return [];
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
+      if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
+      return [...new Set(encontrados.map(item => item.validade_dias).filter(v => v !== null && v !== undefined && v !== "").map(v => String(v).trim()))].sort((a,b) => Number(a) - Number(b));
+    }
+
+    function buscarConservacaoAtual() {
+      if (!estado.produto || !estado.validadeDias) return "";
+      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
+      if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
+      encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(estado.validadeDias).trim());
+      return encontrados.length ? (encontrados[0].conservacao || "") : "";
+    }
+
+    function renderValidades() {
+      const container = qs("validadesCards");
+      const hint = qs("conservacaoHint");
+      container.innerHTML = ""; hint.textContent = "";
+      if (!estado.produto) return container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
+      const validades = getValidadesDoProduto();
+      if (!validades.length) return container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
+      validades.forEach(validade => {
+        container.appendChild(criarCard(validade + " dia(s)", estado.validadeDias === validade, () => {
+          estado.validadeDias = validade; estado.conservacao = buscarConservacaoAtual(); qs("conservacao").value = estado.conservacao;
+          renderValidades(); atualizarResumoLateral(); atualizarPreviewFinal(); limparStatus();
+        }));
+      });
+      if (estado.conservacao) hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
+    }
+
+    async function carregarProdutos() {
+      const { data, error } = await supabaseClient.from("produtos").select("*").order("nome_produto", { ascending: true });
+      if (error) {
+        console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
+        mostrarStatus("error", "Erro ao carregar produtos.");
+        return;
+      }
+      produtosCache = data || [];
+      renderGrupos(); renderProdutos(); renderValidades();
+    }
+
+    async function gerarImpressao() {
+      limparStatus();
+      estado.dataProducao = qs("dataProducao").value;
+      estado.horaProducao = qs("horaProducao").value;
+      estado.quantidade = qs("quantidade").value;
+      estado.lote = qs("lote").value;
+      estado.observacao = qs("observacao").value;
+      estado.conservacao = qs("conservacao").value;
+      atualizarResumoLateral(); atualizarPreviewFinal();
+
+      if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) {
+        mostrarStatus("error", "Preencha todas as etapas obrigatórias antes de imprimir.");
+        return;
+      }
+
+      const payloadBanco = {
+        grupo_produto: removerAcentos(estado.grupo),
+        nome_produto: removerAcentos(estado.produto),
+        opcao_validade: Number(estado.validadeDias),
+        data_producao: estado.dataProducao,
+        hora_producao: estado.horaProducao,
+        quantidade_etiquetas: Number(estado.quantidade || 1),
+        lote_manual: removerAcentos(estado.lote) || null,
+        conservacao: removerAcentos(estado.conservacao) || null,
+        observacao_padrao: removerAcentos(estado.observacao) || null,
+        status_impressao: "pendente"
+      };
+
+      try {
+        const { error } = await supabaseClient.from("solicitacoes_impressao").insert([payloadBanco]);
+        if (error) {
+          console.error("Erro ao salvar impressão no banco:", error);
+          mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
+          return;
+        }
+        mostrarStatus("success", "Solicitação enviada para a fila com sucesso.");
+      } catch (erro) {
+        console.error("Erro geral:", erro);
+        mostrarStatus("error", "Erro ao gerar impressão.");
+      }
+    }
+
+    async function carregarProdutosAdmin() {
+      clearStatus("statusProdutos");
+
+      const { data, error } = await supabaseClient
+        .from("produtos_admin")
+        .select(`
           id,
-          validade_dias,
-          conservacao
-        )
-      `)
-      .order("nome_produto", { ascending: true });
-
-    if (error) {
-      console.error("Erro ao carregar produtos admin:", error);
-      showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
-      return;
-    }
-
-    produtosAdminDB = data || [];
-    renderProdutosAdminDB();
-  }
-
-  async function gerarImpressao() {
-    limparStatus();
-
-    estado.dataProducao = qs("dataProducao").value;
-    estado.horaProducao = qs("horaProducao").value;
-    estado.quantidade = qs("quantidade").value;
-    estado.lote = qs("lote").value;
-    estado.observacao = qs("observacao").value;
-    estado.conservacao = qs("conservacao").value;
-
-    atualizarResumoLateral();
-    atualizarPreviewFinal();
-
-    if (
-      !estado.responsavel ||
-      !estado.grupo ||
-      !estado.produto ||
-      !estado.validadeDias ||
-      !estado.dataProducao ||
-      !estado.horaProducao
-    ) {
-      mostrarStatus("error", "Preencha todas as etapas obrigatórias antes de imprimir.");
-      return;
-    }
-
-    const payloadBanco = {
-      grupo_produto: removerAcentos(estado.grupo),
-      nome_produto: removerAcentos(estado.produto),
-      opcao_validade: Number(estado.validadeDias),
-      data_producao: estado.dataProducao,
-      hora_producao: estado.horaProducao,
-      quantidade_etiquetas: Number(estado.quantidade || 1),
-      lote_manual: removerAcentos(estado.lote) || null,
-      conservacao: removerAcentos(estado.conservacao) || null,
-      observacao_padrao: removerAcentos(estado.observacao) || null,
-      status_impressao: "pendente"
-    };
-
-    try {
-      const { error } = await supabaseClient
-        .from("solicitacoes_impressao")
-        .insert([payloadBanco]);
+          nome_produto,
+          categoria,
+          status,
+          unidade,
+          produto_validades (
+            id,
+            validade_dias,
+            conservacao
+          )
+        `)
+        .order("nome_produto", { ascending: true });
 
       if (error) {
-        console.error("Erro ao salvar impressão no banco:", error);
-        mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
+        console.error("Erro ao carregar produtos admin:", error);
+        showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
         return;
       }
 
-      mostrarStatus("success", "Solicitação enviada para a fila com sucesso.");
-    } catch (erro) {
-      console.error("Erro geral:", erro);
-      mostrarStatus("error", "Erro ao gerar impressão.");
-    }
-  }
-
-  function renderProdutosAdminDB() {
-    const body = qs("produtosAdminBody");
-
-    if (!produtosAdminDB.length) {
-      body.innerHTML = `
-        <tr>
-          <td colspan="6">Nenhum produto cadastrado.</td>
-        </tr>
-      `;
-      return;
+      produtosAdminDB = data || [];
+      renderProdutosAdminDB();
     }
 
-    body.innerHTML = produtosAdminDB.map(item => {
-      const primeiraValidade = item.produto_validades?.[0];
+    function renderProdutosAdminDB() {
+      const body = qs("produtosAdminBody");
 
-      return `
-        <tr>
-          <td>${item.nome_produto}</td>
-          <td>${item.categoria}</td>
-          <td>${primeiraValidade ? primeiraValidade.validade_dias + " dia(s)" : "-"}</td>
-          <td>${primeiraValidade ? primeiraValidade.conservacao : "-"}</td>
-          <td>${item.unidade}</td>
-          <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
-        </tr>
-      `;
-    }).join("");
-  }
-
-  function renderUsuariosAdmin() {
-    const body = qs("usuariosAdminBody");
-    body.innerHTML = usuariosAdmin.map(item => `
-      <tr>
-        <td>${item.nome}</td>
-        <td>${item.email}</td>
-        <td>${item.perfil}</td>
-        <td>${item.unidade}</td>
-        <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
-      </tr>
-    `).join("");
-  }
-
-  function renderUnidadesAdmin() {
-    const body = qs("unidadesAdminBody");
-    body.innerHTML = unidadesAdmin.map(item => `
-      <tr>
-        <td>${item.nome}</td>
-        <td>${item.impressora}</td>
-        <td>${item.host}</td>
-        <td><span class="chip ${item.status === 'Ativa' ? 'dark' : ''}">${item.status}</span></td>
-      </tr>
-    `).join("");
-  }
-
-  function limparFormProduto() {
-    qs("produtoNome").value = "";
-    qs("produtoGrupo").value = "";
-    qs("produtoValidade").value = "";
-    qs("produtoConservacao").value = "";
-    qs("produtoUnidade").value = "CAIS";
-    qs("produtoStatus").value = "Ativo";
-    clearStatus("statusProdutos");
-  }
-
-  async function salvarProdutoReal() {
-    clearStatus("statusProdutos");
-
-    const nome = qs("produtoNome").value.trim();
-    const grupo = qs("produtoGrupo").value.trim();
-    const validade = qs("produtoValidade").value.trim();
-    const conservacao = qs("produtoConservacao").value;
-    const unidade = qs("produtoUnidade").value;
-    const status = qs("produtoStatus").value;
-
-    if (!nome || !grupo || !validade || !conservacao) {
-      showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
-      return;
-    }
-
-    try {
-      const { data: produtoCriado, error: erroProduto } = await supabaseClient
-        .from("produtos_admin")
-        .insert([
-          {
-            nome_produto: nome,
-            categoria: grupo,
-            status: status,
-            unidade: unidade
-          }
-        ])
-        .select()
-        .single();
-
-      if (erroProduto) {
-        console.error("Erro ao criar produto:", erroProduto);
-        showStatus("statusProdutos", "error", "Erro ao salvar produto.");
+      if (!produtosAdminDB.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6">Nenhum produto cadastrado.</td>
+          </tr>
+        `;
         return;
       }
 
-      const { error: erroValidade } = await supabaseClient
-        .from("produto_validades")
+      body.innerHTML = produtosAdminDB.map(item => {
+        const primeiraValidade = item.produto_validades?.[0];
+
+        return async function carregarUnidadesDB() {
+      clearStatus("statusUnidades");
+
+      const { data, error } = await supabaseClient
+        .from("unidades")
+        .select("id, nome, codigo, ativa, created_at")
+        .order("nome", { ascending: true });
+
+      if (error) {
+        console.error("Erro ao carregar unidades:", error);
+        showStatus("statusUnidades", "error", "Erro ao carregar unidades.");
+        return;
+      }
+
+      unidadesDB = data || [];async function carregarUsuariosDB() {
+      clearStatus("statusUsuarios");
+
+      const { data, error } = await supabaseClient
+        .from("usuarios")
+        .select(`
+          id,
+          nome,
+          email,
+          perfil,
+          unidade_id,
+          ativo,
+          created_at,
+          unidades (
+            nome
+          )
+        `)
+        .order("nome", { ascending: true });
+
+      if (error) {
+        console.error("Erro ao carregar usuários:", error);
+        showStatus("statusUsuarios", "error", "Erro ao carregar usuários.");
+        return;
+      }
+
+      usuariosDB = data || [];
+      renderUsuariosDB();
+    }
+
+    function renderUsuariosDB() {
+      const body = qs("usuariosAdminBody");
+
+      if (!usuariosDB.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="5">Nenhum usuário cadastrado.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = usuariosDB.map(item => `
+        <tr>
+          <td>${item.nome}</td>
+          <td>${item.email}</td>
+          <td>${item.perfil}</td>
+          <td>${item.unidades?.nome || "-"}</td>
+          <td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td>
+        </tr>
+      `).join("");
+    }.nome}async function carregarUnidadesDB() {
+      clearStatus("statusUnidades");
+
+      const { data, error } = await supabaseClient
+        .from("unidades")
+        .select("id, nome, codigo, ativa, created_at")
+        .order("nome", { ascending: true });
+
+      if (error) {
+        console.error("Erro ao carregar unidades:", error);
+        showStatus("statusUnidades", "error", "Erro ao carregar unidades.");
+        return;
+      }
+
+      unidadesDB = data || [];
+      renderUnidadesDB();
+      preencherSelectUnidades();
+    }
+
+    function renderUnidadesDB() {
+      const body = qs("unidadesAdminBody");
+
+      if (!unidadesDB.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="4">Nenhuma unidade cadastrada.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = unidadesDB.map(item => `
+        <tr>
+          <td>${item.nome}</td>
+          <td>${item.codigo || "-"}</td>
+          <td>${item.id}</td>
+          <td><span class="chip ${item.ativa ? 'dark' : ''}">${item.ativa ? 'Ativa' : 'Inativa'}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function preencherSelectUnidades() {
+      const select = qs("usuarioUnidade");
+      if (!select) return;
+
+      const valorAtual = select.value;
+      select.innerHTML = "";
+
+      if (!unidadesDB.length) {
+        select.innerHTML = `<option value="">Nenhuma unidade</option>`;
+        return;
+      }
+
+      unidadesDB.forEach(unidade => {
+        const option = document.createElement("option");
+        option.value = unidade.id;
+        option.textContent = unidade.nome;
+        select.appendChild(option);
+      });
+
+      const existeValorAtual = unidadesDB.some(item => item.id === valorAtual);
+      if (existeValorAtual) {
+        select.value = valorAtual;
+      }
+    } select.innerHTML = "";
+
+      if (!unidadesDB.length) {
+        select.innerHTML = `<option value="">Nenhuma unidade</option>`;
+        return;
+      }
+
+      unidadesDB.forEach(unidade => {
+        const option = document.createElement("option");
+        option.value = unidade.id;
+        option.textContent = unidade.nome;
+        select.appendChild(option);
+      });
+
+      const existeValorAtual = unidadesDB.some(item => item.id === valorAtual);
+      if (existeValorAtual) {
+        select.value = valorAtual;
+      }
+    }
+
+    async function carregarUsuariosDB() {
+      clearStatus("statusUsuarios");
+
+      const { data, error } = await supabaseClient
+        .from("usuarios")
+        .select(`
+          id,
+          nome,
+          email,
+          perfil,
+          unidade_id,
+          ativo,
+          created_at,
+          unidades (
+            nome
+          )
+        `)
+        .order("nome", { ascending: true });
+
+      if (error) {
+        console.error("Erro ao carregar usuários:", error);
+        showStatus("statusUsuarios", "error", "Erro ao carregar usuários.");
+        return;
+      }
+
+      usuariosDB = data || [];
+      renderUsuariosDB();
+    }
+
+    function renderUsuariosDB() {
+      const body = qs("usuariosAdminBody");
+
+      if (!usuariosDB.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="5">Nenhum usuário cadastrado.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = usuariosDB.map(item => `
+        <tr>
+          <td>${item.nome}</td>
+          <td>${item.email}</td>
+          <td>${item.perfil}</td>
+          <td>${item.unidades?.nome || "-"}</td>
+          <td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td>
+        </tr>
+      `).join("");
+    }ark' : ''}">${item.status}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderUnidadesAdmin() {
+      const body = qs("unidadesAdminBody");
+      body.innerHTML = unidadesAdmin.map(item => `
+        <tr>
+          <td>${item.nome}</td>
+          <td>${item.impressora}</td>
+          <td>${item.host}</td>
+          <td><span class="chip ${item.status === 'Ativa' ? 'dark' : ''}">${item.status}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function limparFormfunction limparFormUsuario() {
+      qs("usuarioNome").value = "";
+      qs("usuarioEmail").value = "";
+      qs("usuarioPerfil").value = "Admin geral";
+      if (qs("usuarioUnidade").options.length) {
+        qs("usuarioUnidade").selectedIndex = 0;
+      }
+      qs("usuarioStatus").value = "Ativo";
+      clearStatus("statusUsuarios");
+    }odutosasync function salvarUsuarioReal() {
+      clearStatus("statusUsuarios");
+
+      const nome = qs("usuarioNome").value.trim();
+      const email = qs("usuarioEmail").value.trim();
+      const perfilFront = qs("usuarioPerfil").value;
+      const unidadeId = qs("usuarioUnidade").value;
+      const ativo = qs("usuarioStatus").value === "Ativo";
+
+      const perfilMap = {
+        "Admin geral": "admin_geral",
+        "Admin da unidade": "admin_unidade",
+        "Operador": "operacao"
+      };
+
+      const perfil = perfilMap[perfilFront] || "operacao";
+
+      if (!nome || !email || !perfil || !unidadeId) {
+        showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from("usuarios")
         .insert([
           {
-            produto_id: produtoCriado.id,
-            validade_dias: Number(validade),
-            conservacao: conservacao
+            nome,
+            email,
+            perfil,
+            unidade_id: unidadeId,
+            ativo
           }
         ]);
 
-      if (erroValidade) {
-        console.error("Erro ao salvar validade:", erroValidade);
-        showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
+      if (error) {
+        console.error("Erro ao salvar usuário:", error);
+        showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
         return;
       }
 
-      limparFormProduto();
-      showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
-      carregarProdutosAdmin();
-      carregarProdutosOperacao();
-    } catch (err) {
-      console.error("Erro geral ao salvar produto:", err);
-      showStatus("statusProdutos", "error", "Erro inesperado ao salvar produto.");
+      limparFormUsuario();
+      showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
+      carregarUsuariosDB();
+    } produtoCriado, error: erroProduto } = await supabaseClient
+          .from("produtos_admin")
+          .insert([
+            {
+              nome_produto: nome,
+              categoria: grupo,
+              status: status,
+              unidade: unidade
+            }
+        async function salvarUnidadeReal() {
+      clearStatus("statusUnidades");
+
+      const nome = qs("unidadeNome").value.trim();
+      const codigoManual = qs("unidadeHost").value.trim();
+      const ativa = qs("unidadeStatus").value === "Ativa";
+
+      if (!nome) {
+        showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
+        return;
+      }
+
+      const codigo = (codigoManual || nome)
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "_");
+
+      const { error } = await supabaseClient
+        .from("unidades")
+        .insert([
+          {
+            nome,
+            codigo,
+            ativa
+          }
+        ]);
+
+      if (error) {
+        console.error("Erro ao salvar unidade:", error);
+        showStatus("statusUnidades", "error", "Erro salvar validade:", erroValidafunction limparFormUsuario() {
+      qs("usuarioNome").value = "";
+      qs("usuarioEmail").value = "";
+      qs("usuarioPerfil").value = "Admin geral";
+      if (qs("usuarioUnidade").options.length) {
+        qs("usuarioUnidade").selectedIndex = 0;
+      }
+      qs("usuarioStatus").value = "Ativo";
+      clearStatus("statusUsuarios");
     }
-  }
 
-  function limparFormUsuario() {
-    qs("usuarioNome").value = "";
-    qs("usuarioEmail").value = "";
-    qs("usuarioPerfil").value = "Admin geral";
-    qs("usuarioUnidade").value = "CAIS";
-    qs("usuarioStatus").value = "Ativo";
-    clearStatus("statusUsuarios");
-  }
+    async function salvarUsuarioReal() {
+      clearStatus("statusUsuarios");
 
-  function salvarUsuarioDemo() {
-    const nome = qs("usuarioNome").value.trim();
-    const email = qs("usuarioEmail").value.trim();
-    const perfil = qs("usuarioPerfil").value;
-    const unidade = qs("usuarioUnidade").value;
-    const status = qs("usuarioStatus").value;
+      const nome = qs("usuarioNome").value.trim();
+      const email = qs("usuarioEmail").value.trim();
+      const perfilFront = qs("usuarioPerfil").value;
+      const unidadeId = qs("usuarioUnidade").value;
+      const ativo = qs("usuarioStatus").value === "Ativo";
 
-    if (!nome || !email) {
-      return showStatus("statusUsuarios", "error", "Preencha nome e e-mail do usuário.");
+      const perfilMap = {
+        "Admin geral": "admin_geral",
+        "Admin da unidade": "admin_unidade",
+        "Operador": "operacao"
+      };
+
+      const perfil = perfilMap[perfilFront] || "operacao";
+
+      if (!nome || !email || !perfil || !unidadeId) {
+        showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from("usuarios")
+        .insert([
+          {
+            nome,
+            email,
+            perfil,
+            unidade_id: unidadeId,
+            ativo
+          }
+        ]);
+
+      if (error) {
+        console.error("Erro ao salvar usuário:", error);
+        showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
+        return;
+      }
+
+      limparFormUsuario();
+      showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
+      carregarUsuariosDB();
     }
 
-    usuariosAdmin.unshift({ nome, email, perfil, unidade, status });
+    function limparFormUnidade() {
+      qs("unidadeNome").value = "";
+      qs("unidadeImpressora").value = "";
+      qs("unidadeHost").value = "";
+      qs("unidadeStatus").value = "Ativa";
+      qs("unidadeObs").value = "";
+      clearStatus("statusUnidades");
+    }
+
+    async function salvarUnidadeReal() {
+      clearStatus("statusUnidades");
+
+      const nome = qs("unidadeNome").value.trim();
+      const codigoManual = qs("unidadeHost").value.trim();
+      const ativa = qs("unidadeStatus").value === "Ativa";
+
+      if (!nome) {
+        showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
+        return;
+      }
+
+      const codigo = (codigoManual || nome)
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "_");
+
+      const { error } = await supabaseClient
+        .from("unidades")
+        .insert([
+          {
+            nome,
+            codigo,
+            ativa
+          }
+        ]);
+
+      if (error) {
+        console.error("Erro ao salvar unidade:", error);
+        showStatus("statusUnidades", "error", "Erro ao salvar unidade: " + error.message);
+        return;
+      }
+
+      limparFormUnidade();
+      showStatus("statusUnidades", "success", "Unidade salva com sucesso.");
+      carregarUnidadesDB();
+      carregarUsuariosDB();
+    }").value.trim();
+      const host = qs("unidadeHost").value.trim();
+      const status = qs("unidadeStatus").value;
+      if (!nome || !impressora || !host) return showStatus("statusUnidades", "error", "Preencha unidade, impressora e host.");
+      unidadesAdmin.unshift({ nome, impressora, host, status });
+      renderUnidadesAdmin();
+      limparFormUnidade();
+      showStatus("statusUnidades", "success", "Unidade adicionada no layout de demonstração.");
+    }
+
+    function setActiveTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+      qs('panel-' + tab).classList.add('active');
+      qs('pageTitle').textContent = pageTitles[tab] || 'Sistema de Etiquetas Eat Kitchen';
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+    });
+
+    qs("buscaProduto").addEventListener("input", renderProdutos);
+    qs("dataProducao").addEventListener("change", e => { estado.dataProducao = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
+    qs("horaProducao").addEventListener("change", e => { estado.horaProducao = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
+    qs("quantidade").addEventListener("input", e => { estado.quantidade = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
+    qs("lote").addEventListener("input", e => { estado.lote = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
+    qs("observacao").addEventListener("input", e => { estado.observacao = e.target.value; atualizarPreviewFinal(); });
+
+    preencherDataHoraAtual();
+    renderResponsaveis();
+    carregarProdutos();
+    atualizarUIEtapa();
+    carregarProdutosAdmin();
     renderUsuariosAdmin();
-    limparFormUsuario();
-    showStatus("statusUsuarios", "success", "Usuário adicionado no layout de demonstração.");
-  }
-
-  function limparFormUnidade() {
-    qs("unidadeNome").value = "";
-    qs("unidadeImpressora").value = "";
-    qs("unidadeHost").value = "";
-    qs("unidadeStatus").value = "Ativa";
-    qs("unidadeObs").value = "";
-    clearStatus("statusUnidades");
-  }
-
-  function salvarUnidadeDemo() {
-    const nome = qs("unidadeNome").value.trim();
-    const impressora = qs("unidadeImpressora").value.trim();
-    const host = qs("unidadeHost").value.trim();
-    const status = qs("unidadeStatus").value;
-
-    if (!nome || !impressora || !host) {
-      return showStatus("statusUnidades", "error", "Preencha unidade, impressora e host.");
-    }
-
-    unidadesAdmin.unshift({ nome, impressora, host, status });
     renderUnidadesAdmin();
-    limparFormUnidade();
-    showStatus("statusUnidades", "success", "Unidade adicionada no layout de demonstração.");
-  }
-
-  function setActiveTab(tab) {
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.tab === tab);
-    });
-
-    document.querySelectorAll(".tab-panel").forEach(panel => {
-      panel.classList.remove("active");
-    });
-
-    qs("panel-" + tab).classList.add("active");
-    qs("pageTitle").textContent = pageTitles[tab] || "Sistema de Etiquetas Eat Kitchen";
-  }
-
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
-  });
-
-  qs("buscaProduto").addEventListener("input", renderProdutos);
-
-  qs("dataProducao").addEventListener("change", e => {
-    estado.dataProducao = e.target.value;
-    atualizarResumoLateral();
-    atualizarPreviewFinal();
-  });
-
-  qs("horaProducao").addEventListener("change", e => {
-    estado.horaProducao = e.target.value;
-    atualizarResumoLateral();
-    atualizarPreviewFinal();
-  });
-
-  qs("quantidade").addEventListener("input", e => {
-    estado.quantidade = e.target.value;
-    atualizarResumoLateral();
-    atualizarPreviewFinal();
-  });
-
-  qs("lote").addEventListener("input", e => {
-    estado.lote = e.target.value;
-    atualizarResumoLateral();
-    atualizarPreviewFinal();
-  });
-
-  qs("observacao").addEventListener("input", e => {
-    estado.observacao = e.target.value;
-    atualizarPreviewFinal();
-  });
-
-  preencherDataHoraAtual();
-  renderResponsaveis();
-  carregarProdutosOperacao();
-  atualizarUIEtapa();
-  carregarProdutosAdmin();
-  renderUsuariosAdmin();
-  renderUnidadesAdmin();
-</script>
+  </script>
+</body>
+</html>
