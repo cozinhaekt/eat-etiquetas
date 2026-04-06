@@ -651,7 +651,7 @@
               <button class="btn light" onclick="limparFormProduto()">Limpar</button>
             </div>
             <div class="actions-right">
-              <button class="btn primary" onclick="salvarProdutoDemo()">Salvar produto</button>
+              <button class="btn primary" onclick="salvarProdutoReal()">Salvar produto</button>
             </div>
           </div>
 
@@ -836,9 +836,8 @@
     const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-   let produtosCache = [];
-let produtosAdminDB = [];
-let etapaAtual = 1;
+    let produtosCache = [];
+    let etapaAtual = 1;
 
     const estado = {
       responsavel: "",
@@ -854,11 +853,6 @@ let etapaAtual = 1;
     };
 
     const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
-
-    const produtosAdmin = [
-      { nome: "Filé medalhão", grupo: "Fogão", validade: 3, conservacao: "Resfriado", unidade: "Ambas", status: "Ativo" },
-      { nome: "Molho de tomate", grupo: "Molhos", validade: 5, conservacao: "Resfriado", unidade: "CAIS", status: "Ativo" }
-    ];
 
     const usuariosAdmin = [
       { nome: "Marcelo", email: "marcelo@eatkitchen.com", perfil: "Admin geral", unidade: "CAIS", status: "Ativo" },
@@ -1155,18 +1149,61 @@ let etapaAtual = 1;
       }
     }
 
-    function renderProdutosAdmin() {
+    async function carregarProdutosAdmin() {
+      clearStatus("statusProdutos");
+
+      const { data, error } = await supabaseClient
+        .from("produtos_admin")
+        .select(`
+          id,
+          nome_produto,
+          categoria,
+          status,
+          unidade,
+          produto_validades (
+            id,
+            validade_dias,
+            conservacao
+          )
+        `)
+        .order("nome_produto", { ascending: true });
+
+      if (error) {
+        console.error("Erro ao carregar produtos admin:", error);
+        showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
+        return;
+      }
+
+      produtosAdminDB = data || [];
+      renderProdutosAdminDB();
+    }
+
+    function renderProdutosAdminDB() {
       const body = qs("produtosAdminBody");
-      body.innerHTML = produtosAdmin.map(item => `
-        <tr>
-          <td>${item.nome}</td>
-          <td>${item.grupo}</td>
-          <td>${item.validade} dia(s)</td>
-          <td>${item.conservacao}</td>
-          <td>${item.unidade}</td>
-          <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
-        </tr>
-      `).join("");
+
+      if (!produtosAdminDB.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6">Nenhum produto cadastrado.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = produtosAdminDB.map(item => {
+        const primeiraValidade = item.produto_validades?.[0];
+
+        return `
+          <tr>
+            <td>${item.nome_produto}</td>
+            <td>${item.categoria}</td>
+            <td>${primeiraValidade ? primeiraValidade.validade_dias + " dia(s)" : "-"}</td>
+            <td>${primeiraValidade ? primeiraValidade.conservacao : "-"}</td>
+            <td>${item.unidade}</td>
+            <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
+          </tr>
+        `;
+      }).join("");
     }
 
     function renderUsuariosAdmin() {
@@ -1204,18 +1241,64 @@ let etapaAtual = 1;
       clearStatus("statusProdutos");
     }
 
-    function salvarProdutoDemo() {
+    async function salvarProdutoReal() {
+      clearStatus("statusProdutos");
+
       const nome = qs("produtoNome").value.trim();
       const grupo = qs("produtoGrupo").value.trim();
       const validade = qs("produtoValidade").value.trim();
       const conservacao = qs("produtoConservacao").value;
       const unidade = qs("produtoUnidade").value;
       const status = qs("produtoStatus").value;
-      if (!nome || !grupo || !validade || !conservacao) return showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
-      produtosAdmin.unshift({ nome, grupo, validade, conservacao, unidade, status });
-      renderProdutosAdmin();
-      limparFormProduto();
-      showStatus("statusProdutos", "success", "Produto adicionado no layout de demonstração.");
+
+      if (!nome || !grupo || !validade || !conservacao) {
+        showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
+        return;
+      }
+
+      try {
+        const { data: produtoCriado, error: erroProduto } = await supabaseClient
+          .from("produtos_admin")
+          .insert([
+            {
+              nome_produto: nome,
+              categoria: grupo,
+              status: status,
+              unidade: unidade
+            }
+          ])
+          .select()
+          .single();
+
+        if (erroProduto) {
+          console.error("Erro ao criar produto:", erroProduto);
+          showStatus("statusProdutos", "error", "Erro ao salvar produto.");
+          return;
+        }
+
+        const { error: erroValidade } = await supabaseClient
+          .from("produto_validades")
+          .insert([
+            {
+              produto_id: produtoCriado.id,
+              validade_dias: Number(validade),
+              conservacao: conservacao
+            }
+          ]);
+
+        if (erroValidade) {
+          console.error("Erro ao salvar validade:", erroValidade);
+          showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
+          return;
+        }
+
+        limparFormProduto();
+        showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
+        carregarProdutosAdmin();
+      } catch (err) {
+        console.error("Erro geral ao salvar produto:", err);
+        showStatus("statusProdutos", "error", "Erro inesperado ao salvar produto.");
+      }
     }
 
     function limparFormUsuario() {
@@ -1283,10 +1366,9 @@ let etapaAtual = 1;
     renderResponsaveis();
     carregarProdutos();
     atualizarUIEtapa();
-    renderProdutosAdmin();
+    carregarProdutosAdmin();
     renderUsuariosAdmin();
     renderUnidadesAdmin();
   </script>
 </body>
 </html>
-
