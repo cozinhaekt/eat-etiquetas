@@ -702,10 +702,7 @@
             </div>
             <div class="field">
               <label>Unidade</label>
-              <select id="usuarioUnidade">
-                <option>CAIS</option>
-                <option>DINARTE</option>
-              </select>
+              <select id="usuarioUnidade"></select>
             </div>
           </div>
 
@@ -753,22 +750,22 @@
 
           <div class="field-row">
             <div class="field"><label>Nome da unidade</label><input id="unidadeNome" type="text" placeholder="Ex.: CAIS" /></div>
-            <div class="field"><label>Nome da impressora</label><input id="unidadeImpressora" type="text" placeholder="Ex.: ZD220 CAIS" /></div>
+            <div class="field"><label>Nome da impressora</label><input id="unidadeImpressora" type="text" placeholder="Campo visual por enquanto" /></div>
           </div>
 
           <div class="field-row">
-            <div class="field"><label>Raspberry / Host</label><input id="unidadeHost" type="text" placeholder="Ex.: raspberry-cais.local" /></div>
+            <div class="field"><label>Código / Host</label><input id="unidadeHost" type="text" placeholder="Ex.: cais ou raspberry-cais" /></div>
             <div class="field"><label>Status</label><select id="unidadeStatus"><option>Ativa</option><option>Inativa</option></select></div>
           </div>
 
           <div class="field">
             <label>Observação operacional</label>
-            <textarea id="unidadeObs" rows="3" placeholder="Ex.: fila exclusiva desta casa"></textarea>
+            <textarea id="unidadeObs" rows="3" placeholder="Campo visual por enquanto"></textarea>
           </div>
 
           <div class="actions">
             <div class="actions-left"><button class="btn light" onclick="limparFormUnidade()">Limpar</button></div>
-            <div class="actions-right"><button class="btn primary" onclick="salvarUnidadeDemo()">Salvar unidade</button></div>
+            <div class="actions-right"><button class="btn primary" onclick="salvarUnidadeReal()">Salvar unidade</button></div>
           </div>
 
           <div id="statusUnidades" class="status-box"></div>
@@ -781,8 +778,8 @@
               <thead>
                 <tr>
                   <th>Unidade</th>
-                  <th>Impressora</th>
-                  <th>Host</th>
+                  <th>Código</th>
+                  <th>ID</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -820,7 +817,7 @@
             <h2 class="card-title">Próximo desenvolvimento recomendado</h2>
             <div class="stack">
               <div class="list-item"><div class="chip dark">Passo 1</div><div class="small muted">Conectar aba Produtos ao banco.</div></div>
-              <div class="list-item"><div class="chip dark">Passo 2</div><div class="small muted">Criar tabelas de usuários e unidades.</div></div>
+              <div class="list-item"><div class="chip dark">Passo 2</div><div class="small muted">Usar usuários e unidades reais do banco.</div></div>
               <div class="list-item"><div class="chip dark">Passo 3</div><div class="small muted">Implementar login e permissões.</div></div>
               <div class="list-item"><div class="chip dark">Passo 4</div><div class="small muted">Amarrar impressão à unidade do usuário logado.</div></div>
             </div>
@@ -837,6 +834,9 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let produtosCache = [];
+    let produtosAdminDB = [];
+    let usuariosDB = [];
+    let unidadesDB = [];
     let etapaAtual = 1;
 
     const estado = {
@@ -853,9 +853,6 @@
     };
 
     const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
-
-    let usuariosDB = [];
-    let unidadesDB = [];
 
     const pageTitles = {
       operacao: "Painel operacional de geração de etiquetas",
@@ -1089,14 +1086,45 @@
       if (estado.conservacao) hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
     }
 
-    async function carregarProdutos() {
-      const { data, error } = await supabaseClient.from("produtos").select("*").order("nome_produto", { ascending: true });
+    async function carregarProdutosOperacao() {
+      const { data, error } = await supabaseClient
+        .from("produtos_admin")
+        .select(`
+          id,
+          nome_produto,
+          categoria,
+          status,
+          unidade,
+          produto_validades (
+            id,
+            validade_dias,
+            conservacao
+          )
+        `)
+        .eq("status", "Ativo")
+        .order("nome_produto", { ascending: true });
+
       if (error) {
-        console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
+        console.error("Erro ao carregar produtos da operação:", error);
         mostrarStatus("error", "Erro ao carregar produtos.");
         return;
       }
-      produtosCache = data || [];
+
+      const listaAchatada = [];
+      (data || []).forEach(produto => {
+        const validades = produto.produto_validades || [];
+        validades.forEach(validade => {
+          listaAchatada.push({
+            categoria: produto.categoria,
+            nome_produto: produto.nome_produto,
+            validade_dias: validade.validade_dias,
+            conservacao: validade.conservacao,
+            unidade: produto.unidade
+          });
+        });
+      });
+
+      produtosCache = listaAchatada;
       renderGrupos(); renderProdutos(); renderValidades();
     }
 
@@ -1144,7 +1172,6 @@
 
     async function carregarProdutosAdmin() {
       clearStatus("statusProdutos");
-
       const { data, error } = await supabaseClient
         .from("produtos_admin")
         .select(`
@@ -1173,7 +1200,6 @@
 
     function renderProdutosAdminDB() {
       const body = qs("produtosAdminBody");
-
       if (!produtosAdminDB.length) {
         body.innerHTML = `
           <tr>
@@ -1185,24 +1211,68 @@
 
       body.innerHTML = produtosAdminDB.map(item => {
         const primeiraValidade = item.produto_validades?.[0];
+        return `
+          <tr>
+            <td>${item.nome_produto}</td>
+            <td>${item.categoria}</td>
+            <td>${primeiraValidade ? primeiraValidade.validade_dias + " dia(s)" : "-"}</td>
+            <td>${primeiraValidade ? primeiraValidade.conservacao : "-"}</td>
+            <td>${item.unidade}</td>
+            <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-        return async function carregarUnidadesDB() {
-      clearStatus("statusUnidades");
+    async function salvarProdutoReal() {
+      clearStatus("statusProdutos");
+      const nome = qs("produtoNome").value.trim();
+      const grupo = qs("produtoGrupo").value.trim();
+      const validade = qs("produtoValidade").value.trim();
+      const conservacao = qs("produtoConservacao").value;
+      const unidade = qs("produtoUnidade").value;
+      const status = qs("produtoStatus").value;
 
-      const { data, error } = await supabaseClient
-        .from("unidades")
-        .select("id, nome, codigo, ativa, created_at")
-        .order("nome", { ascending: true });
-
-      if (error) {
-        console.error("Erro ao carregar unidades:", error);
-        showStatus("statusUnidades", "error", "Erro ao carregar unidades.");
+      if (!nome || !grupo || !validade || !conservacao) {
+        showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
         return;
       }
 
-      unidadesDB = data || [];async function carregarUsuariosDB() {
-      clearStatus("statusUsuarios");
+      try {
+        const { data: produtoCriado, error: erroProduto } = await supabaseClient
+          .from("produtos_admin")
+          .insert([{ nome_produto: nome, categoria: grupo, status: status, unidade: unidade }])
+          .select()
+          .single();
 
+        if (erroProduto) {
+          console.error("Erro ao criar produto:", erroProduto);
+          showStatus("statusProdutos", "error", "Erro ao salvar produto.");
+          return;
+        }
+
+        const { error: erroValidade } = await supabaseClient
+          .from("produto_validades")
+          .insert([{ produto_id: produtoCriado.id, validade_dias: Number(validade), conservacao: conservacao }]);
+
+        if (erroValidade) {
+          console.error("Erro ao salvar validade:", erroValidade);
+          showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
+          return;
+        }
+
+        limparFormProduto();
+        showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
+        carregarProdutosAdmin();
+        carregarProdutosOperacao();
+      } catch (err) {
+        console.error("Erro geral ao salvar produto:", err);
+        showStatus("statusProdutos", "error", "Erro inesperado ao salvar produto.");
+      }
+    }
+
+    async function carregarUsuariosDB() {
+      clearStatus("statusUsuarios");
       const { data, error } = await supabaseClient
         .from("usuarios")
         .select(`
@@ -1231,7 +1301,6 @@
 
     function renderUsuariosDB() {
       const body = qs("usuariosAdminBody");
-
       if (!usuariosDB.length) {
         body.innerHTML = `
           <tr>
@@ -1250,9 +1319,46 @@
           <td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td>
         </tr>
       `).join("");
-    }.nome}async function carregarUnidadesDB() {
-      clearStatus("statusUnidades");
+    }
 
+    async function salvarUsuarioReal() {
+      clearStatus("statusUsuarios");
+      const nome = qs("usuarioNome").value.trim();
+      const email = qs("usuarioEmail").value.trim();
+      const perfilFront = qs("usuarioPerfil").value;
+      const unidadeId = qs("usuarioUnidade").value;
+      const ativo = qs("usuarioStatus").value === "Ativo";
+
+      const perfilMap = {
+        "Admin geral": "admin_geral",
+        "Admin da unidade": "admin_unidade",
+        "Operador": "operacao"
+      };
+
+      const perfil = perfilMap[perfilFront] || "operacao";
+
+      if (!nome || !email || !perfil || !unidadeId) {
+        showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from("usuarios")
+        .insert([{ nome, email, perfil, unidade_id: unidadeId, ativo }]);
+
+      if (error) {
+        console.error("Erro ao salvar usuário:", error);
+        showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
+        return;
+      }
+
+      limparFormUsuario();
+      showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
+      carregarUsuariosDB();
+    }
+
+    async function carregarUnidadesDB() {
+      clearStatus("statusUnidades");
       const { data, error } = await supabaseClient
         .from("unidades")
         .select("id, nome, codigo, ativa, created_at")
@@ -1271,7 +1377,6 @@
 
     function renderUnidadesDB() {
       const body = qs("unidadesAdminBody");
-
       if (!unidadesDB.length) {
         body.innerHTML = `
           <tr>
@@ -1311,254 +1416,11 @@
       });
 
       const existeValorAtual = unidadesDB.some(item => item.id === valorAtual);
-      if (existeValorAtual) {
-        select.value = valorAtual;
-      }
-    } select.innerHTML = "";
-
-      if (!unidadesDB.length) {
-        select.innerHTML = `<option value="">Nenhuma unidade</option>`;
-        return;
-      }
-
-      unidadesDB.forEach(unidade => {
-        const option = document.createElement("option");
-        option.value = unidade.id;
-        option.textContent = unidade.nome;
-        select.appendChild(option);
-      });
-
-      const existeValorAtual = unidadesDB.some(item => item.id === valorAtual);
-      if (existeValorAtual) {
-        select.value = valorAtual;
-      }
-    }
-
-    async function carregarUsuariosDB() {
-      clearStatus("statusUsuarios");
-
-      const { data, error } = await supabaseClient
-        .from("usuarios")
-        .select(`
-          id,
-          nome,
-          email,
-          perfil,
-          unidade_id,
-          ativo,
-          created_at,
-          unidades (
-            nome
-          )
-        `)
-        .order("nome", { ascending: true });
-
-      if (error) {
-        console.error("Erro ao carregar usuários:", error);
-        showStatus("statusUsuarios", "error", "Erro ao carregar usuários.");
-        return;
-      }
-
-      usuariosDB = data || [];
-      renderUsuariosDB();
-    }
-
-    function renderUsuariosDB() {
-      const body = qs("usuariosAdminBody");
-
-      if (!usuariosDB.length) {
-        body.innerHTML = `
-          <tr>
-            <td colspan="5">Nenhum usuário cadastrado.</td>
-          </tr>
-        `;
-        return;
-      }
-
-      body.innerHTML = usuariosDB.map(item => `
-        <tr>
-          <td>${item.nome}</td>
-          <td>${item.email}</td>
-          <td>${item.perfil}</td>
-          <td>${item.unidades?.nome || "-"}</td>
-          <td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td>
-        </tr>
-      `).join("");
-    }ark' : ''}">${item.status}</span></td>
-        </tr>
-      `).join("");
-    }
-
-    function renderUnidadesAdmin() {
-      const body = qs("unidadesAdminBody");
-      body.innerHTML = unidadesAdmin.map(item => `
-        <tr>
-          <td>${item.nome}</td>
-          <td>${item.impressora}</td>
-          <td>${item.host}</td>
-          <td><span class="chip ${item.status === 'Ativa' ? 'dark' : ''}">${item.status}</span></td>
-        </tr>
-      `).join("");
-    }
-
-    function limparFormfunction limparFormUsuario() {
-      qs("usuarioNome").value = "";
-      qs("usuarioEmail").value = "";
-      qs("usuarioPerfil").value = "Admin geral";
-      if (qs("usuarioUnidade").options.length) {
-        qs("usuarioUnidade").selectedIndex = 0;
-      }
-      qs("usuarioStatus").value = "Ativo";
-      clearStatus("statusUsuarios");
-    }odutosasync function salvarUsuarioReal() {
-      clearStatus("statusUsuarios");
-
-      const nome = qs("usuarioNome").value.trim();
-      const email = qs("usuarioEmail").value.trim();
-      const perfilFront = qs("usuarioPerfil").value;
-      const unidadeId = qs("usuarioUnidade").value;
-      const ativo = qs("usuarioStatus").value === "Ativo";
-
-      const perfilMap = {
-        "Admin geral": "admin_geral",
-        "Admin da unidade": "admin_unidade",
-        "Operador": "operacao"
-      };
-
-      const perfil = perfilMap[perfilFront] || "operacao";
-
-      if (!nome || !email || !perfil || !unidadeId) {
-        showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
-        return;
-      }
-
-      const { error } = await supabaseClient
-        .from("usuarios")
-        .insert([
-          {
-            nome,
-            email,
-            perfil,
-            unidade_id: unidadeId,
-            ativo
-          }
-        ]);
-
-      if (error) {
-        console.error("Erro ao salvar usuário:", error);
-        showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
-        return;
-      }
-
-      limparFormUsuario();
-      showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
-      carregarUsuariosDB();
-    } produtoCriado, error: erroProduto } = await supabaseClient
-          .from("produtos_admin")
-          .insert([
-            {
-              nome_produto: nome,
-              categoria: grupo,
-              status: status,
-              unidade: unidade
-            }
-        async function salvarUnidadeReal() {
-      clearStatus("statusUnidades");
-
-      const nome = qs("unidadeNome").value.trim();
-      const codigoManual = qs("unidadeHost").value.trim();
-      const ativa = qs("unidadeStatus").value === "Ativa";
-
-      if (!nome) {
-        showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
-        return;
-      }
-
-      const codigo = (codigoManual || nome)
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "_");
-
-      const { error } = await supabaseClient
-        .from("unidades")
-        .insert([
-          {
-            nome,
-            codigo,
-            ativa
-          }
-        ]);
-
-      if (error) {
-        console.error("Erro ao salvar unidade:", error);
-        showStatus("statusUnidades", "error", "Erro salvar validade:", erroValidafunction limparFormUsuario() {
-      qs("usuarioNome").value = "";
-      qs("usuarioEmail").value = "";
-      qs("usuarioPerfil").value = "Admin geral";
-      if (qs("usuarioUnidade").options.length) {
-        qs("usuarioUnidade").selectedIndex = 0;
-      }
-      qs("usuarioStatus").value = "Ativo";
-      clearStatus("statusUsuarios");
-    }
-
-    async function salvarUsuarioReal() {
-      clearStatus("statusUsuarios");
-
-      const nome = qs("usuarioNome").value.trim();
-      const email = qs("usuarioEmail").value.trim();
-      const perfilFront = qs("usuarioPerfil").value;
-      const unidadeId = qs("usuarioUnidade").value;
-      const ativo = qs("usuarioStatus").value === "Ativo";
-
-      const perfilMap = {
-        "Admin geral": "admin_geral",
-        "Admin da unidade": "admin_unidade",
-        "Operador": "operacao"
-      };
-
-      const perfil = perfilMap[perfilFront] || "operacao";
-
-      if (!nome || !email || !perfil || !unidadeId) {
-        showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
-        return;
-      }
-
-      const { error } = await supabaseClient
-        .from("usuarios")
-        .insert([
-          {
-            nome,
-            email,
-            perfil,
-            unidade_id: unidadeId,
-            ativo
-          }
-        ]);
-
-      if (error) {
-        console.error("Erro ao salvar usuário:", error);
-        showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
-        return;
-      }
-
-      limparFormUsuario();
-      showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
-      carregarUsuariosDB();
-    }
-
-    function limparFormUnidade() {
-      qs("unidadeNome").value = "";
-      qs("unidadeImpressora").value = "";
-      qs("unidadeHost").value = "";
-      qs("unidadeStatus").value = "Ativa";
-      qs("unidadeObs").value = "";
-      clearStatus("statusUnidades");
+      if (existeValorAtual) select.value = valorAtual;
     }
 
     async function salvarUnidadeReal() {
       clearStatus("statusUnidades");
-
       const nome = qs("unidadeNome").value.trim();
       const codigoManual = qs("unidadeHost").value.trim();
       const ativa = qs("unidadeStatus").value === "Ativa";
@@ -1575,13 +1437,7 @@
 
       const { error } = await supabaseClient
         .from("unidades")
-        .insert([
-          {
-            nome,
-            codigo,
-            ativa
-          }
-        ]);
+        .insert([{ nome, codigo, ativa }]);
 
       if (error) {
         console.error("Erro ao salvar unidade:", error);
@@ -1593,14 +1449,36 @@
       showStatus("statusUnidades", "success", "Unidade salva com sucesso.");
       carregarUnidadesDB();
       carregarUsuariosDB();
-    }").value.trim();
-      const host = qs("unidadeHost").value.trim();
-      const status = qs("unidadeStatus").value;
-      if (!nome || !impressora || !host) return showStatus("statusUnidades", "error", "Preencha unidade, impressora e host.");
-      unidadesAdmin.unshift({ nome, impressora, host, status });
-      renderUnidadesAdmin();
-      limparFormUnidade();
-      showStatus("statusUnidades", "success", "Unidade adicionada no layout de demonstração.");
+    }
+
+    function limparFormProduto() {
+      qs("produtoNome").value = "";
+      qs("produtoGrupo").value = "";
+      qs("produtoValidade").value = "";
+      qs("produtoConservacao").value = "";
+      qs("produtoUnidade").value = "CAIS";
+      qs("produtoStatus").value = "Ativo";
+      clearStatus("statusProdutos");
+    }
+
+    function limparFormUsuario() {
+      qs("usuarioNome").value = "";
+      qs("usuarioEmail").value = "";
+      qs("usuarioPerfil").value = "Admin geral";
+      if (qs("usuarioUnidade").options.length) {
+        qs("usuarioUnidade").selectedIndex = 0;
+      }
+      qs("usuarioStatus").value = "Ativo";
+      clearStatus("statusUsuarios");
+    }
+
+    function limparFormUnidade() {
+      qs("unidadeNome").value = "";
+      qs("unidadeImpressora").value = "";
+      qs("unidadeHost").value = "";
+      qs("unidadeStatus").value = "Ativa";
+      qs("unidadeObs").value = "";
+      clearStatus("statusUnidades");
     }
 
     function setActiveTab(tab) {
@@ -1623,11 +1501,11 @@
 
     preencherDataHoraAtual();
     renderResponsaveis();
-    carregarProdutos();
+    carregarProdutosOperacao();
     atualizarUIEtapa();
     carregarProdutosAdmin();
-    renderUsuariosAdmin();
-    renderUnidadesAdmin();
+    carregarUnidadesDB();
+    carregarUsuariosDB();
   </script>
 </body>
 </html>
