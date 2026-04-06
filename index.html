@@ -836,8 +836,9 @@
     const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let produtosCache = [];
-    let etapaAtual = 1;
+   let produtosCache = [];
+let produtosAdminDB = [];
+let etapaAtual = 1;
 
     const estado = {
       responsavel: "",
