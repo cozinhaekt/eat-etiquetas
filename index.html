@@ -1,1374 +1,772 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema de Etiquetas Eat Kitchen - V2</title>
-  <style>
-    * { box-sizing: border-box; }
-    :root {
-      --bg: #f3f3f3;
-      --surface: #ffffff;
-      --surface-soft: #f7f7f7;
-      --border: #d9d9d9;
-      --border-strong: #bdbdbd;
-      --text: #111111;
-      --text-soft: #666666;
-      --text-muted: #8a8a8a;
-      --black: #111111;
-      --black-2: #1d1d1d;
-      --white: #ffffff;
-      --shadow: 0 8px 24px rgba(0,0,0,0.06);
-      --radius-lg: 18px;
-      --radius-md: 14px;
-      --radius-sm: 12px;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .topbar {
-      background: var(--black);
-      color: var(--white);
-      border-bottom: 1px solid #2c2c2c;
-    }
-
-    .topbar-row {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 18px 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .topbar-title {
-      font-size: 28px;
-      font-weight: bold;
-      line-height: 1.1;
-      margin-bottom: 4px;
-    }
-
-    .topbar-subtitle {
-      font-size: 13px;
-      opacity: 0.78;
-    }
-
-    .topbar-meta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      border: 1px solid #373737;
-      background: #1b1b1b;
-      color: var(--white);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .tabs-bar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tabs-row {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 12px 16px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .tab-btn.active,
-    .tab-btn:hover {
-      background: var(--black);
-      color: var(--white);
-      border-color: var(--black);
-    }
-
-    .container {
-      max-width: 1280px;
-      margin: 24px auto;
-      padding: 0 16px 34px;
-    }
-
-    .page-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .page-title { font-size: 20px; font-weight: bold; }
-    .page-note { font-size: 13px; color: var(--text-soft); }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .layout-single {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      padding: 22px;
-      border: 1px solid var(--border);
-    }
-
-    .card-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 0 0 8px;
-    }
-
-    .card-text {
-      margin: 0 0 16px;
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .wizard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .wizard-title { font-size: 28px; font-weight: bold; }
-
-    .step-chip {
-      background: #efefef;
-      color: #222;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .progress {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    .progress-step {
-      height: 8px;
-      border-radius: 999px;
-      background: #ddd;
-    }
-
-    .progress-step.active { background: var(--black); }
-    .step-screen { display: none; }
-    .step-screen.active { display: block; }
-    .step-title { font-size: 30px; font-weight: bold; margin: 0 0 8px; }
-    .step-text { margin: 0 0 18px; color: var(--text-soft); font-size: 14px; line-height: 1.5; }
-
-    .grid-cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .grid-cards.products {
-      max-height: 430px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .select-card {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 16px 14px;
-      min-height: 88px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.2s ease;
-      font-weight: bold;
-      user-select: none;
-    }
-
-    .select-card:hover {
-      transform: translateY(-1px);
-      border-color: var(--black);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-    }
-
-    .select-card.selected {
-      background: var(--black);
-      color: var(--white);
-      border-color: var(--black);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
-    }
-
-    .field { display: flex; flex-direction: column; margin-bottom: 14px; }
-    .field label { font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #333; }
-
-    .field input,
-    .field select,
-    .field textarea {
-      border: 1px solid #cfcfcf;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 14px;
-      background: var(--surface);
-      color: var(--text);
-      transition: 0.2s ease;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: var(--black);
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .search-box { margin-bottom: 14px; }
-    .search-box input { width: 100%; }
-
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .actions-left,
-    .actions-right { display: flex; gap: 10px; flex-wrap: wrap; }
-
-    .btn {
-      border: 1px solid transparent;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-    .btn.primary { background: var(--black); color: var(--white); border-color: var(--black); }
-    .btn.light { background: #f0f0f0; color: var(--text); border-color: #d5d5d5; }
-    .btn.ghost { background: var(--surface); color: var(--text); border-color: var(--border); }
-
-    .summary-card,
-    .soft-panel {
-      background: var(--surface-soft);
-      border: 1px solid #dddddd;
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .summary-title, .section-title { margin: 0 0 16px; font-size: 22px; font-weight: bold; }
-    .summary-product { font-size: 34px; font-weight: bold; line-height: 1.05; margin-bottom: 14px; word-break: break-word; }
-    .summary-badge {
-      display: inline-block;
-      background: var(--black);
-      color: var(--white);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 18px;
-    }
-
-    .summary-grid, .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .summary-box, .stat-box, .list-item {
-      background: var(--surface);
-      border: 1px solid #dcdcdc;
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .summary-label, .mini-label, .stat-label {
-      font-size: 12px;
-      color: #666;
-      text-transform: uppercase;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .summary-value, .mini-value, .stat-value { font-size: 18px; font-weight: bold; word-break: break-word; }
-    .summary-extra, .stack, .mini-summary, .list-stack { display: grid; gap: 10px; }
-
-    .aside-title { font-size: 24px; font-weight: bold; margin: 0 0 16px; }
-    .mini-item { background: var(--surface-soft); border: 1px solid #ddd; border-radius: 12px; padding: 12px; }
-    .muted { color: var(--text-soft); }
-    .small { font-size: 13px; }
-    .tiny { font-size: 12px; color: var(--text-muted); }
-    .divider { height: 1px; background: var(--border); margin: 18px 0; }
-
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--surface);
-    }
-
-    table { width: 100%; border-collapse: collapse; min-width: 760px; }
-    th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; }
-    th { background: #f5f5f5; font-size: 12px; text-transform: uppercase; color: #555; }
-    tr:last-child td { border-bottom: none; }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #f5f5f5;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .chip.dark { background: var(--black); color: var(--white); border-color: var(--black); }
-
-    .status-box {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      display: none;
-      border: 1px solid transparent;
-    }
-
-    .status-box.show { display: block; }
-    .status-box.success { background: #f5f5f5; border-color: #cfcfcf; color: var(--text); }
-    .status-box.error { background: #1a1a1a; border-color: #000; color: var(--white); }
-
-    .empty {
-      padding: 20px;
-      border: 1px dashed var(--border-strong);
-      border-radius: 12px;
-      color: var(--text-soft);
-      background: #fafafa;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    @media (max-width: 1024px) {
-      .layout, .two-col { grid-template-columns: 1fr; }
-      .grid-cards, .grid-cards.products, .summary-grid, .stats-grid, .field-row { grid-template-columns: 1fr; }
-      .summary-product { font-size: 28px; }
-      .step-title, .wizard-title { font-size: 24px; }
-      .topbar-title { font-size: 24px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="topbar">
-    <div class="topbar-row">
-      <div>
-        <div class="topbar-title">Sistema de Etiquetas Eat Kitchen</div>
-        <div class="topbar-subtitle">Operação, produtos, usuários e unidades em uma única base visual</div>
-      </div>
-      <div class="topbar-meta">
-        <div class="badge">V2 ESTRUTURAL</div>
-        <div class="badge">BASE PARA LOGIN / CASAS / IMPRESSORAS</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="tabs-bar">
-    <div class="tabs-row">
-      <button class="tab-btn active" data-tab="operacao">Operação</button>
-      <button class="tab-btn" data-tab="produtos">Produtos</button>
-      <button class="tab-btn" data-tab="usuarios">Usuários</button>
-      <button class="tab-btn" data-tab="unidades">Unidades</button>
-      <button class="tab-btn" data-tab="visao">Visão geral</button>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="page-head">
-      <div class="page-title" id="pageTitle">Painel operacional de geração de etiquetas</div>
-      <div class="page-note">Nesta versão, os módulos administrativos já aparecem no layout para a próxima etapa de desenvolvimento.</div>
-    </div>
-
-    <section class="tab-panel active" id="panel-operacao">
-      <div class="layout">
-        <div class="card">
-          <div class="wizard-header">
-            <div class="wizard-title">Nova impressão</div>
-            <div class="step-chip" id="stepChip">Etapa 1 de 5</div>
-          </div>
-
-          <div class="progress">
-            <div class="progress-step" id="progress1"></div>
-            <div class="progress-step" id="progress2"></div>
-            <div class="progress-step" id="progress3"></div>
-            <div class="progress-step" id="progress4"></div>
-            <div class="progress-step" id="progress5"></div>
-          </div>
-
-          <div class="step-screen active" id="step1">
-            <h2 class="step-title">Selecionar responsável</h2>
-            <p class="step-text">Depois, esse campo será substituído por usuário logado.</p>
-            <div class="grid-cards" id="responsaveisCards"></div>
-          </div>
-
-          <div class="step-screen" id="step2">
-            <h2 class="step-title">Selecionar grupo</h2>
-            <p class="step-text">Escolha o grupo do produto para filtrar os itens.</p>
-            <div class="grid-cards" id="gruposCards"></div>
-          </div>
-
-          <div class="step-screen" id="step3">
-            <h2 class="step-title">Selecionar produto</h2>
-            <p class="step-text">Busque e escolha o produto que será impresso.</p>
-            <div class="field search-box">
-              <input id="buscaProduto" type="text" placeholder="Buscar produto..." />
-            </div>
-            <div class="grid-cards products" id="produtosCards"></div>
-          </div>
-
-          <div class="step-screen" id="step4">
-            <h2 class="step-title">Selecionar validade</h2>
-            <p class="step-text">Escolha a validade disponível para este produto.</p>
-            <div class="grid-cards" id="validadesCards"></div>
-            <div class="small muted" id="conservacaoHint"></div>
-          </div>
-
-          <div class="step-screen" id="step5">
-            <h2 class="step-title">Finalizar impressão</h2>
-            <p class="step-text">Revise os dados antes de enviar para a fila.</p>
-
-            <div class="field-row">
-              <div class="field">
-                <label>Data de produção</label>
-                <input id="dataProducao" type="date" />
-              </div>
-              <div class="field">
-                <label>Hora de produção</label>
-                <input id="horaProducao" type="time" />
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field">
-                <label>Quantidade de etiquetas</label>
-                <input id="quantidade" type="number" value="1" min="1" />
-              </div>
-              <div class="field">
-                <label>Lote manual</label>
-                <input id="lote" type="text" placeholder="Opcional" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Conservação</label>
-              <input id="conservacao" type="text" readonly />
-            </div>
-
-            <div class="field">
-              <label>Observação</label>
-              <textarea id="observacao" rows="3" placeholder="Opcional"></textarea>
-            </div>
-
-            <div class="summary-card">
-              <div class="summary-title">Resumo da etiqueta</div>
-              <div class="summary-product" id="pvProduto">-</div>
-              <div class="summary-badge" id="pvBadge">-</div>
-
-              <div class="summary-grid">
-                <div class="summary-box"><div class="summary-label">Responsável</div><div class="summary-value" id="pvResponsavel">-</div></div>
-                <div class="summary-box"><div class="summary-label">Grupo</div><div class="summary-value" id="pvGrupo">-</div></div>
-                <div class="summary-box"><div class="summary-label">Data de produção</div><div class="summary-value" id="pvData">-</div></div>
-                <div class="summary-box"><div class="summary-label">Hora</div><div class="summary-value" id="pvHora">-</div></div>
-                <div class="summary-box"><div class="summary-label">Conservação</div><div class="summary-value" id="pvConservacao">-</div></div>
-                <div class="summary-box"><div class="summary-label">Validade final</div><div class="summary-value" id="pvValidade">-</div></div>
-              </div>
-
-              <div class="summary-extra">
-                <div class="summary-extra-box"><div class="summary-label">Quantidade de etiquetas</div><div class="summary-value" id="pvQuantidade">1</div></div>
-                <div class="summary-extra-box" id="pvLoteBox" style="display:none;"><div class="summary-label">Lote</div><div class="summary-value" id="pvLote">-</div></div>
-                <div class="summary-extra-box" id="pvObsBox" style="display:none;"><div class="summary-label">Observação</div><div class="summary-value" id="pvObservacao">-</div></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <div class="actions-left">
-              <button class="btn light" id="btnVoltar" onclick="voltarEtapa()">Voltar</button>
-              <button class="btn light" onclick="reiniciarFluxo()">Reiniciar</button>
-            </div>
-            <div class="actions-right">
-              <button class="btn primary" id="btnProximo" onclick="proximaEtapa()">Próximo</button>
-              <button class="btn primary" id="btnImprimir" onclick="gerarImpressao()" style="display:none;">Imprimir</button>
-            </div>
-          </div>
-
-          <div id="statusBox" class="status-box"></div>
-        </div>
-
-        <div class="card">
-          <h3 class="aside-title">Resumo da seleção</h3>
-          <div class="mini-summary">
-            <div class="mini-item"><div class="mini-label">Responsável</div><div class="mini-value" id="sideResponsavel">-</div></div>
-            <div class="mini-item"><div class="mini-label">Grupo</div><div class="mini-value" id="sideGrupo">-</div></div>
-            <div class="mini-item"><div class="mini-label">Produto</div><div class="mini-value" id="sideProduto">-</div></div>
-            <div class="mini-item"><div class="mini-label">Validade</div><div class="mini-value" id="sideValidade">-</div></div>
-            <div class="mini-item"><div class="mini-label">Conservação</div><div class="mini-value" id="sideConservacao">-</div></div>
-            <div class="mini-item"><div class="mini-label">Data de produção</div><div class="mini-value" id="sideData">-</div></div>
-            <div class="mini-item"><div class="mini-label">Hora</div><div class="mini-value" id="sideHora">-</div></div>
-            <div class="mini-item"><div class="mini-label">Quantidade</div><div class="mini-value" id="sideQuantidade">1</div></div>
-            <div class="mini-item"><div class="mini-label">Lote</div><div class="mini-value" id="sideLote">-</div></div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="section-title">Próximas integrações</div>
-          <div class="stack">
-            <div class="list-item"><div class="tiny">Fase 1</div><strong>Admin de produtos</strong><div class="small muted">Cadastrar, editar, ativar e inativar itens sem depender de planilha.</div></div>
-            <div class="list-item"><div class="tiny">Fase 2</div><strong>Login e perfis</strong><div class="small muted">Admin geral, admin da unidade e operador.</div></div>
-            <div class="list-item"><div class="tiny">Fase 3</div><strong>Casas / unidades</strong><div class="small muted">Produtos, usuários e impressoras vinculados por unidade.</div></div>
-            <div class="list-item"><div class="tiny">Fase 4</div><strong>Fila por Raspberry</strong><div class="small muted">Cada casa lê apenas suas próprias solicitações.</div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="tab-panel" id="panel-produtos">
-      <div class="two-col">
-        <div class="card">
-          <h2 class="card-title">Admin de Produtos</h2>
-          <p class="card-text">Estrutura pronta para cadastro interno de novos produtos, múltiplas validades e conservação por item.</p>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Nome do produto</label>
-              <input id="produtoNome" type="text" placeholder="Ex.: Filé medalhão" />
-            </div>
-            <div class="field">
-              <label>Grupo / categoria</label>
-              <input id="produtoGrupo" type="text" placeholder="Ex.: Fogão" />
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Validade (dias)</label>
-              <input id="produtoValidade" type="number" min="1" placeholder="Ex.: 3" />
-            </div>
-            <div class="field">
-              <label>Conservação</label>
-              <select id="produtoConservacao">
-                <option value="">Selecione</option>
-                <option>Resfriado</option>
-                <option>Congelado</option>
-                <option>Ambiente</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Unidade disponível</label>
-              <select id="produtoUnidade">
-                <option>CAIS</option>
-                <option>DINARTE</option>
-                <option>Ambas</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Status</label>
-              <select id="produtoStatus">
-                <option>Ativo</option>
-                <option>Inativo</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="actions">
-            <div class="actions-left">
-              <button class="btn light" onclick="limparFormProduto()">Limpar</button>
-            </div>
-            <div class="actions-right">
-              <button class="btn primary" onclick="salvarProdutoReal()">Salvar produto</button>
-            </div>
-          </div>
-
-          <div id="statusProdutos" class="status-box"></div>
-        </div>
-
-        <div class="card">
-          <h2 class="card-title">Produtos cadastrados</h2>
-          <p class="card-text">Visual de como ficará a gestão depois de ligada ao banco.</p>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Grupo</th>
-                  <th>Validade</th>
-                  <th>Conservação</th>
-                  <th>Unidade</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="produtosAdminBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="tab-panel" id="panel-usuarios">
-      <div class="two-col">
-        <div class="card">
-          <h2 class="card-title">Admin de Usuários</h2>
-          <p class="card-text">Base visual para quando entrar Supabase Auth e perfis de acesso.</p>
-
-          <div class="field-row">
-            <div class="field"><label>Nome</label><input id="usuarioNome" type="text" placeholder="Ex.: Marcelo" /></div>
-            <div class="field"><label>E-mail</label><input id="usuarioEmail" type="email" placeholder="Ex.: nome@eatkitchen.com" /></div>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Perfil</label>
-              <select id="usuarioPerfil">
-                <option>Admin geral</option>
-                <option>Admin da unidade</option>
-                <option>Operador</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Unidade</label>
-              <select id="usuarioUnidade">
-                <option>CAIS</option>
-                <option>DINARTE</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Status</label>
-            <select id="usuarioStatus">
-              <option>Ativo</option>
-              <option>Inativo</option>
-            </select>
-          </div>
-
-          <div class="actions">
-            <div class="actions-left"><button class="btn light" onclick="limparFormUsuario()">Limpar</button></div>
-            <div class="actions-right"><button class="btn primary" onclick="salvarUsuarioDemo()">Salvar usuário</button></div>
-          </div>
-
-          <div id="statusUsuarios" class="status-box"></div>
-        </div>
-
-        <div class="card">
-          <h2 class="card-title">Usuários cadastrados</h2>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>E-mail</th>
-                  <th>Perfil</th>
-                  <th>Unidade</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="usuariosAdminBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="tab-panel" id="panel-unidades">
-      <div class="two-col">
-        <div class="card">
-          <h2 class="card-title">Admin de Unidades</h2>
-          <p class="card-text">Estrutura visual para separar cada casa, Raspberry e impressora.</p>
-
-          <div class="field-row">
-            <div class="field"><label>Nome da unidade</label><input id="unidadeNome" type="text" placeholder="Ex.: CAIS" /></div>
-            <div class="field"><label>Nome da impressora</label><input id="unidadeImpressora" type="text" placeholder="Ex.: ZD220 CAIS" /></div>
-          </div>
-
-          <div class="field-row">
-            <div class="field"><label>Raspberry / Host</label><input id="unidadeHost" type="text" placeholder="Ex.: raspberry-cais.local" /></div>
-            <div class="field"><label>Status</label><select id="unidadeStatus"><option>Ativa</option><option>Inativa</option></select></div>
-          </div>
-
-          <div class="field">
-            <label>Observação operacional</label>
-            <textarea id="unidadeObs" rows="3" placeholder="Ex.: fila exclusiva desta casa"></textarea>
-          </div>
-
-          <div class="actions">
-            <div class="actions-left"><button class="btn light" onclick="limparFormUnidade()">Limpar</button></div>
-            <div class="actions-right"><button class="btn primary" onclick="salvarUnidadeDemo()">Salvar unidade</button></div>
-          </div>
-
-          <div id="statusUnidades" class="status-box"></div>
-        </div>
-
-        <div class="card">
-          <h2 class="card-title">Unidades cadastradas</h2>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Unidade</th>
-                  <th>Impressora</th>
-                  <th>Host</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="unidadesAdminBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="tab-panel" id="panel-visao">
-      <div class="layout-single">
-        <div class="card">
-          <h2 class="card-title">Visão geral do sistema</h2>
-          <p class="card-text">Mapa do que essa próxima fase passa a organizar dentro do mesmo sistema.</p>
-          <div class="stats-grid">
-            <div class="stat-box"><div class="stat-label">Fluxo atual</div><div class="stat-value">Operação de etiquetas</div></div>
-            <div class="stat-box"><div class="stat-label">Próxima etapa</div><div class="stat-value">Admin de produtos</div></div>
-            <div class="stat-box"><div class="stat-label">Autenticação</div><div class="stat-value">Supabase Auth</div></div>
-            <div class="stat-box"><div class="stat-label">Modelo futuro</div><div class="stat-value">Usuário → Unidade → Fila → Raspberry → Impressora</div></div>
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="card">
-            <h2 class="card-title">Arquitetura sugerida</h2>
-            <div class="stack">
-              <div class="list-item"><strong>1. Usuários</strong><div class="small muted">Login, perfil e vínculo com unidade.</div></div>
-              <div class="list-item"><strong>2. Produtos</strong><div class="small muted">Cadastro interno com validade e conservação.</div></div>
-              <div class="list-item"><strong>3. Unidades</strong><div class="small muted">Separação real entre CAIS, DINARTE e futuras casas.</div></div>
-              <div class="list-item"><strong>4. Impressão</strong><div class="small muted">Fila separada por unidade e impressora.</div></div>
-            </div>
-          </div>
-          <div class="card">
-            <h2 class="card-title">Próximo desenvolvimento recomendado</h2>
-            <div class="stack">
-              <div class="list-item"><div class="chip dark">Passo 1</div><div class="small muted">Conectar aba Produtos ao banco.</div></div>
-              <div class="list-item"><div class="chip dark">Passo 2</div><div class="small muted">Criar tabelas de usuários e unidades.</div></div>
-              <div class="list-item"><div class="chip dark">Passo 3</div><div class="small muted">Implementar login e permissões.</div></div>
-              <div class="list-item"><div class="chip dark">Passo 4</div><div class="small muted">Amarrar impressão à unidade do usuário logado.</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let produtosCache = [];
-    let etapaAtual = 1;
-
-    const estado = {
-      responsavel: "",
-      grupo: "",
-      produto: "",
-      validadeDias: "",
-      conservacao: "",
-      dataProducao: "",
-      horaProducao: "",
-      quantidade: "1",
-      lote: "",
-      observacao: ""
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://opujvhffclwzaqwfodyd.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_ToOFdbd8KwGlCyogjlWDeg_2lpSaUib";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let produtosCache = [];
+  let produtosAdminDB = [];
+  let etapaAtual = 1;
+
+  const estado = {
+    responsavel: "",
+    grupo: "",
+    produto: "",
+    validadeDias: "",
+    conservacao: "",
+    dataProducao: "",
+    horaProducao: "",
+    quantidade: "1",
+    lote: "",
+    observacao: ""
+  };
+
+  const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
+
+  const usuariosAdmin = [
+    { nome: "Marcelo", email: "marcelo@eatkitchen.com", perfil: "Admin geral", unidade: "CAIS", status: "Ativo" },
+    { nome: "Operação Dinarte", email: "dinarte@eatkitchen.com", perfil: "Operador", unidade: "DINARTE", status: "Ativo" }
+  ];
+
+  const unidadesAdmin = [
+    { nome: "CAIS", impressora: "ZD220 CAIS", host: "raspberry-cais.local", status: "Ativa" },
+    { nome: "DINARTE", impressora: "ZD220 DINARTE", host: "raspberry-dinarte.local", status: "Ativa" }
+  ];
+
+  const pageTitles = {
+    operacao: "Painel operacional de geração de etiquetas",
+    produtos: "Cadastro interno de produtos",
+    usuarios: "Gestão de usuários e perfis",
+    unidades: "Gestão de unidades, Raspberry e impressoras",
+    visao: "Mapa geral da próxima fase do sistema"
+  };
+
+  function qs(id) {
+    return document.getElementById(id);
+  }
+
+  function showStatus(id, type, message) {
+    const box = qs(id);
+    box.className = "status-box show " + type;
+    box.textContent = message;
+  }
+
+  function clearStatus(id) {
+    const box = qs(id);
+    if (!box) return;
+    box.className = "status-box";
+    box.textContent = "";
+  }
+
+  function mostrarStatus(tipo, mensagem) {
+    showStatus("statusBox", tipo, mensagem);
+  }
+
+  function limparStatus() {
+    clearStatus("statusBox");
+  }
+
+  function removerAcentos(texto) {
+    if (!texto) return "";
+    const mapa = {
+      "á":"a","à":"a","â":"a","ã":"a","ä":"a","Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A",
+      "é":"e","è":"e","ê":"e","ë":"e","É":"E","È":"E","Ê":"E","Ë":"E",
+      "í":"i","ì":"i","î":"i","ï":"i","Í":"I","Ì":"I","Î":"I","Ï":"I",
+      "ó":"o","ò":"o","ô":"o","õ":"o","ö":"o","Ó":"O","Ò":"O","Ô":"O","Õ":"O","Ö":"O",
+      "ú":"u","ù":"u","û":"u","ü":"u","Ú":"U","Ù":"U","Û":"U","Ü":"U",
+      "ç":"c","Ç":"C"
     };
+    return String(texto).replace(/[^\u0000-\u007E]/g, letra => mapa[letra] || letra);
+  }
 
-    const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
+  function preencherDataHoraAtual() {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    const horas = String(hoje.getHours()).padStart(2, "0");
+    const minutos = String(hoje.getMinutes()).padStart(2, "0");
 
-    const usuariosAdmin = [
-      { nome: "Marcelo", email: "marcelo@eatkitchen.com", perfil: "Admin geral", unidade: "CAIS", status: "Ativo" },
-      { nome: "Operação Dinarte", email: "dinarte@eatkitchen.com", perfil: "Operador", unidade: "DINARTE", status: "Ativo" }
-    ];
+    estado.dataProducao = `${ano}-${mes}-${dia}`;
+    estado.horaProducao = `${horas}:${minutos}`;
 
-    const unidadesAdmin = [
-      { nome: "CAIS", impressora: "ZD220 CAIS", host: "raspberry-cais.local", status: "Ativa" },
-      { nome: "DINARTE", impressora: "ZD220 DINARTE", host: "raspberry-dinarte.local", status: "Ativa" }
-    ];
+    qs("dataProducao").value = estado.dataProducao;
+    qs("horaProducao").value = estado.horaProducao;
+  }
 
-    const pageTitles = {
-      operacao: "Painel operacional de geração de etiquetas",
-      produtos: "Cadastro interno de produtos",
-      usuarios: "Gestão de usuários e perfis",
-      unidades: "Gestão de unidades, Raspberry e impressoras",
-      visao: "Mapa geral da próxima fase do sistema"
-    };
+  function formatarDataBR(dataISO) {
+    if (!dataISO) return "-";
+    const [ano, mes, dia] = dataISO.split("-");
+    return `${dia}/${mes}/${ano}`;
+  }
 
-    function qs(id) { return document.getElementById(id); }
+  function calcularValidade(dataISO, dias) {
+    if (!dataISO || !dias) return "-";
+    const data = new Date(dataISO + "T00:00:00");
+    data.setDate(data.getDate() + Number(dias));
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  }
 
-    function showStatus(id, type, message) {
-      const box = qs(id);
-      box.className = "status-box show " + type;
-      box.textContent = message;
+  function atualizarUIEtapa() {
+    for (let i = 1; i <= 5; i++) {
+      qs("step" + i).classList.toggle("active", i === etapaAtual);
+      qs("progress" + i).classList.toggle("active", i <= etapaAtual);
     }
 
-    function clearStatus(id) {
-      const box = qs(id);
-      if (!box) return;
-      box.className = "status-box";
-      box.textContent = "";
+    qs("stepChip").textContent = "Etapa " + etapaAtual + " de 5";
+    qs("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
+    qs("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
+    qs("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
+
+    atualizarResumoLateral();
+    atualizarPreviewFinal();
+  }
+
+  function validarEtapaAtual() {
+    if (etapaAtual === 1 && !estado.responsavel) {
+      mostrarStatus("error", "Selecione um responsável para continuar.");
+      return false;
     }
 
-    function mostrarStatus(tipo, mensagem) { showStatus("statusBox", tipo, mensagem); }
-    function limparStatus() { clearStatus("statusBox"); }
-
-    function removerAcentos(texto) {
-      if (!texto) return "";
-      const mapa = {
-        "á":"a","à":"a","â":"a","ã":"a","ä":"a","Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A",
-        "é":"e","è":"e","ê":"e","ë":"e","É":"E","È":"E","Ê":"E","Ë":"E",
-        "í":"i","ì":"i","î":"i","ï":"i","Í":"I","Ì":"I","Î":"I","Ï":"I",
-        "ó":"o","ò":"o","ô":"o","õ":"o","ö":"o","Ó":"O","Ò":"O","Ô":"O","Õ":"O","Ö":"O",
-        "ú":"u","ù":"u","û":"u","ü":"u","Ú":"U","Ù":"U","Û":"U","Ü":"U",
-        "ç":"c","Ç":"C"
-      };
-      return String(texto).replace(/[^\u0000-\u007E]/g, letra => mapa[letra] || letra);
+    if (etapaAtual === 2 && !estado.grupo) {
+      mostrarStatus("error", "Selecione um grupo para continuar.");
+      return false;
     }
 
-    function preencherDataHoraAtual() {
-      const hoje = new Date();
-      const ano = hoje.getFullYear();
-      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-      const dia = String(hoje.getDate()).padStart(2, "0");
-      const horas = String(hoje.getHours()).padStart(2, "0");
-      const minutos = String(hoje.getMinutes()).padStart(2, "0");
-      estado.dataProducao = `${ano}-${mes}-${dia}`;
-      estado.horaProducao = `${horas}:${minutos}`;
-      qs("dataProducao").value = estado.dataProducao;
-      qs("horaProducao").value = estado.horaProducao;
+    if (etapaAtual === 3 && !estado.produto) {
+      mostrarStatus("error", "Selecione um produto para continuar.");
+      return false;
     }
 
-    function formatarDataBR(dataISO) {
-      if (!dataISO) return "-";
-      const [ano, mes, dia] = dataISO.split("-");
-      return `${dia}/${mes}/${ano}`;
+    if (etapaAtual === 4 && !estado.validadeDias) {
+      mostrarStatus("error", "Selecione uma validade para continuar.");
+      return false;
     }
 
-    function calcularValidade(dataISO, dias) {
-      if (!dataISO || !dias) return "-";
-      const data = new Date(dataISO + "T00:00:00");
-      data.setDate(data.getDate() + Number(dias));
-      const dia = String(data.getDate()).padStart(2, "0");
-      const mes = String(data.getMonth() + 1).padStart(2, "0");
-      const ano = data.getFullYear();
-      return `${dia}/${mes}/${ano}`;
-    }
+    return true;
+  }
 
-    function atualizarUIEtapa() {
-      for (let i = 1; i <= 5; i++) {
-        qs("step" + i).classList.toggle("active", i === etapaAtual);
-        qs("progress" + i).classList.toggle("active", i <= etapaAtual);
-      }
-      qs("stepChip").textContent = "Etapa " + etapaAtual + " de 5";
-      qs("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
-      qs("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
-      qs("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
-      atualizarResumoLateral();
-      atualizarPreviewFinal();
-    }
+  function proximaEtapa() {
+    limparStatus();
+    if (!validarEtapaAtual()) return;
 
-    function validarEtapaAtual() {
-      if (etapaAtual === 1 && !estado.responsavel) return mostrarStatus("error", "Selecione um responsável para continuar."), false;
-      if (etapaAtual === 2 && !estado.grupo) return mostrarStatus("error", "Selecione um grupo para continuar."), false;
-      if (etapaAtual === 3 && !estado.produto) return mostrarStatus("error", "Selecione um produto para continuar."), false;
-      if (etapaAtual === 4 && !estado.validadeDias) return mostrarStatus("error", "Selecione uma validade para continuar."), false;
-      return true;
-    }
-
-    function proximaEtapa() { limparStatus(); if (validarEtapaAtual() && etapaAtual < 5) { etapaAtual++; atualizarUIEtapa(); } }
-    function voltarEtapa() { limparStatus(); if (etapaAtual > 1) { etapaAtual--; atualizarUIEtapa(); } }
-
-    function reiniciarFluxo() {
-      estado.responsavel = "";
-      estado.grupo = "";
-      estado.produto = "";
-      estado.validadeDias = "";
-      estado.conservacao = "";
-      estado.quantidade = "1";
-      estado.lote = "";
-      estado.observacao = "";
-      etapaAtual = 1;
-      preencherDataHoraAtual();
-      qs("quantidade").value = "1";
-      qs("lote").value = "";
-      qs("observacao").value = "";
-      qs("conservacao").value = "";
-      qs("buscaProduto").value = "";
-      renderResponsaveis();
-      renderGrupos();
-      renderProdutos();
-      renderValidades();
+    if (etapaAtual < 5) {
+      etapaAtual++;
       atualizarUIEtapa();
-      limparStatus();
+    }
+  }
+
+  function voltarEtapa() {
+    limparStatus();
+    if (etapaAtual > 1) {
+      etapaAtual--;
+      atualizarUIEtapa();
+    }
+  }
+
+  function reiniciarFluxo() {
+    estado.responsavel = "";
+    estado.grupo = "";
+    estado.produto = "";
+    estado.validadeDias = "";
+    estado.conservacao = "";
+    estado.quantidade = "1";
+    estado.lote = "";
+    estado.observacao = "";
+    etapaAtual = 1;
+
+    preencherDataHoraAtual();
+
+    qs("quantidade").value = "1";
+    qs("lote").value = "";
+    qs("observacao").value = "";
+    qs("conservacao").value = "";
+    qs("buscaProduto").value = "";
+
+    renderResponsaveis();
+    renderGrupos();
+    renderProdutos();
+    renderValidades();
+    atualizarUIEtapa();
+    limparStatus();
+  }
+
+  function atualizarResumoLateral() {
+    qs("sideResponsavel").textContent = estado.responsavel || "-";
+    qs("sideGrupo").textContent = estado.grupo || "-";
+    qs("sideProduto").textContent = estado.produto || "-";
+    qs("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+    qs("sideConservacao").textContent = estado.conservacao || "-";
+    qs("sideData").textContent = formatarDataBR(estado.dataProducao);
+    qs("sideHora").textContent = estado.horaProducao || "-";
+    qs("sideQuantidade").textContent = estado.quantidade || "1";
+    qs("sideLote").textContent = estado.lote && estado.lote.trim() ? estado.lote : "-";
+  }
+
+  function atualizarPreviewFinal() {
+    qs("pvProduto").textContent = estado.produto || "-";
+    qs("pvBadge").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+    qs("pvResponsavel").textContent = estado.responsavel || "-";
+    qs("pvGrupo").textContent = estado.grupo || "-";
+    qs("pvData").textContent = formatarDataBR(estado.dataProducao);
+    qs("pvHora").textContent = estado.horaProducao || "-";
+    qs("pvConservacao").textContent = estado.conservacao || "-";
+    qs("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
+    qs("pvQuantidade").textContent = estado.quantidade || "1";
+
+    const loteBox = qs("pvLoteBox");
+    if (estado.lote && estado.lote.trim()) {
+      qs("pvLote").textContent = estado.lote;
+      loteBox.style.display = "block";
+    } else {
+      qs("pvLote").textContent = "";
+      loteBox.style.display = "none";
     }
 
-    function atualizarResumoLateral() {
-      qs("sideResponsavel").textContent = estado.responsavel || "-";
-      qs("sideGrupo").textContent = estado.grupo || "-";
-      qs("sideProduto").textContent = estado.produto || "-";
-      qs("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
-      qs("sideConservacao").textContent = estado.conservacao || "-";
-      qs("sideData").textContent = formatarDataBR(estado.dataProducao);
-      qs("sideHora").textContent = estado.horaProducao || "-";
-      qs("sideQuantidade").textContent = estado.quantidade || "1";
-      qs("sideLote").textContent = estado.lote && estado.lote.trim() ? estado.lote : "-";
+    const obsBox = qs("pvObsBox");
+    if (estado.observacao && estado.observacao.trim()) {
+      qs("pvObservacao").textContent = estado.observacao;
+      obsBox.style.display = "block";
+    } else {
+      qs("pvObservacao").textContent = "";
+      obsBox.style.display = "none";
     }
+  }
 
-    function atualizarPreviewFinal() {
-      qs("pvProduto").textContent = estado.produto || "-";
-      qs("pvBadge").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
-      qs("pvResponsavel").textContent = estado.responsavel || "-";
-      qs("pvGrupo").textContent = estado.grupo || "-";
-      qs("pvData").textContent = formatarDataBR(estado.dataProducao);
-      qs("pvHora").textContent = estado.horaProducao || "-";
-      qs("pvConservacao").textContent = estado.conservacao || "-";
-      qs("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
-      qs("pvQuantidade").textContent = estado.quantidade || "1";
-      const loteBox = qs("pvLoteBox");
-      if (estado.lote && estado.lote.trim()) { qs("pvLote").textContent = estado.lote; loteBox.style.display = "block"; } else { qs("pvLote").textContent = ""; loteBox.style.display = "none"; }
-      const obsBox = qs("pvObsBox");
-      if (estado.observacao && estado.observacao.trim()) { qs("pvObservacao").textContent = estado.observacao; obsBox.style.display = "block"; } else { qs("pvObservacao").textContent = ""; obsBox.style.display = "none"; }
-    }
+  function criarCard(texto, selecionado, onClick) {
+    const card = document.createElement("div");
+    card.className = "select-card" + (selecionado ? " selected" : "");
+    card.textContent = texto;
+    card.onclick = onClick;
+    return card;
+  }
 
-    function criarCard(texto, selecionado, onClick) {
-      const card = document.createElement("div");
-      card.className = "select-card" + (selecionado ? " selected" : "");
-      card.textContent = texto;
-      card.onclick = onClick;
-      return card;
-    }
+  function renderResponsaveis() {
+    const container = qs("responsaveisCards");
+    container.innerHTML = "";
 
-    function renderResponsaveis() {
-      const container = qs("responsaveisCards");
-      container.innerHTML = "";
-      responsaveis.forEach(nome => {
-        container.appendChild(criarCard(nome, estado.responsavel === nome, () => {
+    responsaveis.forEach(nome => {
+      container.appendChild(
+        criarCard(nome, estado.responsavel === nome, () => {
           estado.responsavel = nome;
-          renderResponsaveis(); atualizarResumoLateral(); limparStatus();
-        }));
-      });
+          renderResponsaveis();
+          atualizarResumoLateral();
+          limparStatus();
+        })
+      );
+    });
+  }
+
+  function getGruposUnicos() {
+    return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }
+
+  function renderGrupos() {
+    const container = qs("gruposCards");
+    container.innerHTML = "";
+
+    getGruposUnicos().forEach(grupo => {
+      container.appendChild(
+        criarCard(grupo, estado.grupo === grupo, () => {
+          estado.grupo = grupo;
+          estado.produto = "";
+          estado.validadeDias = "";
+          estado.conservacao = "";
+          qs("conservacao").value = "";
+          qs("buscaProduto").value = "";
+          renderGrupos();
+          renderProdutos();
+          renderValidades();
+          atualizarResumoLateral();
+          limparStatus();
+        })
+      );
+    });
+  }
+
+  function getProdutosFiltrados() {
+    let lista = produtosCache;
+
+    if (estado.grupo) {
+      lista = lista.filter(item => item.categoria === estado.grupo);
     }
 
-    function getGruposUnicos() {
-      return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+    const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+    const busca = qs("buscaProduto").value.trim().toLowerCase();
+    if (!busca) return nomes;
+
+    return nomes.filter(nome => nome.toLowerCase().includes(busca));
+  }
+
+  function renderProdutos() {
+    const container = qs("produtosCards");
+    container.innerHTML = "";
+
+    const produtos = getProdutosFiltrados();
+
+    if (!estado.grupo) {
+      container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
+      return;
     }
 
-    function renderGrupos() {
-      const container = qs("gruposCards");
-      container.innerHTML = "";
-      getGruposUnicos().forEach(grupo => {
-        container.appendChild(criarCard(grupo, estado.grupo === grupo, () => {
-          estado.grupo = grupo; estado.produto = ""; estado.validadeDias = ""; estado.conservacao = "";
-          qs("conservacao").value = ""; qs("buscaProduto").value = "";
-          renderGrupos(); renderProdutos(); renderValidades(); atualizarResumoLateral(); limparStatus();
-        }));
-      });
+    if (!produtos.length) {
+      container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
+      return;
     }
 
-    function getProdutosFiltrados() {
-      let lista = produtosCache;
-      if (estado.grupo) lista = lista.filter(item => item.categoria === estado.grupo);
-      const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
-      const busca = qs("buscaProduto").value.trim().toLowerCase();
-      return !busca ? nomes : nomes.filter(nome => nome.toLowerCase().includes(busca));
+    produtos.forEach(produto => {
+      container.appendChild(
+        criarCard(produto, estado.produto === produto, () => {
+          estado.produto = produto;
+          estado.validadeDias = "";
+          estado.conservacao = "";
+          qs("conservacao").value = "";
+          renderProdutos();
+          renderValidades();
+          atualizarResumoLateral();
+          limparStatus();
+        })
+      );
+    });
+  }
+
+  function getValidadesDoProduto() {
+    if (!estado.produto) return [];
+
+    let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
+
+    if (estado.grupo) {
+      encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
     }
 
-    function renderProdutos() {
-      const container = qs("produtosCards");
-      container.innerHTML = "";
-      const produtos = getProdutosFiltrados();
-      if (!estado.grupo) return container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
-      if (!produtos.length) return container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
-      produtos.forEach(produto => {
-        container.appendChild(criarCard(produto, estado.produto === produto, () => {
-          estado.produto = produto; estado.validadeDias = ""; estado.conservacao = ""; qs("conservacao").value = "";
-          renderProdutos(); renderValidades(); atualizarResumoLateral(); limparStatus();
-        }));
-      });
+    return [...new Set(
+      encontrados
+        .map(item => item.validade_dias)
+        .filter(v => v !== null && v !== undefined && v !== "")
+        .map(v => String(v).trim())
+    )].sort((a, b) => Number(a) - Number(b));
+  }
+
+  function buscarConservacaoAtual() {
+    if (!estado.produto || !estado.validadeDias) return "";
+
+    let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
+
+    if (estado.grupo) {
+      encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
     }
 
-    function getValidadesDoProduto() {
-      if (!estado.produto) return [];
-      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
-      if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
-      return [...new Set(encontrados.map(item => item.validade_dias).filter(v => v !== null && v !== undefined && v !== "").map(v => String(v).trim()))].sort((a,b) => Number(a) - Number(b));
+    encontrados = encontrados.filter(
+      item => String(item.validade_dias).trim() === String(estado.validadeDias).trim()
+    );
+
+    if (!encontrados.length) return "";
+
+    return encontrados[0].conservacao || "";
+  }
+
+  function renderValidades() {
+    const container = qs("validadesCards");
+    const hint = qs("conservacaoHint");
+    container.innerHTML = "";
+    hint.textContent = "";
+
+    if (!estado.produto) {
+      container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
+      return;
     }
 
-    function buscarConservacaoAtual() {
-      if (!estado.produto || !estado.validadeDias) return "";
-      let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
-      if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
-      encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(estado.validadeDias).trim());
-      return encontrados.length ? (encontrados[0].conservacao || "") : "";
+    const validades = getValidadesDoProduto();
+
+    if (!validades.length) {
+      container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
+      return;
     }
 
-    function renderValidades() {
-      const container = qs("validadesCards");
-      const hint = qs("conservacaoHint");
-      container.innerHTML = ""; hint.textContent = "";
-      if (!estado.produto) return container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
-      const validades = getValidadesDoProduto();
-      if (!validades.length) return container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
-      validades.forEach(validade => {
-        container.appendChild(criarCard(validade + " dia(s)", estado.validadeDias === validade, () => {
-          estado.validadeDias = validade; estado.conservacao = buscarConservacaoAtual(); qs("conservacao").value = estado.conservacao;
-          renderValidades(); atualizarResumoLateral(); atualizarPreviewFinal(); limparStatus();
-        }));
-      });
-      if (estado.conservacao) hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
+    validades.forEach(validade => {
+      container.appendChild(
+        criarCard(validade + " dia(s)", estado.validadeDias === validade, () => {
+          estado.validadeDias = validade;
+          estado.conservacao = buscarConservacaoAtual();
+          qs("conservacao").value = estado.conservacao;
+          renderValidades();
+          atualizarResumoLateral();
+          atualizarPreviewFinal();
+          limparStatus();
+        })
+      );
+    });
+
+    if (estado.conservacao) {
+      hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
     }
+  }
 
-    async function carregarProdutos() {
-      const { data, error } = await supabaseClient.from("produtos").select("*").order("nome_produto", { ascending: true });
-      if (error) {
-        console.error("Erro ao buscar produtos:", JSON.stringify(error, null, 2));
-        mostrarStatus("error", "Erro ao carregar produtos.");
-        return;
-      }
-      produtosCache = data || [];
-      renderGrupos(); renderProdutos(); renderValidades();
-    }
-
-    async function gerarImpressao() {
-      limparStatus();
-      estado.dataProducao = qs("dataProducao").value;
-      estado.horaProducao = qs("horaProducao").value;
-      estado.quantidade = qs("quantidade").value;
-      estado.lote = qs("lote").value;
-      estado.observacao = qs("observacao").value;
-      estado.conservacao = qs("conservacao").value;
-      atualizarResumoLateral(); atualizarPreviewFinal();
-
-      if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) {
-        mostrarStatus("error", "Preencha todas as etapas obrigatórias antes de imprimir.");
-        return;
-      }
-
-      const payloadBanco = {
-        grupo_produto: removerAcentos(estado.grupo),
-        nome_produto: removerAcentos(estado.produto),
-        opcao_validade: Number(estado.validadeDias),
-        data_producao: estado.dataProducao,
-        hora_producao: estado.horaProducao,
-        quantidade_etiquetas: Number(estado.quantidade || 1),
-        lote_manual: removerAcentos(estado.lote) || null,
-        conservacao: removerAcentos(estado.conservacao) || null,
-        observacao_padrao: removerAcentos(estado.observacao) || null,
-        status_impressao: "pendente"
-      };
-
-      try {
-        const { error } = await supabaseClient.from("solicitacoes_impressao").insert([payloadBanco]);
-        if (error) {
-          console.error("Erro ao salvar impressão no banco:", error);
-          mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
-          return;
-        }
-        mostrarStatus("success", "Solicitação enviada para a fila com sucesso.");
-      } catch (erro) {
-        console.error("Erro geral:", erro);
-        mostrarStatus("error", "Erro ao gerar impressão.");
-      }
-    }
-
-    async function carregarProdutosAdmin() {
-      clearStatus("statusProdutos");
-
-      const { data, error } = await supabaseClient
-        .from("produtos_admin")
-        .select(`
+  async function carregarProdutosOperacao() {
+    const { data, error } = await supabaseClient
+      .from("produtos_admin")
+      .select(`
+        id,
+        nome_produto,
+        categoria,
+        status,
+        unidade,
+        produto_validades (
           id,
-          nome_produto,
-          categoria,
-          status,
-          unidade,
-          produto_validades (
-            id,
-            validade_dias,
-            conservacao
-          )
-        `)
-        .order("nome_produto", { ascending: true });
+          validade_dias,
+          conservacao
+        )
+      `)
+      .eq("status", "Ativo")
+      .order("nome_produto", { ascending: true });
+
+    if (error) {
+      console.error("Erro ao carregar produtos da operação:", error);
+      mostrarStatus("error", "Erro ao carregar produtos.");
+      return;
+    }
+
+    const listaAchatada = [];
+
+    (data || []).forEach(produto => {
+      const validades = produto.produto_validades || [];
+
+      validades.forEach(validade => {
+        listaAchatada.push({
+          categoria: produto.categoria,
+          nome_produto: produto.nome_produto,
+          validade_dias: validade.validade_dias,
+          conservacao: validade.conservacao,
+          unidade: produto.unidade
+        });
+      });
+    });
+
+    produtosCache = listaAchatada;
+    renderGrupos();
+    renderProdutos();
+    renderValidades();
+  }
+
+  async function carregarProdutosAdmin() {
+    clearStatus("statusProdutos");
+
+    const { data, error } = await supabaseClient
+      .from("produtos_admin")
+      .select(`
+        id,
+        nome_produto,
+        categoria,
+        status,
+        unidade,
+        produto_validades (
+          id,
+          validade_dias,
+          conservacao
+        )
+      `)
+      .order("nome_produto", { ascending: true });
+
+    if (error) {
+      console.error("Erro ao carregar produtos admin:", error);
+      showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
+      return;
+    }
+
+    produtosAdminDB = data || [];
+    renderProdutosAdminDB();
+  }
+
+  async function gerarImpressao() {
+    limparStatus();
+
+    estado.dataProducao = qs("dataProducao").value;
+    estado.horaProducao = qs("horaProducao").value;
+    estado.quantidade = qs("quantidade").value;
+    estado.lote = qs("lote").value;
+    estado.observacao = qs("observacao").value;
+    estado.conservacao = qs("conservacao").value;
+
+    atualizarResumoLateral();
+    atualizarPreviewFinal();
+
+    if (
+      !estado.responsavel ||
+      !estado.grupo ||
+      !estado.produto ||
+      !estado.validadeDias ||
+      !estado.dataProducao ||
+      !estado.horaProducao
+    ) {
+      mostrarStatus("error", "Preencha todas as etapas obrigatórias antes de imprimir.");
+      return;
+    }
+
+    const payloadBanco = {
+      grupo_produto: removerAcentos(estado.grupo),
+      nome_produto: removerAcentos(estado.produto),
+      opcao_validade: Number(estado.validadeDias),
+      data_producao: estado.dataProducao,
+      hora_producao: estado.horaProducao,
+      quantidade_etiquetas: Number(estado.quantidade || 1),
+      lote_manual: removerAcentos(estado.lote) || null,
+      conservacao: removerAcentos(estado.conservacao) || null,
+      observacao_padrao: removerAcentos(estado.observacao) || null,
+      status_impressao: "pendente"
+    };
+
+    try {
+      const { error } = await supabaseClient
+        .from("solicitacoes_impressao")
+        .insert([payloadBanco]);
 
       if (error) {
-        console.error("Erro ao carregar produtos admin:", error);
-        showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
+        console.error("Erro ao salvar impressão no banco:", error);
+        mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
         return;
       }
 
-      produtosAdminDB = data || [];
-      renderProdutosAdminDB();
+      mostrarStatus("success", "Solicitação enviada para a fila com sucesso.");
+    } catch (erro) {
+      console.error("Erro geral:", erro);
+      mostrarStatus("error", "Erro ao gerar impressão.");
     }
+  }
 
-    function renderProdutosAdminDB() {
-      const body = qs("produtosAdminBody");
+  function renderProdutosAdminDB() {
+    const body = qs("produtosAdminBody");
 
-      if (!produtosAdminDB.length) {
-        body.innerHTML = `
-          <tr>
-            <td colspan="6">Nenhum produto cadastrado.</td>
-          </tr>
-        `;
-        return;
-      }
-
-      body.innerHTML = produtosAdminDB.map(item => {
-        const primeiraValidade = item.produto_validades?.[0];
-
-        return `
-          <tr>
-            <td>${item.nome_produto}</td>
-            <td>${item.categoria}</td>
-            <td>${primeiraValidade ? primeiraValidade.validade_dias + " dia(s)" : "-"}</td>
-            <td>${primeiraValidade ? primeiraValidade.conservacao : "-"}</td>
-            <td>${item.unidade}</td>
-            <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function renderUsuariosAdmin() {
-      const body = qs("usuariosAdminBody");
-      body.innerHTML = usuariosAdmin.map(item => `
+    if (!produtosAdminDB.length) {
+      body.innerHTML = `
         <tr>
-          <td>${item.nome}</td>
-          <td>${item.email}</td>
-          <td>${item.perfil}</td>
+          <td colspan="6">Nenhum produto cadastrado.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    body.innerHTML = produtosAdminDB.map(item => {
+      const primeiraValidade = item.produto_validades?.[0];
+
+      return `
+        <tr>
+          <td>${item.nome_produto}</td>
+          <td>${item.categoria}</td>
+          <td>${primeiraValidade ? primeiraValidade.validade_dias + " dia(s)" : "-"}</td>
+          <td>${primeiraValidade ? primeiraValidade.conservacao : "-"}</td>
           <td>${item.unidade}</td>
           <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
         </tr>
-      `).join("");
+      `;
+    }).join("");
+  }
+
+  function renderUsuariosAdmin() {
+    const body = qs("usuariosAdminBody");
+    body.innerHTML = usuariosAdmin.map(item => `
+      <tr>
+        <td>${item.nome}</td>
+        <td>${item.email}</td>
+        <td>${item.perfil}</td>
+        <td>${item.unidade}</td>
+        <td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td>
+      </tr>
+    `).join("");
+  }
+
+  function renderUnidadesAdmin() {
+    const body = qs("unidadesAdminBody");
+    body.innerHTML = unidadesAdmin.map(item => `
+      <tr>
+        <td>${item.nome}</td>
+        <td>${item.impressora}</td>
+        <td>${item.host}</td>
+        <td><span class="chip ${item.status === 'Ativa' ? 'dark' : ''}">${item.status}</span></td>
+      </tr>
+    `).join("");
+  }
+
+  function limparFormProduto() {
+    qs("produtoNome").value = "";
+    qs("produtoGrupo").value = "";
+    qs("produtoValidade").value = "";
+    qs("produtoConservacao").value = "";
+    qs("produtoUnidade").value = "CAIS";
+    qs("produtoStatus").value = "Ativo";
+    clearStatus("statusProdutos");
+  }
+
+  async function salvarProdutoReal() {
+    clearStatus("statusProdutos");
+
+    const nome = qs("produtoNome").value.trim();
+    const grupo = qs("produtoGrupo").value.trim();
+    const validade = qs("produtoValidade").value.trim();
+    const conservacao = qs("produtoConservacao").value;
+    const unidade = qs("produtoUnidade").value;
+    const status = qs("produtoStatus").value;
+
+    if (!nome || !grupo || !validade || !conservacao) {
+      showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
+      return;
     }
 
-    function renderUnidadesAdmin() {
-      const body = qs("unidadesAdminBody");
-      body.innerHTML = unidadesAdmin.map(item => `
-        <tr>
-          <td>${item.nome}</td>
-          <td>${item.impressora}</td>
-          <td>${item.host}</td>
-          <td><span class="chip ${item.status === 'Ativa' ? 'dark' : ''}">${item.status}</span></td>
-        </tr>
-      `).join("");
-    }
+    try {
+      const { data: produtoCriado, error: erroProduto } = await supabaseClient
+        .from("produtos_admin")
+        .insert([
+          {
+            nome_produto: nome,
+            categoria: grupo,
+            status: status,
+            unidade: unidade
+          }
+        ])
+        .select()
+        .single();
 
-    function limparFormProduto() {
-      qs("produtoNome").value = "";
-      qs("produtoGrupo").value = "";
-      qs("produtoValidade").value = "";
-      qs("produtoConservacao").value = "";
-      qs("produtoUnidade").value = "CAIS";
-      qs("produtoStatus").value = "Ativo";
-      clearStatus("statusProdutos");
-    }
-
-    async function salvarProdutoReal() {
-      clearStatus("statusProdutos");
-
-      const nome = qs("produtoNome").value.trim();
-      const grupo = qs("produtoGrupo").value.trim();
-      const validade = qs("produtoValidade").value.trim();
-      const conservacao = qs("produtoConservacao").value;
-      const unidade = qs("produtoUnidade").value;
-      const status = qs("produtoStatus").value;
-
-      if (!nome || !grupo || !validade || !conservacao) {
-        showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
+      if (erroProduto) {
+        console.error("Erro ao criar produto:", erroProduto);
+        showStatus("statusProdutos", "error", "Erro ao salvar produto.");
         return;
       }
 
-      try {
-        const { data: produtoCriado, error: erroProduto } = await supabaseClient
-          .from("produtos_admin")
-          .insert([
-            {
-              nome_produto: nome,
-              categoria: grupo,
-              status: status,
-              unidade: unidade
-            }
-          ])
-          .select()
-          .single();
+      const { error: erroValidade } = await supabaseClient
+        .from("produto_validades")
+        .insert([
+          {
+            produto_id: produtoCriado.id,
+            validade_dias: Number(validade),
+            conservacao: conservacao
+          }
+        ]);
 
-        if (erroProduto) {
-          console.error("Erro ao criar produto:", erroProduto);
-          showStatus("statusProdutos", "error", "Erro ao salvar produto.");
-          return;
-        }
-
-        const { error: erroValidade } = await supabaseClient
-          .from("produto_validades")
-          .insert([
-            {
-              produto_id: produtoCriado.id,
-              validade_dias: Number(validade),
-              conservacao: conservacao
-            }
-          ]);
-
-        if (erroValidade) {
-          console.error("Erro ao salvar validade:", erroValidade);
-          showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
-          return;
-        }
-
-        limparFormProduto();
-        showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
-        carregarProdutosAdmin();
-      } catch (err) {
-        console.error("Erro geral ao salvar produto:", err);
-        showStatus("statusProdutos", "error", "Erro inesperado ao salvar produto.");
+      if (erroValidade) {
+        console.error("Erro ao salvar validade:", erroValidade);
+        showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
+        return;
       }
+
+      limparFormProduto();
+      showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
+      carregarProdutosAdmin();
+      carregarProdutosOperacao();
+    } catch (err) {
+      console.error("Erro geral ao salvar produto:", err);
+      showStatus("statusProdutos", "error", "Erro inesperado ao salvar produto.");
+    }
+  }
+
+  function limparFormUsuario() {
+    qs("usuarioNome").value = "";
+    qs("usuarioEmail").value = "";
+    qs("usuarioPerfil").value = "Admin geral";
+    qs("usuarioUnidade").value = "CAIS";
+    qs("usuarioStatus").value = "Ativo";
+    clearStatus("statusUsuarios");
+  }
+
+  function salvarUsuarioDemo() {
+    const nome = qs("usuarioNome").value.trim();
+    const email = qs("usuarioEmail").value.trim();
+    const perfil = qs("usuarioPerfil").value;
+    const unidade = qs("usuarioUnidade").value;
+    const status = qs("usuarioStatus").value;
+
+    if (!nome || !email) {
+      return showStatus("statusUsuarios", "error", "Preencha nome e e-mail do usuário.");
     }
 
-    function limparFormUsuario() {
-      qs("usuarioNome").value = "";
-      qs("usuarioEmail").value = "";
-      qs("usuarioPerfil").value = "Admin geral";
-      qs("usuarioUnidade").value = "CAIS";
-      qs("usuarioStatus").value = "Ativo";
-      clearStatus("statusUsuarios");
+    usuariosAdmin.unshift({ nome, email, perfil, unidade, status });
+    renderUsuariosAdmin();
+    limparFormUsuario();
+    showStatus("statusUsuarios", "success", "Usuário adicionado no layout de demonstração.");
+  }
+
+  function limparFormUnidade() {
+    qs("unidadeNome").value = "";
+    qs("unidadeImpressora").value = "";
+    qs("unidadeHost").value = "";
+    qs("unidadeStatus").value = "Ativa";
+    qs("unidadeObs").value = "";
+    clearStatus("statusUnidades");
+  }
+
+  function salvarUnidadeDemo() {
+    const nome = qs("unidadeNome").value.trim();
+    const impressora = qs("unidadeImpressora").value.trim();
+    const host = qs("unidadeHost").value.trim();
+    const status = qs("unidadeStatus").value;
+
+    if (!nome || !impressora || !host) {
+      return showStatus("statusUnidades", "error", "Preencha unidade, impressora e host.");
     }
 
-    function salvarUsuarioDemo() {
-      const nome = qs("usuarioNome").value.trim();
-      const email = qs("usuarioEmail").value.trim();
-      const perfil = qs("usuarioPerfil").value;
-      const unidade = qs("usuarioUnidade").value;
-      const status = qs("usuarioStatus").value;
-      if (!nome || !email) return showStatus("statusUsuarios", "error", "Preencha nome e e-mail do usuário.");
-      usuariosAdmin.unshift({ nome, email, perfil, unidade, status });
-      renderUsuariosAdmin();
-      limparFormUsuario();
-      showStatus("statusUsuarios", "success", "Usuário adicionado no layout de demonstração.");
-    }
+    unidadesAdmin.unshift({ nome, impressora, host, status });
+    renderUnidadesAdmin();
+    limparFormUnidade();
+    showStatus("statusUnidades", "success", "Unidade adicionada no layout de demonstração.");
+  }
 
-    function limparFormUnidade() {
-      qs("unidadeNome").value = "";
-      qs("unidadeImpressora").value = "";
-      qs("unidadeHost").value = "";
-      qs("unidadeStatus").value = "Ativa";
-      qs("unidadeObs").value = "";
-      clearStatus("statusUnidades");
-    }
-
-    function salvarUnidadeDemo() {
-      const nome = qs("unidadeNome").value.trim();
-      const impressora = qs("unidadeImpressora").value.trim();
-      const host = qs("unidadeHost").value.trim();
-      const status = qs("unidadeStatus").value;
-      if (!nome || !impressora || !host) return showStatus("statusUnidades", "error", "Preencha unidade, impressora e host.");
-      unidadesAdmin.unshift({ nome, impressora, host, status });
-      renderUnidadesAdmin();
-      limparFormUnidade();
-      showStatus("statusUnidades", "success", "Unidade adicionada no layout de demonstração.");
-    }
-
-    function setActiveTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-      qs('panel-' + tab).classList.add('active');
-      qs('pageTitle').textContent = pageTitles[tab] || 'Sistema de Etiquetas Eat Kitchen';
-    }
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+  function setActiveTab(tab) {
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.tab === tab);
     });
 
-    qs("buscaProduto").addEventListener("input", renderProdutos);
-    qs("dataProducao").addEventListener("change", e => { estado.dataProducao = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
-    qs("horaProducao").addEventListener("change", e => { estado.horaProducao = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
-    qs("quantidade").addEventListener("input", e => { estado.quantidade = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
-    qs("lote").addEventListener("input", e => { estado.lote = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
-    qs("observacao").addEventListener("input", e => { estado.observacao = e.target.value; atualizarPreviewFinal(); });
+    document.querySelectorAll(".tab-panel").forEach(panel => {
+      panel.classList.remove("active");
+    });
 
-    preencherDataHoraAtual();
-    renderResponsaveis();
-    carregarProdutos();
-    atualizarUIEtapa();
-    carregarProdutosAdmin();
-    renderUsuariosAdmin();
-    renderUnidadesAdmin();
-  </script>
-</body>
-</html>
+    qs("panel-" + tab).classList.add("active");
+    qs("pageTitle").textContent = pageTitles[tab] || "Sistema de Etiquetas Eat Kitchen";
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
+  });
+
+  qs("buscaProduto").addEventListener("input", renderProdutos);
+
+  qs("dataProducao").addEventListener("change", e => {
+    estado.dataProducao = e.target.value;
+    atualizarResumoLateral();
+    atualizarPreviewFinal();
+  });
+
+  qs("horaProducao").addEventListener("change", e => {
+    estado.horaProducao = e.target.value;
+    atualizarResumoLateral();
+    atualizarPreviewFinal();
+  });
+
+  qs("quantidade").addEventListener("input", e => {
+    estado.quantidade = e.target.value;
+    atualizarResumoLateral();
+    atualizarPreviewFinal();
+  });
+
+  qs("lote").addEventListener("input", e => {
+    estado.lote = e.target.value;
+    atualizarResumoLateral();
+    atualizarPreviewFinal();
+  });
+
+  qs("observacao").addEventListener("input", e => {
+    estado.observacao = e.target.value;
+    atualizarPreviewFinal();
+  });
+
+  preencherDataHoraAtual();
+  renderResponsaveis();
+  carregarProdutosOperacao();
+  atualizarUIEtapa();
+  carregarProdutosAdmin();
+  renderUsuariosAdmin();
+  renderUnidadesAdmin();
+</script>
