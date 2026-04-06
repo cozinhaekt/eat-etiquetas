@@ -6,442 +6,645 @@
   <title>Sistema de Etiquetas Eat Kitchen</title>
 
   <style>
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f3f3f3;
-    color: #111111;
-  }
-
-  .topbar {
-    background: #111111;
-    color: #ffffff;
-    padding: 18px 22px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    border-bottom: 1px solid #2a2a2a;
-  }
-
-  .topbar-title {
-    font-size: 26px;
-    font-weight: bold;
-  }
-
-  .topbar-subtitle {
-    font-size: 13px;
-    opacity: 0.75;
-  }
-
-  .container {
-    max-width: 1180px;
-    margin: 24px auto;
-    padding: 0 16px 32px;
-  }
-
-  .layout {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  .card {
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-    padding: 22px;
-    border: 1px solid #dcdcdc;
-  }
-
-  .wizard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-  }
-
-  .wizard-title {
-    font-size: 26px;
-    font-weight: bold;
-    color: #111111;
-  }
-
-  .step-chip {
-    background: #efefef;
-    color: #222222;
-    border: 1px solid #d4d4d4;
-    border-radius: 999px;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-weight: bold;
-  }
-
-  .progress {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-bottom: 22px;
-  }
-
-  .progress-step {
-    height: 8px;
-    border-radius: 999px;
-    background: #d9d9d9;
-    transition: 0.2s ease;
-  }
-
-  .progress-step.active {
-    background: #111111;
-  }
-
-  .step-screen {
-    display: none;
-  }
-
-  .step-screen.active {
-    display: block;
-  }
-
-  .step-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin: 0 0 8px;
-    color: #111111;
-  }
-
-  .step-text {
-    margin: 0 0 18px;
-    color: #5a5a5a;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  .grid-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .grid-cards.products {
-    grid-template-columns: repeat(2, 1fr);
-    max-height: 430px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-
-  .select-card {
-    border: 1px solid #d9d9d9;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 16px 14px;
-    min-height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s ease;
-    font-weight: bold;
-    color: #111111;
-    user-select: none;
-  }
-
-  .select-card:hover {
-    transform: translateY(-1px);
-    border-color: #111111;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  .select-card.selected {
-    background: #111111;
-    color: #ffffff;
-    border-color: #111111;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 14px;
-  }
-
-  .field label {
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 6px;
-    color: #333333;
-  }
-
-  .field input,
-  .field select,
-  .field textarea {
-    border: 1px solid #cfcfcf;
-    border-radius: 12px;
-    padding: 12px 12px;
-    font-size: 14px;
-    background: #ffffff;
-    color: #111111;
-    transition: 0.2s ease;
-  }
-
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    outline: none;
-    border-color: #111111;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-  }
-
-  .search-box {
-    margin-bottom: 14px;
-  }
-
-  .search-box input {
-    width: 100%;
-  }
-
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-
-  .actions-left,
-  .actions-right {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    border: 1px solid transparent;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-
-  .btn:hover {
-    transform: translateY(-1px);
-  }
-
-  .btn.primary {
-    background: #111111;
-    color: #ffffff;
-    border-color: #111111;
-  }
-
-  .btn.secondary {
-    background: #2b2b2b;
-    color: #ffffff;
-    border-color: #2b2b2b;
-  }
-
-  .btn.light {
-    background: #f0f0f0;
-    color: #111111;
-    border-color: #d5d5d5;
-  }
-
-  .btn.success {
-    background: #000000;
-    color: #ffffff;
-    border-color: #000000;
-  }
-
-  .summary-card {
-    background: #f7f7f7;
-    border: 1px solid #dddddd;
-    border-radius: 16px;
-    padding: 18px;
-  }
-
-  .summary-title {
-    margin: 0 0 16px;
-    font-size: 22px;
-    font-weight: bold;
-    color: #111111;
-  }
-
-  .summary-product {
-    font-size: 34px;
-    font-weight: bold;
-    line-height: 1.05;
-    color: #111111;
-    margin-bottom: 14px;
-    word-break: break-word;
-  }
-
-  .summary-badge {
-    display: inline-block;
-    background: #111111;
-    color: #ffffff;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 18px;
-  }
-
-  .summary-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .summary-box {
-    background: #ffffff;
-    border: 1px solid #dcdcdc;
-    border-radius: 12px;
-    padding: 12px;
-  }
-
-  .summary-label {
-    font-size: 12px;
-    color: #666666;
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-
-  .summary-value {
-    font-size: 18px;
-    font-weight: bold;
-    color: #111111;
-    word-break: break-word;
-  }
-
-  .summary-extra {
-    margin-top: 10px;
-    display: grid;
-    gap: 10px;
-  }
-
-  .summary-extra-box {
-    background: #ffffff;
-    border: 1px solid #dcdcdc;
-    border-radius: 12px;
-    padding: 12px;
-  }
-
-  .aside-title {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 0 0 16px;
-    color: #111111;
-  }
-
-  .mini-summary {
-    display: grid;
-    gap: 10px;
-  }
-
-  .mini-item {
-    background: #f7f7f7;
-    border: 1px solid #dddddd;
-    border-radius: 12px;
-    padding: 12px;
-  }
-
-  .mini-label {
-    font-size: 12px;
-    color: #666666;
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-
-  .mini-value {
-    font-size: 18px;
-    font-weight: bold;
-    color: #111111;
-    word-break: break-word;
-  }
-
-  .status-box {
-    margin-top: 18px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    display: none;
-    border: 1px solid transparent;
-  }
-
-  .status-box.show {
-    display: block;
-  }
-
-  .status-box.success {
-    background: #f5f5f5;
-    border-color: #cfcfcf;
-    color: #111111;
-  }
-
-  .status-box.error {
-    background: #1a1a1a;
-    border-color: #000000;
-    color: #ffffff;
-  }
-
-  .hint {
-    font-size: 13px;
-    color: #5e5e5e;
-    margin-top: 10px;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 980px) {
-    .layout {
-      grid-template-columns: 1fr;
+    * {
+      box-sizing: border-box;
     }
 
-    .grid-cards,
-    .grid-cards.products,
-    .summary-grid,
-    .field-row {
-      grid-template-columns: 1fr;
+    :root {
+      --bg: #f3f3f3;
+      --surface: #ffffff;
+      --surface-soft: #f7f7f7;
+      --border: #d8d8d8;
+      --border-strong: #bfbfbf;
+      --text: #111111;
+      --text-soft: #5f5f5f;
+      --text-muted: #7a7a7a;
+      --black: #111111;
+      --black-2: #1f1f1f;
+      --white: #ffffff;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 12px;
     }
 
-    .summary-product {
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--black);
+      color: var(--white);
+      padding: 18px 22px;
+      border-bottom: 1px solid #2c2c2c;
+    }
+
+    .topbar-row {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-title {
       font-size: 28px;
+      font-weight: bold;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .topbar-subtitle {
+      font-size: 13px;
+      opacity: 0.78;
+    }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-badge {
+      border: 1px solid #3a3a3a;
+      background: #1d1d1d;
+      color: var(--white);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+    }
+
+    .module-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .module-bar-row {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .module-tab {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .module-tab.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .module-tab.disabled {
+      background: #f7f7f7;
+      color: #5b5b5b;
+    }
+
+    .module-pill {
+      background: #ececec;
+      color: #444444;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .module-tab.active .module-pill {
+      background: #2f2f2f;
+      color: #ffffff;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 24px auto;
+      padding: 0 16px 34px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .page-note {
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      border: 1px solid var(--border);
+    }
+
+    .wizard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .wizard-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .step-chip {
+      background: #f0f0f0;
+      color: #222222;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .progress {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .progress-step {
+      height: 8px;
+      border-radius: 999px;
+      background: #dddddd;
+      transition: 0.2s ease;
+    }
+
+    .progress-step.active {
+      background: var(--black);
+    }
+
+    .step-screen {
+      display: none;
+    }
+
+    .step-screen.active {
+      display: block;
     }
 
     .step-title {
-      font-size: 24px;
+      font-size: 30px;
+      font-weight: bold;
+      margin: 0 0 8px;
+      color: var(--text);
     }
-  }
-</style>
+
+    .step-text {
+      margin: 0 0 18px;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .grid-cards.products {
+      grid-template-columns: repeat(2, 1fr);
+      max-height: 430px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .select-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px 14px;
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: bold;
+      color: var(--text);
+      user-select: none;
+    }
+
+    .select-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--black);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .select-card.selected {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #333333;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      border: 1px solid #cfcfcf;
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--text);
+      transition: 0.2s ease;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-box {
+      margin-bottom: 14px;
+    }
+
+    .search-box input {
+      width: 100%;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .actions-left,
+    .actions-right {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .btn.secondary {
+      background: #2b2b2b;
+      color: var(--white);
+      border-color: #2b2b2b;
+    }
+
+    .btn.light {
+      background: #f0f0f0;
+      color: var(--text);
+      border-color: #d5d5d5;
+    }
+
+    .btn.success {
+      background: #000000;
+      color: #ffffff;
+      border-color: #000000;
+    }
+
+    .summary-card {
+      background: var(--surface-soft);
+      border: 1px solid #dddddd;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 6px;
+    }
+
+    .summary-title {
+      margin: 0 0 16px;
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .summary-product {
+      font-size: 34px;
+      font-weight: bold;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 14px;
+      word-break: break-word;
+    }
+
+    .summary-badge {
+      display: inline-block;
+      background: var(--black);
+      color: var(--white);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .summary-box {
+      background: var(--surface);
+      border: 1px solid #dcdcdc;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #666666;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .summary-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .summary-extra {
+      margin-top: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .summary-extra-box {
+      background: var(--surface);
+      border: 1px solid #dcdcdc;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .aside-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 0 16px;
+      color: var(--text);
+    }
+
+    .mini-summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-item {
+      background: var(--surface-soft);
+      border: 1px solid #dddddd;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .mini-label {
+      font-size: 12px;
+      color: #666666;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .mini-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .side-section {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .side-section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 0 10px;
+      color: var(--text);
+    }
+
+    .roadmap {
+      display: grid;
+      gap: 10px;
+    }
+
+    .roadmap-item {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .roadmap-step {
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .roadmap-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .status-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      display: none;
+      border: 1px solid transparent;
+    }
+
+    .status-box.show {
+      display: block;
+    }
+
+    .status-box.success {
+      background: #f5f5f5;
+      border-color: #cfcfcf;
+      color: var(--text);
+    }
+
+    .status-box.error {
+      background: #1a1a1a;
+      border-color: #000000;
+      color: var(--white);
+    }
+
+    .hint {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .hidden-module-panel {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-cards,
+      .grid-cards.products,
+      .summary-grid,
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-product {
+        font-size: 28px;
+      }
+
+      .step-title {
+        font-size: 24px;
+      }
+
+      .wizard-title {
+        font-size: 24px;
+      }
+
+      .topbar-title {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="topbar">
-    <div>
-      <div class="topbar-title">Sistema de Etiquetas Eat Kitchen</div>
-      <div class="topbar-subtitle">Fluxo operacional em etapas</div>
+    <div class="topbar-row">
+      <div>
+        <div class="topbar-title">Sistema de Etiquetas Eat Kitchen</div>
+        <div class="topbar-subtitle">Operação de impressão de etiquetas</div>
+      </div>
+
+      <div class="topbar-meta">
+        <div class="topbar-badge">MODO OPERAÇÃO</div>
+        <div class="topbar-badge">ESTRUTURA PRONTA PARA LOGIN / CASAS / ADMIN</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="module-bar">
+    <div class="module-bar-row">
+      <div class="module-tab active">
+        Operação
+        <span class="module-pill">Atual</span>
+      </div>
+
+      <div class="module-tab disabled">
+        Produtos
+        <span class="module-pill">Próxima fase</span>
+      </div>
+
+      <div class="module-tab disabled">
+        Usuários
+        <span class="module-pill">Próxima fase</span>
+      </div>
+
+      <div class="module-tab disabled">
+        Unidades
+        <span class="module-pill">Próxima fase</span>
+      </div>
     </div>
   </div>
 
   <div class="container">
+    <div class="page-header">
+      <div class="page-title">Painel operacional de geração de etiquetas</div>
+      <div class="page-note">Base pronta para crescer para múltiplas casas, múltiplos usuários e cadastro interno de produtos.</div>
+    </div>
+
     <div class="layout">
       <div class="card">
         <div class="wizard-header">
@@ -459,15 +662,13 @@
 
         <div class="step-screen active" id="step1">
           <h2 class="step-title">Selecionar responsável</h2>
-          <p class="step-text">Escolha quem está gerando a etiqueta nesta operação.</p>
-
+          <p class="step-text">Escolha quem está gerando a etiqueta nesta operação. Depois, esse campo será substituído por usuário logado.</p>
           <div class="grid-cards" id="responsaveisCards"></div>
         </div>
 
         <div class="step-screen" id="step2">
           <h2 class="step-title">Selecionar grupo</h2>
           <p class="step-text">Escolha o grupo do produto para filtrar os itens.</p>
-
           <div class="grid-cards" id="gruposCards"></div>
         </div>
 
@@ -487,7 +688,6 @@
           <p class="step-text">Escolha a validade disponível para este produto.</p>
 
           <div class="grid-cards" id="validadesCards"></div>
-
           <div class="hint" id="conservacaoHint"></div>
         </div>
 
@@ -561,12 +761,17 @@
               </div>
 
               <div class="summary-box">
-                <div class="summary-label">Validade</div>
+                <div class="summary-label">Validade final</div>
                 <div class="summary-value" id="pvValidade">-</div>
               </div>
             </div>
 
             <div class="summary-extra">
+              <div class="summary-extra-box" id="pvQuantidadeBox">
+                <div class="summary-label">Quantidade de etiquetas</div>
+                <div class="summary-value" id="pvQuantidade">1</div>
+              </div>
+
               <div class="summary-extra-box" id="pvLoteBox" style="display:none;">
                 <div class="summary-label">Lote</div>
                 <div class="summary-value" id="pvLote">-</div>
@@ -623,11 +828,59 @@
             <div class="mini-label">Conservação</div>
             <div class="mini-value" id="sideConservacao">-</div>
           </div>
+
+          <div class="mini-item">
+            <div class="mini-label">Data de produção</div>
+            <div class="mini-value" id="sideData">-</div>
+          </div>
+
+          <div class="mini-item">
+            <div class="mini-label">Hora</div>
+            <div class="mini-value" id="sideHora">-</div>
+          </div>
+
+          <div class="mini-item">
+            <div class="mini-label">Quantidade</div>
+            <div class="mini-value" id="sideQuantidade">1</div>
+          </div>
+
+          <div class="mini-item">
+            <div class="mini-label">Lote</div>
+            <div class="mini-value" id="sideLote">-</div>
+          </div>
         </div>
 
-        <p class="hint">
-          Nesta versão, o fluxo foi reorganizado em etapas. Na próxima fase, a gente encaixa login por casa, unidade e roteamento por Raspberry/impressora.
-        </p>
+        <div class="side-section">
+          <h4 class="side-section-title">Próximos passos do sistema</h4>
+
+          <div class="roadmap">
+            <div class="roadmap-item">
+              <div class="roadmap-step">Fase 1</div>
+              <div class="roadmap-text">Criar área Admin de Produtos dentro do próprio site.</div>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-step">Fase 2</div>
+              <div class="roadmap-text">Implementar login e perfis de acesso com admin e operador.</div>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-step">Fase 3</div>
+              <div class="roadmap-text">Separar casas/unidades e vincular usuários, produtos e impressoras por unidade.</div>
+            </div>
+
+            <div class="roadmap-item">
+              <div class="roadmap-step">Fase 4</div>
+              <div class="roadmap-text">Rotear fila por unidade para Raspberry e impressora da respectiva casa.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-section">
+          <p class="hint">
+            Nesta versão, a operação continua simples e funcional. O layout já foi preparado para crescer sem precisar refazer a base inteira depois.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -818,6 +1071,10 @@
       document.getElementById("sideProduto").textContent = estado.produto || "-";
       document.getElementById("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
       document.getElementById("sideConservacao").textContent = estado.conservacao || "-";
+      document.getElementById("sideData").textContent = formatarDataBR(estado.dataProducao);
+      document.getElementById("sideHora").textContent = estado.horaProducao || "-";
+      document.getElementById("sideQuantidade").textContent = estado.quantidade || "1";
+      document.getElementById("sideLote").textContent = estado.lote && estado.lote.trim() ? estado.lote : "-";
     }
 
     function atualizarPreviewFinal() {
@@ -829,6 +1086,7 @@
       document.getElementById("pvHora").textContent = estado.horaProducao || "-";
       document.getElementById("pvConservacao").textContent = estado.conservacao || "-";
       document.getElementById("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
+      document.getElementById("pvQuantidade").textContent = estado.quantidade || "1";
 
       const loteBox = document.getElementById("pvLoteBox");
       const loteText = document.getElementById("pvLote");
@@ -1052,6 +1310,7 @@
       estado.observacao = document.getElementById("observacao").value;
       estado.conservacao = document.getElementById("conservacao").value;
 
+      atualizarResumoLateral();
       atualizarPreviewFinal();
 
       if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) {
@@ -1094,20 +1353,25 @@
 
     document.getElementById("dataProducao").addEventListener("change", (e) => {
       estado.dataProducao = e.target.value;
+      atualizarResumoLateral();
       atualizarPreviewFinal();
     });
 
     document.getElementById("horaProducao").addEventListener("change", (e) => {
       estado.horaProducao = e.target.value;
+      atualizarResumoLateral();
       atualizarPreviewFinal();
     });
 
     document.getElementById("quantidade").addEventListener("input", (e) => {
       estado.quantidade = e.target.value;
+      atualizarResumoLateral();
+      atualizarPreviewFinal();
     });
 
     document.getElementById("lote").addEventListener("input", (e) => {
       estado.lote = e.target.value;
+      atualizarResumoLateral();
       atualizarPreviewFinal();
     });
 
