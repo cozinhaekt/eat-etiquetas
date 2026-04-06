@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema de Etiquetas Eat Kitchen - V3</title>
+  <title>Sistema de Etiquetas Eat Kitchen - V4</title>
   <style>
     * { box-sizing: border-box; }
     :root {
@@ -27,13 +27,12 @@
     .topbar-row { max-width: 1280px; margin: 0 auto; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
     .topbar-title { font-size: 28px; font-weight: bold; line-height: 1.1; margin-bottom: 4px; }
     .topbar-subtitle { font-size: 13px; opacity: 0.78; }
-    .topbar-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .topbar-meta { display: flex; gap: 10px; flex-wrap: wrap; }
     .badge { border: 1px solid #373737; background: #1b1b1b; color: var(--white); border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: bold; }
     .tabs-bar { background: var(--surface); border-bottom: 1px solid var(--border); }
     .tabs-row { max-width: 1280px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 10px; flex-wrap: wrap; }
     .tab-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 14px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s ease; }
     .tab-btn.active, .tab-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
-    .tab-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
     .container { max-width: 1280px; margin: 24px auto; padding: 0 16px 34px; }
     .page-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
     .page-title { font-size: 20px; font-weight: bold; }
@@ -100,74 +99,23 @@
     .status-box.success { background: #f5f5f5; border-color: #cfcfcf; color: var(--text); }
     .status-box.error { background: #1a1a1a; border-color: #000; color: var(--white); }
     .empty { padding: 20px; border: 1px dashed var(--border-strong); border-radius: 12px; color: var(--text-soft); background: #fafafa; text-align: center; font-size: 14px; }
-    .auth-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.82); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
-    .auth-overlay.show { display: flex; }
-    .auth-card { width: 100%; max-width: 460px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 26px; box-shadow: 0 18px 48px rgba(0,0,0,0.18); }
-    .auth-title { font-size: 28px; font-weight: bold; margin: 0 0 8px; }
-    .auth-text { margin: 0 0 18px; color: var(--text-soft); font-size: 14px; line-height: 1.5; }
-    .auth-divider { height: 1px; background: var(--border); margin: 18px 0; }
     @media (max-width: 1024px) {
-      .layout, .two-col, .field-row, .summary-grid, .stats-grid, .grid-cards, .grid-cards.products { grid-template-columns: 1fr; }
+      .layout, .two-col, .grid-cards, .grid-cards.products, .summary-grid, .stats-grid, .field-row { grid-template-columns: 1fr; }
       .summary-product { font-size: 28px; }
       .step-title, .wizard-title, .topbar-title { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="auth-overlay show" id="authOverlay">
-    <div class="auth-card">
-      <h2 class="auth-title">Entrar no sistema</h2>
-      <p class="auth-text">Próxima etapa: autenticação real com Supabase Auth. Primeiro vamos validar login e sessão. O cadastro interno de usuários continua existindo para gestão operacional.</p>
-      <div class="field">
-        <label>E-mail</label>
-        <input id="loginEmail" type="email" placeholder="nome@eatkitchen.com" />
-      </div>
-      <div class="field">
-        <label>Senha</label>
-        <input id="loginSenha" type="password" placeholder="Digite sua senha" />
-      </div>
-      <div class="actions">
-        <div class="actions-left"><button class="btn light" id="btnMostrarCadastro">Criar acesso</button></div>
-        <div class="actions-right"><button class="btn primary" id="btnEntrar">Entrar</button></div>
-      </div>
-      <div class="auth-divider"></div>
-      <div id="authCadastro" style="display:none;">
-        <div class="field">
-          <label>Nome</label>
-          <input id="signupNome" type="text" placeholder="Nome completo" />
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Unidade</label>
-            <select id="signupUnidade"></select>
-          </div>
-          <div class="field">
-            <label>Perfil</label>
-            <select id="signupPerfil">
-              <option value="operacao">Operador</option>
-              <option value="admin_unidade">Admin da unidade</option>
-              <option value="admin_geral">Admin geral</option>
-            </select>
-          </div>
-        </div>
-        <div class="actions">
-          <div class="actions-left"><button class="btn light" id="btnCancelarCadastro">Cancelar</button></div>
-          <div class="actions-right"><button class="btn primary" id="btnCriarConta">Criar conta</button></div>
-        </div>
-      </div>
-      <div id="authStatus" class="status-box"></div>
-    </div>
-  </div>
-
   <div class="topbar">
     <div class="topbar-row">
       <div>
         <div class="topbar-title">Sistema de Etiquetas Eat Kitchen</div>
-        <div class="topbar-subtitle">Operação, produtos, usuários, unidades e autenticação</div>
+        <div class="topbar-subtitle">Fluxo rápido com impressão em lote</div>
       </div>
       <div class="topbar-meta">
-        <div class="badge" id="badgeUsuario">SEM SESSÃO</div>
-        <button class="btn light" id="btnSair" style="display:none;">Sair</button>
+        <div class="badge">V4 OPERAÇÃO</div>
+        <div class="badge">AUTOAVANÇO + IMPRESSÃO EM LOTE</div>
       </div>
     </div>
   </div>
@@ -185,7 +133,7 @@
   <div class="container">
     <div class="page-head">
       <div class="page-title" id="pageTitle">Painel operacional de geração de etiquetas</div>
-      <div class="page-note">Esta versão já traz login real. Próximo passo depois disso: amarrar impressão à unidade do usuário logado.</div>
+      <div class="page-note">Agora o fluxo pode autoavançar e juntar vários itens antes de enviar tudo para a fila.</div>
     </div>
 
     <section class="tab-panel active" id="panel-operacao">
@@ -195,6 +143,7 @@
             <div class="wizard-title">Nova impressão</div>
             <div class="step-chip" id="stepChip">Etapa 1 de 5</div>
           </div>
+
           <div class="progress">
             <div class="progress-step" id="progress1"></div>
             <div class="progress-step" id="progress2"></div>
@@ -202,43 +151,60 @@
             <div class="progress-step" id="progress4"></div>
             <div class="progress-step" id="progress5"></div>
           </div>
+
           <div class="step-screen active" id="step1">
             <h2 class="step-title">Selecionar responsável</h2>
-            <p class="step-text">Enquanto a impressão ainda não está amarrada ao usuário logado, o responsável pode ser selecionado manualmente.</p>
+            <p class="step-text">Ao clicar, o sistema já segue para a próxima etapa.</p>
             <div class="grid-cards" id="responsaveisCards"></div>
           </div>
+
           <div class="step-screen" id="step2">
             <h2 class="step-title">Selecionar grupo</h2>
-            <p class="step-text">Escolha o grupo do produto para filtrar os itens.</p>
+            <p class="step-text">Escolha o grupo do produto.</p>
             <div class="grid-cards" id="gruposCards"></div>
           </div>
+
           <div class="step-screen" id="step3">
             <h2 class="step-title">Selecionar produto</h2>
-            <p class="step-text">Busque e escolha o produto que será impresso.</p>
-            <div class="field search-box"><input id="buscaProduto" type="text" placeholder="Buscar produto..." /></div>
+            <p class="step-text">Busque e escolha o produto.</p>
+            <div class="field search-box">
+              <input id="buscaProduto" type="text" placeholder="Buscar produto..." />
+            </div>
             <div class="grid-cards products" id="produtosCards"></div>
           </div>
+
           <div class="step-screen" id="step4">
             <h2 class="step-title">Selecionar validade</h2>
-            <p class="step-text">Escolha a validade disponível para este produto.</p>
+            <p class="step-text">Ao clicar na validade, o sistema abre a finalização.</p>
             <div class="grid-cards" id="validadesCards"></div>
             <div class="small" id="conservacaoHint"></div>
           </div>
+
           <div class="step-screen" id="step5">
             <h2 class="step-title">Finalizar impressão</h2>
-            <p class="step-text">Revise os dados antes de enviar para a fila.</p>
+            <p class="step-text">Adicione o item à lista ou envie todos juntos.</p>
+
             <div class="field-row">
               <div class="field"><label>Data de produção</label><input id="dataProducao" type="date" /></div>
               <div class="field"><label>Hora de produção</label><input id="horaProducao" type="time" /></div>
             </div>
+
             <div class="field-row">
               <div class="field"><label>Quantidade de etiquetas</label><input id="quantidade" type="number" value="1" min="1" /></div>
               <div class="field"><label>Lote manual</label><input id="lote" type="text" placeholder="Opcional" /></div>
             </div>
+
             <div class="field"><label>Conservação</label><input id="conservacao" type="text" readonly /></div>
             <div class="field"><label>Observação</label><textarea id="observacao" rows="3" placeholder="Opcional"></textarea></div>
-            <div class="summary-card">
-              <div class="summary-title">Resumo da etiqueta</div>
+
+            <div class="soft-panel">
+              <div class="section-title">Itens para imprimir</div>
+              <div class="small">Pode adicionar vários produtos e depois imprimir tudo junto.</div>
+              <div id="listaItensImpressao" class="stack" style="margin-top:12px;"></div>
+            </div>
+
+            <div class="summary-card" style="margin-top:14px;">
+              <div class="summary-title">Resumo do item atual</div>
               <div class="summary-product" id="pvProduto">-</div>
               <div class="summary-badge" id="pvBadge">-</div>
               <div class="summary-grid">
@@ -256,16 +222,19 @@
               </div>
             </div>
           </div>
+
           <div class="actions">
             <div class="actions-left">
               <button class="btn light" id="btnVoltar" onclick="voltarEtapa()">Voltar</button>
               <button class="btn light" onclick="reiniciarFluxo()">Reiniciar</button>
             </div>
             <div class="actions-right">
+              <button class="btn light" id="btnAdicionarItem" onclick="adicionarItemLista()" style="display:none;">Adicionar à lista</button>
               <button class="btn primary" id="btnProximo" onclick="proximaEtapa()">Próximo</button>
-              <button class="btn primary" id="btnImprimir" onclick="gerarImpressao()" style="display:none;">Imprimir</button>
+              <button class="btn primary" id="btnImprimir" onclick="gerarImpressao()" style="display:none;">Imprimir todos</button>
             </div>
           </div>
+
           <div id="statusBox" class="status-box"></div>
         </div>
 
@@ -290,7 +259,7 @@
       <div class="two-col">
         <div class="card">
           <h2 class="card-title">Admin de Produtos</h2>
-          <p class="card-text">Cadastro interno de produtos e validades.</p>
+          <p class="card-text">Cadastro interno de produtos, validade e conservação.</p>
           <div class="field-row">
             <div class="field"><label>Nome do produto</label><input id="produtoNome" type="text" placeholder="Ex.: Filé medalhão" /></div>
             <div class="field"><label>Grupo / categoria</label><input id="produtoGrupo" type="text" placeholder="Ex.: Fogão" /></div>
@@ -317,7 +286,7 @@
       <div class="two-col">
         <div class="card">
           <h2 class="card-title">Admin de Usuários</h2>
-          <p class="card-text">Gestão de usuários do sistema, vinculados às unidades reais.</p>
+          <p class="card-text">Usuários reais do banco.</p>
           <div class="field-row">
             <div class="field"><label>Nome</label><input id="usuarioNome" type="text" placeholder="Ex.: Marcelo" /></div>
             <div class="field"><label>E-mail</label><input id="usuarioEmail" type="email" placeholder="Ex.: nome@eatkitchen.com" /></div>
@@ -341,7 +310,7 @@
       <div class="two-col">
         <div class="card">
           <h2 class="card-title">Admin de Unidades</h2>
-          <p class="card-text">Cadastro e listagem das unidades reais do banco.</p>
+          <p class="card-text">Unidades reais do banco.</p>
           <div class="field-row">
             <div class="field"><label>Nome da unidade</label><input id="unidadeNome" type="text" placeholder="Ex.: CAIS" /></div>
             <div class="field"><label>Código / Host</label><input id="unidadeHost" type="text" placeholder="Ex.: cais" /></div>
@@ -364,12 +333,12 @@
       <div class="layout-single">
         <div class="card">
           <h2 class="card-title">Visão geral do sistema</h2>
-          <p class="card-text">A base já tem operação, produtos, usuários, unidades e autenticação inicial.</p>
+          <p class="card-text">Fluxo operacional com autoavanço e impressão em lote.</p>
           <div class="stats-grid">
-            <div class="stat-box"><div class="stat-label">Fluxo atual</div><div class="stat-value">Operação + login</div></div>
-            <div class="stat-box"><div class="stat-label">Próxima etapa</div><div class="stat-value">Vincular impressão à unidade do usuário</div></div>
-            <div class="stat-box"><div class="stat-label">Autenticação</div><div class="stat-value">Supabase Auth</div></div>
-            <div class="stat-box"><div class="stat-label">Modelo futuro</div><div class="stat-value">Usuário → Unidade → Fila → Raspberry → Impressora</div></div>
+            <div class="stat-box"><div class="stat-label">Fluxo atual</div><div class="stat-value">Operação em lote</div></div>
+            <div class="stat-box"><div class="stat-label">Próxima etapa</div><div class="stat-value">Amarrar fila à unidade do usuário logado</div></div>
+            <div class="stat-box"><div class="stat-label">Banco</div><div class="stat-value">Supabase</div></div>
+            <div class="stat-box"><div class="stat-label">Objetivo</div><div class="stat-value">Multiunidade com filas separadas</div></div>
           </div>
         </div>
       </div>
@@ -386,16 +355,28 @@
     let produtosAdminDB = [];
     let usuariosDB = [];
     let unidadesDB = [];
+    let itensImpressao = [];
     let etapaAtual = 1;
-    let usuarioLogado = null;
 
-    const estado = { responsavel: "", grupo: "", produto: "", validadeDias: "", conservacao: "", dataProducao: "", horaProducao: "", quantidade: "1", lote: "", observacao: "" };
+    const estado = {
+      responsavel: "",
+      grupo: "",
+      produto: "",
+      validadeDias: "",
+      conservacao: "",
+      dataProducao: "",
+      horaProducao: "",
+      quantidade: "1",
+      lote: "",
+      observacao: ""
+    };
+
     const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
     const pageTitles = {
       operacao: "Painel operacional de geração de etiquetas",
       produtos: "Cadastro interno de produtos",
       usuarios: "Gestão de usuários e perfis",
-      unidades: "Gestão de unidades",
+      unidades: "Gestão de unidades, Raspberry e impressoras",
       visao: "Mapa geral da próxima fase do sistema"
     };
 
@@ -424,19 +405,35 @@
       qs("horaProducao").value = estado.horaProducao;
     }
 
-    function formatarDataBR(dataISO) { if (!dataISO) return "-"; const [ano, mes, dia] = dataISO.split("-"); return `${dia}/${mes}/${ano}`; }
-    function calcularValidade(dataISO, dias) { if (!dataISO || !dias) return "-"; const data = new Date(dataISO + "T00:00:00"); data.setDate(data.getDate() + Number(dias)); return `${String(data.getDate()).padStart(2,"0")}/${String(data.getMonth()+1).padStart(2,"0")}/${data.getFullYear()}`; }
+    function formatarDataBR(dataISO) {
+      if (!dataISO) return "-";
+      const [ano, mes, dia] = dataISO.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function calcularValidade(dataISO, dias) {
+      if (!dataISO || !dias) return "-";
+      const data = new Date(dataISO + "T00:00:00");
+      data.setDate(data.getDate() + Number(dias));
+      return `${String(data.getDate()).padStart(2, "0")}/${String(data.getMonth() + 1).padStart(2, "0")}/${data.getFullYear()}`;
+    }
 
     function atualizarUIEtapa() {
-      for (let i = 1; i <= 5; i++) { qs("step" + i).classList.toggle("active", i === etapaAtual); qs("progress" + i).classList.toggle("active", i <= etapaAtual); }
-      qs("stepChip").textContent = "Etapa " + etapaAtual + " de 5";
+      for (let i = 1; i <= 5; i++) {
+        qs("step" + i).classList.toggle("active", i === etapaAtual);
+        qs("progress" + i).classList.toggle("active", i <= etapaAtual);
+      }
+      qs("stepChip").textContent = `Etapa ${etapaAtual} de 5`;
       qs("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
       qs("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
+      qs("btnAdicionarItem").style.display = etapaAtual === 5 ? "inline-block" : "none";
       qs("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
       atualizarResumoLateral();
       atualizarPreviewFinal();
+      renderListaItensImpressao();
     }
 
+    function autoAvancar() { if (etapaAtual < 5) { etapaAtual++; atualizarUIEtapa(); } }
     function validarEtapaAtual() {
       if (etapaAtual === 1 && !estado.responsavel) return mostrarStatus("error", "Selecione um responsável para continuar."), false;
       if (etapaAtual === 2 && !estado.grupo) return mostrarStatus("error", "Selecione um grupo para continuar."), false;
@@ -444,22 +441,46 @@
       if (etapaAtual === 4 && !estado.validadeDias) return mostrarStatus("error", "Selecione uma validade para continuar."), false;
       return true;
     }
-
     function proximaEtapa() { limparStatus(); if (validarEtapaAtual() && etapaAtual < 5) { etapaAtual++; atualizarUIEtapa(); } }
     function voltarEtapa() { limparStatus(); if (etapaAtual > 1) { etapaAtual--; atualizarUIEtapa(); } }
+
+    function limparSelecaoAtual() {
+      estado.grupo = "";
+      estado.produto = "";
+      estado.validadeDias = "";
+      estado.conservacao = "";
+      estado.quantidade = "1";
+      estado.lote = "";
+      estado.observacao = "";
+      qs("quantidade").value = "1";
+      qs("lote").value = "";
+      qs("observacao").value = "";
+      qs("conservacao").value = "";
+      qs("buscaProduto").value = "";
+      etapaAtual = 2;
+      renderGrupos();
+      renderProdutos();
+      renderValidades();
+      atualizarUIEtapa();
+    }
+
     function reiniciarFluxo() {
-      estado.responsavel = usuarioLogado?.nome || "";
-      estado.grupo = ""; estado.produto = ""; estado.validadeDias = ""; estado.conservacao = ""; estado.quantidade = "1"; estado.lote = ""; estado.observacao = ""; etapaAtual = 1;
+      estado.responsavel = "";
+      itensImpressao = [];
+      limparSelecaoAtual();
+      etapaAtual = 1;
       preencherDataHoraAtual();
-      qs("quantidade").value = "1"; qs("lote").value = ""; qs("observacao").value = ""; qs("conservacao").value = ""; qs("buscaProduto").value = "";
-      renderResponsaveis(); renderGrupos(); renderProdutos(); renderValidades(); atualizarUIEtapa(); limparStatus();
+      renderResponsaveis();
+      renderListaItensImpressao();
+      atualizarUIEtapa();
+      limparStatus();
     }
 
     function atualizarResumoLateral() {
       qs("sideResponsavel").textContent = estado.responsavel || "-";
       qs("sideGrupo").textContent = estado.grupo || "-";
       qs("sideProduto").textContent = estado.produto || "-";
-      qs("sideValidade").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+      qs("sideValidade").textContent = estado.validadeDias ? `${estado.validadeDias} dia(s)` : "-";
       qs("sideConservacao").textContent = estado.conservacao || "-";
       qs("sideData").textContent = formatarDataBR(estado.dataProducao);
       qs("sideHora").textContent = estado.horaProducao || "-";
@@ -469,7 +490,7 @@
 
     function atualizarPreviewFinal() {
       qs("pvProduto").textContent = estado.produto || "-";
-      qs("pvBadge").textContent = estado.validadeDias ? estado.validadeDias + " dia(s)" : "-";
+      qs("pvBadge").textContent = estado.validadeDias ? `${estado.validadeDias} dia(s)` : "-";
       qs("pvResponsavel").textContent = estado.responsavel || "-";
       qs("pvGrupo").textContent = estado.grupo || "-";
       qs("pvData").textContent = formatarDataBR(estado.dataProducao);
@@ -477,45 +498,95 @@
       qs("pvConservacao").textContent = estado.conservacao || "-";
       qs("pvValidade").textContent = calcularValidade(estado.dataProducao, estado.validadeDias);
       qs("pvQuantidade").textContent = estado.quantidade || "1";
-      const loteBox = qs("pvLoteBox");
-      if (estado.lote && estado.lote.trim()) { qs("pvLote").textContent = estado.lote; loteBox.style.display = "block"; } else { qs("pvLote").textContent = ""; loteBox.style.display = "none"; }
-      const obsBox = qs("pvObsBox");
-      if (estado.observacao && estado.observacao.trim()) { qs("pvObservacao").textContent = estado.observacao; obsBox.style.display = "block"; } else { qs("pvObservacao").textContent = ""; obsBox.style.display = "none"; }
+      qs("pvLoteBox").style.display = estado.lote && estado.lote.trim() ? "block" : "none";
+      qs("pvObsBox").style.display = estado.observacao && estado.observacao.trim() ? "block" : "none";
+      qs("pvLote").textContent = estado.lote || "";
+      qs("pvObservacao").textContent = estado.observacao || "";
     }
 
-    function criarCard(texto, selecionado, onClick) { const card = document.createElement("div"); card.className = "select-card" + (selecionado ? " selected" : ""); card.textContent = texto; card.onclick = onClick; return card; }
+    function criarCard(texto, selecionado, onClick) {
+      const card = document.createElement("div");
+      card.className = "select-card" + (selecionado ? " selected" : "");
+      card.textContent = texto;
+      card.onclick = onClick;
+      return card;
+    }
+
     function renderResponsaveis() {
       const container = qs("responsaveisCards");
       container.innerHTML = "";
-      responsaveis.forEach(nome => container.appendChild(criarCard(nome, estado.responsavel === nome, () => { estado.responsavel = nome; renderResponsaveis(); atualizarResumoLateral(); limparStatus(); })));
-      if (usuarioLogado?.nome && !responsaveis.includes(usuarioLogado.nome)) {
-        container.prepend(criarCard(usuarioLogado.nome, estado.responsavel === usuarioLogado.nome, () => { estado.responsavel = usuarioLogado.nome; renderResponsaveis(); atualizarResumoLateral(); limparStatus(); }));
-      }
+      responsaveis.forEach(nome => {
+        container.appendChild(criarCard(nome, estado.responsavel === nome, () => {
+          estado.responsavel = nome;
+          renderResponsaveis();
+          atualizarResumoLateral();
+          limparStatus();
+          autoAvancar();
+        }));
+      });
     }
 
-    function getGruposUnicos() { return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR")); }
+    function getGruposUnicos() {
+      return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+    }
+
     function renderGrupos() {
-      const container = qs("gruposCards"); container.innerHTML = "";
-      getGruposUnicos().forEach(grupo => container.appendChild(criarCard(grupo, estado.grupo === grupo, () => { estado.grupo = grupo; estado.produto = ""; estado.validadeDias = ""; estado.conservacao = ""; qs("conservacao").value = ""; qs("buscaProduto").value = ""; renderGrupos(); renderProdutos(); renderValidades(); atualizarResumoLateral(); limparStatus(); })));
+      const container = qs("gruposCards");
+      container.innerHTML = "";
+      getGruposUnicos().forEach(grupo => {
+        container.appendChild(criarCard(grupo, estado.grupo === grupo, () => {
+          estado.grupo = grupo;
+          estado.produto = "";
+          estado.validadeDias = "";
+          estado.conservacao = "";
+          qs("conservacao").value = "";
+          qs("buscaProduto").value = "";
+          renderGrupos();
+          renderProdutos();
+          renderValidades();
+          atualizarResumoLateral();
+          limparStatus();
+          autoAvancar();
+        }));
+      });
     }
+
     function getProdutosFiltrados() {
-      let lista = produtosCache; if (estado.grupo) lista = lista.filter(item => item.categoria === estado.grupo);
+      let lista = produtosCache;
+      if (estado.grupo) lista = lista.filter(item => item.categoria === estado.grupo);
       const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
-      const busca = qs("buscaProduto").value.trim().toLowerCase(); return !busca ? nomes : nomes.filter(nome => nome.toLowerCase().includes(busca));
+      const busca = qs("buscaProduto").value.trim().toLowerCase();
+      return !busca ? nomes : nomes.filter(nome => nome.toLowerCase().includes(busca));
     }
+
     function renderProdutos() {
-      const container = qs("produtosCards"); container.innerHTML = "";
+      const container = qs("produtosCards");
+      container.innerHTML = "";
       const produtos = getProdutosFiltrados();
       if (!estado.grupo) return container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
       if (!produtos.length) return container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
-      produtos.forEach(produto => container.appendChild(criarCard(produto, estado.produto === produto, () => { estado.produto = produto; estado.validadeDias = ""; estado.conservacao = ""; qs("conservacao").value = ""; renderProdutos(); renderValidades(); atualizarResumoLateral(); limparStatus(); })));
+      produtos.forEach(produto => {
+        container.appendChild(criarCard(produto, estado.produto === produto, () => {
+          estado.produto = produto;
+          estado.validadeDias = "";
+          estado.conservacao = "";
+          qs("conservacao").value = "";
+          renderProdutos();
+          renderValidades();
+          atualizarResumoLateral();
+          limparStatus();
+          autoAvancar();
+        }));
+      });
     }
+
     function getValidadesDoProduto() {
       if (!estado.produto) return [];
       let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
       if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
       return [...new Set(encontrados.map(item => item.validade_dias).filter(v => v !== null && v !== undefined && v !== "").map(v => String(v).trim()))].sort((a,b) => Number(a) - Number(b));
     }
+
     function buscarConservacaoAtual() {
       if (!estado.produto || !estado.validadeDias) return "";
       let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
@@ -523,31 +594,137 @@
       encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(estado.validadeDias).trim());
       return encontrados.length ? (encontrados[0].conservacao || "") : "";
     }
+
     function renderValidades() {
-      const container = qs("validadesCards"); const hint = qs("conservacaoHint"); container.innerHTML = ""; hint.textContent = "";
+      const container = qs("validadesCards");
+      const hint = qs("conservacaoHint");
+      container.innerHTML = "";
+      hint.textContent = "";
       if (!estado.produto) return container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
-      const validades = getValidadesDoProduto(); if (!validades.length) return container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
-      validades.forEach(validade => container.appendChild(criarCard(validade + " dia(s)", estado.validadeDias === validade, () => { estado.validadeDias = validade; estado.conservacao = buscarConservacaoAtual(); qs("conservacao").value = estado.conservacao; renderValidades(); atualizarResumoLateral(); atualizarPreviewFinal(); limparStatus(); })));
-      if (estado.conservacao) hint.textContent = "Conservação selecionada automaticamente: " + estado.conservacao;
+      const validades = getValidadesDoProduto();
+      if (!validades.length) return container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
+      validades.forEach(validade => {
+        container.appendChild(criarCard(`${validade} dia(s)`, estado.validadeDias === validade, () => {
+          estado.validadeDias = validade;
+          estado.conservacao = buscarConservacaoAtual();
+          qs("conservacao").value = estado.conservacao;
+          renderValidades();
+          atualizarResumoLateral();
+          atualizarPreviewFinal();
+          limparStatus();
+          autoAvancar();
+        }));
+      });
+      if (estado.conservacao) hint.textContent = `Conservação selecionada automaticamente: ${estado.conservacao}`;
+    }
+
+    function montarItemAtual() {
+      estado.dataProducao = qs("dataProducao").value;
+      estado.horaProducao = qs("horaProducao").value;
+      estado.quantidade = qs("quantidade").value;
+      estado.lote = qs("lote").value;
+      estado.observacao = qs("observacao").value;
+      estado.conservacao = qs("conservacao").value;
+      if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) {
+        mostrarStatus("error", "Preencha seleção, data e hora antes de adicionar à lista.");
+        return null;
+      }
+      return {
+        responsavel: estado.responsavel,
+        grupo: estado.grupo,
+        produto: estado.produto,
+        validadeDias: estado.validadeDias,
+        conservacao: estado.conservacao,
+        dataProducao: estado.dataProducao,
+        horaProducao: estado.horaProducao,
+        quantidade: Number(estado.quantidade || 1),
+        lote: estado.lote || "",
+        observacao: estado.observacao || ""
+      };
+    }
+
+    function adicionarItemLista() {
+      limparStatus();
+      const item = montarItemAtual();
+      if (!item) return;
+      itensImpressao.push(item);
+      renderListaItensImpressao();
+      mostrarStatus("success", "Item adicionado à lista. Pode selecionar outro produto.");
+      limparSelecaoAtual();
+    }
+
+    function removerItemLista(index) {
+      itensImpressao.splice(index, 1);
+      renderListaItensImpressao();
+    }
+
+    function renderListaItensImpressao() {
+      const box = qs("listaItensImpressao");
+      if (!box) return;
+      if (!itensImpressao.length) {
+        box.innerHTML = "<div class='empty'>Nenhum item adicionado ainda.</div>";
+        return;
+      }
+      box.innerHTML = itensImpressao.map((item, index) => `
+        <div class="list-item">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+            <div>
+              <div><strong>${item.produto}</strong></div>
+              <div class="small">${item.grupo} · ${item.validadeDias} dia(s) · ${item.conservacao}</div>
+              <div class="small">Qtd: ${item.quantidade} · ${formatarDataBR(item.dataProducao)} ${item.horaProducao}</div>
+            </div>
+            <button class="btn light" onclick="removerItemLista(${index})">Remover</button>
+          </div>
+        </div>
+      `).join("");
     }
 
     async function carregarProdutosOperacao() {
       const { data, error } = await supabaseClient.from("produtos_admin").select(`id,nome_produto,categoria,status,unidade,produto_validades ( id, validade_dias, conservacao )`).eq("status", "Ativo").order("nome_produto", { ascending: true });
-      if (error) { console.error("Erro ao carregar produtos da operação:", error); mostrarStatus("error", "Erro ao carregar produtos."); return; }
+      if (error) {
+        console.error("Erro ao carregar produtos da operação:", error);
+        mostrarStatus("error", "Erro ao carregar produtos.");
+        return;
+      }
       const listaAchatada = [];
-      (data || []).forEach(produto => (produto.produto_validades || []).forEach(validade => listaAchatada.push({ categoria: produto.categoria, nome_produto: produto.nome_produto, validade_dias: validade.validade_dias, conservacao: validade.conservacao, unidade: produto.unidade })));
-      produtosCache = listaAchatada; renderGrupos(); renderProdutos(); renderValidades();
+      (data || []).forEach(produto => {
+        (produto.produto_validades || []).forEach(validade => {
+          listaAchatada.push({ categoria: produto.categoria, nome_produto: produto.nome_produto, validade_dias: validade.validade_dias, conservacao: validade.conservacao, unidade: produto.unidade });
+        });
+      });
+      produtosCache = listaAchatada;
+      renderGrupos();
+      renderProdutos();
+      renderValidades();
     }
 
     async function gerarImpressao() {
       limparStatus();
-      estado.dataProducao = qs("dataProducao").value; estado.horaProducao = qs("horaProducao").value; estado.quantidade = qs("quantidade").value; estado.lote = qs("lote").value; estado.observacao = qs("observacao").value; estado.conservacao = qs("conservacao").value;
-      atualizarResumoLateral(); atualizarPreviewFinal();
-      if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) return mostrarStatus("error", "Preencha todas as etapas obrigatórias antes de imprimir.");
-      const payloadBanco = { grupo_produto: removerAcentos(estado.grupo), nome_produto: removerAcentos(estado.produto), opcao_validade: Number(estado.validadeDias), data_producao: estado.dataProducao, hora_producao: estado.horaProducao, quantidade_etiquetas: Number(estado.quantidade || 1), lote_manual: removerAcentos(estado.lote) || null, conservacao: removerAcentos(estado.conservacao) || null, observacao_padrao: removerAcentos(estado.observacao) || null, status_impressao: "pendente" };
-      const { error } = await supabaseClient.from("solicitacoes_impressao").insert([payloadBanco]);
+      let fila = [...itensImpressao];
+      const itemAtual = montarItemAtual();
+      if (itemAtual && !fila.length) fila.push(itemAtual);
+      if (!fila.length) {
+        mostrarStatus("error", "Adicione pelo menos um item à lista ou finalize um item atual para imprimir.");
+        return;
+      }
+      const payload = fila.map(item => ({
+        grupo_produto: removerAcentos(item.grupo),
+        nome_produto: removerAcentos(item.produto),
+        opcao_validade: Number(item.validadeDias),
+        data_producao: item.dataProducao,
+        hora_producao: item.horaProducao,
+        quantidade_etiquetas: Number(item.quantidade || 1),
+        lote_manual: removerAcentos(item.lote) || null,
+        conservacao: removerAcentos(item.conservacao) || null,
+        observacao_padrao: removerAcentos(item.observacao) || null,
+        status_impressao: "pendente"
+      }));
+      const { error } = await supabaseClient.from("solicitacoes_impressao").insert(payload);
       if (error) return mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
-      mostrarStatus("success", "Solicitação enviada para a fila com sucesso.");
+      itensImpressao = [];
+      renderListaItensImpressao();
+      mostrarStatus("success", `${payload.length} item(ns) enviado(s) para a fila com sucesso.`);
+      reiniciarFluxo();
     }
 
     async function carregarProdutosAdmin() {
@@ -556,19 +733,35 @@
       if (error) return showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
       produtosAdminDB = data || [];
       const body = qs("produtosAdminBody");
-      if (!produtosAdminDB.length) { body.innerHTML = `<tr><td colspan="6">Nenhum produto cadastrado.</td></tr>`; return; }
-      body.innerHTML = produtosAdminDB.map(item => { const primeira = item.produto_validades?.[0]; return `<tr><td>${item.nome_produto}</td><td>${item.categoria}</td><td>${primeira ? primeira.validade_dias + " dia(s)" : "-"}</td><td>${primeira ? primeira.conservacao : "-"}</td><td>${item.unidade}</td><td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td></tr>`; }).join("");
+      body.innerHTML = !produtosAdminDB.length ? `<tr><td colspan="6">Nenhum produto cadastrado.</td></tr>` : produtosAdminDB.map(item => { const primeira = item.produto_validades?.[0]; return `<tr><td>${item.nome_produto}</td><td>${item.categoria}</td><td>${primeira ? primeira.validade_dias + " dia(s)" : "-"}</td><td>${primeira ? primeira.conservacao : "-"}</td><td>${item.unidade}</td><td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td></tr>`; }).join("");
     }
 
     async function salvarProdutoReal() {
       clearStatus("statusProdutos");
-      const nome = qs("produtoNome").value.trim(); const grupo = qs("produtoGrupo").value.trim(); const validade = qs("produtoValidade").value.trim(); const conservacao = qs("produtoConservacao").value; const unidade = qs("produtoUnidade").value; const status = qs("produtoStatus").value;
+      const nome = qs("produtoNome").value.trim();
+      const grupo = qs("produtoGrupo").value.trim();
+      const validade = qs("produtoValidade").value.trim();
+      const conservacao = qs("produtoConservacao").value;
+      const unidade = qs("produtoUnidade").value;
+      const status = qs("produtoStatus").value;
       if (!nome || !grupo || !validade || !conservacao) return showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
       const { data: produtoCriado, error: erroProduto } = await supabaseClient.from("produtos_admin").insert([{ nome_produto: nome, categoria: grupo, status, unidade }]).select().single();
       if (erroProduto) return showStatus("statusProdutos", "error", "Erro ao salvar produto.");
       const { error: erroValidade } = await supabaseClient.from("produto_validades").insert([{ produto_id: produtoCriado.id, validade_dias: Number(validade), conservacao }]);
       if (erroValidade) return showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
-      limparFormProduto(); showStatus("statusProdutos", "success", "Produto salvo com sucesso."); carregarProdutosAdmin(); carregarProdutosOperacao();
+      limparFormProduto();
+      showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
+      carregarProdutosAdmin();
+      carregarProdutosOperacao();
+    }
+
+    async function carregarUsuariosDB() {
+      clearStatus("statusUsuarios");
+      const { data, error } = await supabaseClient.from("usuarios").select(`id,nome,email,perfil,unidade_id,ativo,created_at,unidades ( nome )`).order("nome", { ascending: true });
+      if (error) return showStatus("statusUsuarios", "error", "Erro ao carregar usuários.");
+      usuariosDB = data || [];
+      const body = qs("usuariosAdminBody");
+      body.innerHTML = !usuariosDB.length ? `<tr><td colspan="5">Nenhum usuário cadastrado.</td></tr>` : usuariosDB.map(item => `<tr><td>${item.nome}</td><td>${item.email}</td><td>${item.perfil}</td><td>${item.unidades?.nome || "-"}</td><td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td></tr>`).join("");
     }
 
     async function carregarUnidadesDB() {
@@ -582,110 +775,55 @@
     }
 
     function preencherSelectUnidades() {
-      const selectUsuario = qs("usuarioUnidade");
-      const selectSignup = qs("signupUnidade");
-      [selectUsuario, selectSignup].forEach(select => {
-        if (!select) return;
-        const atual = select.value;
-        select.innerHTML = "";
-        if (!unidadesDB.length) { select.innerHTML = `<option value="">Nenhuma unidade</option>`; return; }
-        unidadesDB.forEach(unidade => { const option = document.createElement("option"); option.value = unidade.id; option.textContent = unidade.nome; select.appendChild(option); });
-        if (unidadesDB.some(item => item.id === atual)) select.value = atual;
+      const select = qs("usuarioUnidade");
+      if (!select) return;
+      const valorAtual = select.value;
+      select.innerHTML = "";
+      if (!unidadesDB.length) return select.innerHTML = `<option value="">Nenhuma unidade</option>`;
+      unidadesDB.forEach(unidade => {
+        const option = document.createElement("option");
+        option.value = unidade.id;
+        option.textContent = unidade.nome;
+        select.appendChild(option);
       });
-    }
-
-    async function salvarUnidadeReal() {
-      clearStatus("statusUnidades");
-      const nome = qs("unidadeNome").value.trim(); const codigoManual = qs("unidadeHost").value.trim(); const ativa = qs("unidadeStatus").value === "Ativa";
-      if (!nome) return showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
-      const codigo = (codigoManual || nome).toLowerCase().trim().replace(/\s+/g, "_");
-      const { error } = await supabaseClient.from("unidades").insert([{ nome, codigo, ativa }]);
-      if (error) return showStatus("statusUnidades", "error", "Erro ao salvar unidade: " + error.message);
-      limparFormUnidade(); showStatus("statusUnidades", "success", "Unidade salva com sucesso."); carregarUnidadesDB(); carregarUsuariosDB();
-    }
-
-    async function carregarUsuariosDB() {
-      clearStatus("statusUsuarios");
-      const { data, error } = await supabaseClient.from("usuarios").select(`id,nome,email,perfil,unidade_id,ativo,created_at,unidades ( nome )`).order("nome", { ascending: true });
-      if (error) return showStatus("statusUsuarios", "error", "Erro ao carregar usuários.");
-      usuariosDB = data || [];
-      const body = qs("usuariosAdminBody");
-      body.innerHTML = !usuariosDB.length ? `<tr><td colspan="5">Nenhum usuário cadastrado.</td></tr>` : usuariosDB.map(item => `<tr><td>${item.nome}</td><td>${item.email}</td><td>${item.perfil}</td><td>${item.unidades?.nome || "-"}</td><td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td></tr>`).join("");
-    }
-
-    async function salvarUsuarioReal() {
-      clearStatus("statusUsuarios");
-      const nome = qs("usuarioNome").value.trim(); const email = qs("usuarioEmail").value.trim(); const perfilFront = qs("usuarioPerfil").value; const unidadeId = qs("usuarioUnidade").value; const ativo = qs("usuarioStatus").value === "Ativo";
-      const perfilMap = { "Admin geral": "admin_geral", "Admin da unidade": "admin_unidade", "Operador": "operacao" };
-      const perfil = perfilMap[perfilFront] || "operacao";
-      if (!nome || !email || !perfil || !unidadeId) return showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
-      const { error } = await supabaseClient.from("usuarios").insert([{ nome, email, perfil, unidade_id: unidadeId, ativo }]);
-      if (error) return showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
-      limparFormUsuario(); showStatus("statusUsuarios", "success", "Usuário salvo com sucesso."); carregarUsuariosDB();
-    }
-
-    async function entrarSistema() {
-      clearStatus("authStatus");
-      const email = qs("loginEmail").value.trim();
-      const password = qs("loginSenha").value;
-      if (!email || !password) return showStatus("authStatus", "error", "Preencha e-mail e senha.");
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) return showStatus("authStatus", "error", error.message);
-      await carregarSessao();
-      qs("authOverlay").classList.remove("show");
-      showStatus("authStatus", "success", "Login realizado com sucesso.");
-    }
-
-    async function criarContaSistema() {
-      clearStatus("authStatus");
-      const nome = qs("signupNome").value.trim();
-      const email = qs("loginEmail").value.trim();
-      const password = qs("loginSenha").value;
-      const unidadeId = qs("signupUnidade").value;
-      const perfil = qs("signupPerfil").value;
-      if (!nome || !email || !password || !unidadeId) return showStatus("authStatus", "error", "Preencha nome, e-mail, senha e unidade.");
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
-      if (error) return showStatus("authStatus", "error", error.message);
-      if (data.user) {
-        const { error: userDbError } = await supabaseClient.from("usuarios").insert([{ id: data.user.id, nome, email, perfil, unidade_id: unidadeId, ativo: true }]);
-        if (userDbError) return showStatus("authStatus", "error", "Conta criada no Auth, mas houve erro ao gravar usuário: " + userDbError.message);
-      }
-      showStatus("authStatus", "success", "Conta criada. Faça login para continuar.");
-      qs("authCadastro").style.display = "none";
-    }
-
-    async function carregarSessao() {
-      const { data: sessionData } = await supabaseClient.auth.getSession();
-      const session = sessionData.session;
-      if (!session?.user) {
-        usuarioLogado = null;
-        qs("badgeUsuario").textContent = "SEM SESSÃO";
-        qs("btnSair").style.display = "none";
-        qs("authOverlay").classList.add("show");
-        return;
-      }
-      const { data: usuarioDb } = await supabaseClient.from("usuarios").select(`id,nome,email,perfil,unidade_id,ativo,unidades ( nome )`).eq("id", session.user.id).maybeSingle();
-      usuarioLogado = usuarioDb || { id: session.user.id, nome: session.user.email, email: session.user.email, perfil: "operacao" };
-      qs("badgeUsuario").textContent = `${usuarioLogado.nome} · ${usuarioLogado.perfil}`;
-      qs("btnSair").style.display = "inline-block";
-      qs("authOverlay").classList.remove("show");
-      estado.responsavel = usuarioLogado.nome;
-      renderResponsaveis();
-      atualizarResumoLateral();
-    }
-
-    async function sairSistema() {
-      await supabaseClient.auth.signOut();
-      usuarioLogado = null;
-      qs("authOverlay").classList.add("show");
-      qs("badgeUsuario").textContent = "SEM SESSÃO";
-      qs("btnSair").style.display = "none";
-      reiniciarFluxo();
+      if (unidadesDB.some(item => item.id === valorAtual)) select.value = valorAtual;
     }
 
     function limparFormProduto() { qs("produtoNome").value = ""; qs("produtoGrupo").value = ""; qs("produtoValidade").value = ""; qs("produtoConservacao").value = ""; qs("produtoUnidade").value = "CAIS"; qs("produtoStatus").value = "Ativo"; clearStatus("statusProdutos"); }
     function limparFormUsuario() { qs("usuarioNome").value = ""; qs("usuarioEmail").value = ""; qs("usuarioPerfil").value = "Admin geral"; if (qs("usuarioUnidade").options.length) qs("usuarioUnidade").selectedIndex = 0; qs("usuarioStatus").value = "Ativo"; clearStatus("statusUsuarios"); }
     function limparFormUnidade() { qs("unidadeNome").value = ""; qs("unidadeHost").value = ""; qs("unidadeStatus").value = "Ativa"; qs("unidadeObs").value = ""; clearStatus("statusUnidades"); }
+
+    async function salvarUsuarioReal() {
+      clearStatus("statusUsuarios");
+      const nome = qs("usuarioNome").value.trim();
+      const email = qs("usuarioEmail").value.trim();
+      const perfilFront = qs("usuarioPerfil").value;
+      const unidadeId = qs("usuarioUnidade").value;
+      const ativo = qs("usuarioStatus").value === "Ativo";
+      const perfilMap = { "Admin geral": "admin_geral", "Admin da unidade": "admin_unidade", "Operador": "operacao" };
+      const perfil = perfilMap[perfilFront] || "operacao";
+      if (!nome || !email || !perfil || !unidadeId) return showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
+      const { error } = await supabaseClient.from("usuarios").insert([{ nome, email, perfil, unidade_id: unidadeId, ativo }]);
+      if (error) return showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
+      limparFormUsuario();
+      showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
+      carregarUsuariosDB();
+    }
+
+    async function salvarUnidadeReal() {
+      clearStatus("statusUnidades");
+      const nome = qs("unidadeNome").value.trim();
+      const codigoManual = qs("unidadeHost").value.trim();
+      const ativa = qs("unidadeStatus").value === "Ativa";
+      if (!nome) return showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
+      const codigo = (codigoManual || nome).toLowerCase().trim().replace(/\s+/g, "_");
+      const { error } = await supabaseClient.from("unidades").insert([{ nome, codigo, ativa }]);
+      if (error) return showStatus("statusUnidades", "error", "Erro ao salvar unidade: " + error.message);
+      limparFormUnidade();
+      showStatus("statusUnidades", "success", "Unidade salva com sucesso.");
+      carregarUnidadesDB();
+      carregarUsuariosDB();
+    }
 
     function setActiveTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
@@ -701,27 +839,15 @@
     qs("quantidade").addEventListener("input", e => { estado.quantidade = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
     qs("lote").addEventListener("input", e => { estado.lote = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
     qs("observacao").addEventListener("input", e => { estado.observacao = e.target.value; atualizarPreviewFinal(); });
-    qs("btnEntrar").addEventListener("click", entrarSistema);
-    qs("btnCriarConta").addEventListener("click", criarContaSistema);
-    qs("btnMostrarCadastro").addEventListener("click", () => { qs("authCadastro").style.display = "block"; });
-    qs("btnCancelarCadastro").addEventListener("click", () => { qs("authCadastro").style.display = "none"; });
-    qs("btnSair").addEventListener("click", sairSistema);
 
-    supabaseClient.auth.onAuthStateChange(async () => { await carregarSessao(); });
-
-    async function inicializarSistema() {
-      preencherDataHoraAtual();
-      await carregarUnidadesDB();
-      await carregarUsuariosDB();
-      renderResponsaveis();
-      await carregarProdutosOperacao();
-      atualizarUIEtapa();
-      await carregarProdutosAdmin();
-      await carregarSessao();
-    }
-
-    inicializarSistema();
+    preencherDataHoraAtual();
+    renderResponsaveis();
+    carregarProdutosOperacao();
+    atualizarUIEtapa();
+    carregarProdutosAdmin();
+    carregarUnidadesDB();
+    carregarUsuariosDB();
+    renderListaItensImpressao();
   </script>
 </body>
 </html>
-
