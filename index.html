@@ -22,6 +22,7 @@
       --radius-md: 14px;
       --radius-sm: 12px;
     }
+
     body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
     .topbar { background: var(--black); color: var(--white); border-bottom: 1px solid #2c2c2c; }
     .topbar-row { max-width: 1280px; margin: 0 auto; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -29,78 +30,283 @@
     .topbar-subtitle { font-size: 13px; opacity: 0.78; }
     .topbar-meta { display: flex; gap: 10px; flex-wrap: wrap; }
     .badge { border: 1px solid #373737; background: #1b1b1b; color: var(--white); border-radius: 999px; padding: 8px 12px; font-size: 12px; font-weight: bold; }
+
     .tabs-bar { background: var(--surface); border-bottom: 1px solid var(--border); }
     .tabs-row { max-width: 1280px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 10px; flex-wrap: wrap; }
-    .tab-btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 14px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s ease; }
-    .tab-btn.active, .tab-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
     .container { max-width: 1280px; margin: 24px auto; padding: 0 16px 34px; }
     .page-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
     .page-title { font-size: 20px; font-weight: bold; }
     .page-note { font-size: 13px; color: var(--text-soft); }
+
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
+
     .layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; align-items: start; }
     .layout-single { display: grid; grid-template-columns: 1fr; gap: 24px; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-    .card { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 22px; border: 1px solid var(--border); }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      border: 1px solid var(--border);
+    }
+
     .card-title { font-size: 24px; font-weight: bold; margin: 0 0 8px; }
     .card-text { margin: 0 0 16px; color: var(--text-soft); font-size: 14px; line-height: 1.5; }
+
     .wizard-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
     .wizard-title { font-size: 28px; font-weight: bold; }
-    .step-chip { background: #efefef; color: #222; border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: bold; }
+    .step-chip {
+      background: #efefef;
+      color: #222;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
     .progress { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 22px; }
     .progress-step { height: 8px; border-radius: 999px; background: #ddd; }
     .progress-step.active { background: var(--black); }
+
     .step-screen { display: none; }
     .step-screen.active { display: block; }
     .step-title { font-size: 30px; font-weight: bold; margin: 0 0 8px; }
     .step-text { margin: 0 0 18px; color: var(--text-soft); font-size: 14px; line-height: 1.5; }
+
     .grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .grid-cards.products { max-height: 430px; overflow-y: auto; padding-right: 4px; }
-    .select-card { border: 1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 16px 14px; min-height: 88px; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: 0.2s ease; font-weight: bold; user-select: none; }
-    .select-card:hover { transform: translateY(-1px); border-color: var(--black); box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
-    .select-card.selected { background: var(--black); color: var(--white); border-color: var(--black); box-shadow: 0 8px 18px rgba(0,0,0,0.18); }
+
+    .select-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px 14px;
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    .select-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--black);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    }
+
+    .select-card.selected {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }
+
     .field { display: flex; flex-direction: column; margin-bottom: 14px; }
     .field label { font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #333; }
-    .field input, .field select, .field textarea { border: 1px solid #cfcfcf; border-radius: 12px; padding: 12px; font-size: 14px; background: var(--surface); color: var(--text); transition: 0.2s ease; }
-    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--black); box-shadow: 0 0 0 3px rgba(0,0,0,0.08); }
+
+    .field input, .field select, .field textarea {
+      border: 1px solid #cfcfcf;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--text);
+      transition: 0.2s ease;
+    }
+
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+    }
+
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .search-box { margin-bottom: 14px; }
     .search-box input { width: 100%; }
-    .actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
     .actions-left, .actions-right { display: flex; gap: 10px; flex-wrap: wrap; }
-    .btn { border: 1px solid transparent; border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s ease; }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
     .btn:hover { transform: translateY(-1px); }
     .btn.primary { background: var(--black); color: var(--white); border-color: var(--black); }
     .btn.light { background: #f0f0f0; color: var(--text); border-color: #d5d5d5; }
-    .summary-card, .soft-panel { background: var(--surface-soft); border: 1px solid #dddddd; border-radius: 16px; padding: 18px; }
+
+    .summary-card, .soft-panel {
+      background: var(--surface-soft);
+      border: 1px solid #dddddd;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
     .summary-title, .section-title { margin: 0 0 16px; font-size: 22px; font-weight: bold; }
     .summary-product { font-size: 34px; font-weight: bold; line-height: 1.05; margin-bottom: 14px; word-break: break-word; }
-    .summary-badge { display: inline-block; background: var(--black); color: var(--white); padding: 8px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; margin-bottom: 18px; }
-    .summary-grid, .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-    .summary-box, .stat-box, .list-item { background: var(--surface); border: 1px solid #dcdcdc; border-radius: 12px; padding: 12px; }
-    .summary-label, .mini-label, .stat-label { font-size: 12px; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
-    .summary-value, .mini-value, .stat-value { font-size: 18px; font-weight: bold; word-break: break-word; }
+    .summary-badge {
+      display: inline-block;
+      background: var(--black);
+      color: var(--white);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .summary-grid, .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .summary-box, .stat-box, .list-item {
+      background: var(--surface);
+      border: 1px solid #dcdcdc;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .summary-label, .mini-label, .stat-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .summary-value, .mini-value, .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
     .summary-extra, .stack, .mini-summary { display: grid; gap: 10px; }
     .aside-title { font-size: 24px; font-weight: bold; margin: 0 0 16px; }
-    .mini-item { background: var(--surface-soft); border: 1px solid #ddd; border-radius: 12px; padding: 12px; }
+
+    .mini-item {
+      background: var(--surface-soft);
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
     .small { font-size: 13px; color: var(--text-soft); }
     .tiny { font-size: 12px; color: var(--text-muted); }
     .divider { height: 1px; background: var(--border); margin: 18px 0; }
-    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+
     table { width: 100%; border-collapse: collapse; min-width: 760px; }
     th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; }
     th { background: #f5f5f5; font-size: 12px; text-transform: uppercase; color: #555; }
     tr:last-child td { border-bottom: none; }
-    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); background: #f5f5f5; font-size: 12px; font-weight: bold; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f5f5f5;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
     .chip.dark { background: var(--black); color: var(--white); border-color: var(--black); }
-    .status-box { margin-top: 18px; padding: 14px 16px; border-radius: 12px; font-size: 14px; display: none; border: 1px solid transparent; }
+
+    .status-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      display: none;
+      border: 1px solid transparent;
+    }
+
     .status-box.show { display: block; }
     .status-box.success { background: #f5f5f5; border-color: #cfcfcf; color: var(--text); }
     .status-box.error { background: #1a1a1a; border-color: #000; color: var(--white); }
-    .empty { padding: 20px; border: 1px dashed var(--border-strong); border-radius: 12px; color: var(--text-soft); background: #fafafa; text-align: center; font-size: 14px; }
+
+    .empty {
+      padding: 20px;
+      border: 1px dashed var(--border-strong);
+      border-radius: 12px;
+      color: var(--text-soft);
+      background: #fafafa;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .dashboard-hero {
+      display: grid;
+      gap: 12px;
+    }
+
+    .dashboard-note {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-top: -6px;
+    }
+
     @media (max-width: 1024px) {
-      .layout, .two-col, .grid-cards, .grid-cards.products, .summary-grid, .stats-grid, .field-row { grid-template-columns: 1fr; }
+      .layout,
+      .two-col,
+      .grid-cards,
+      .grid-cards.products,
+      .summary-grid,
+      .stats-grid,
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
       .summary-product { font-size: 28px; }
       .step-title, .wizard-title, .topbar-title { font-size: 24px; }
     }
@@ -111,18 +317,19 @@
     <div class="topbar-row">
       <div>
         <div class="topbar-title">Sistema de Etiquetas Eat Kitchen</div>
-        <div class="topbar-subtitle">Fluxo rápido com impressão em lote</div>
+        <div class="topbar-subtitle">Fluxo rápido com impressão em lote + monitoramento de vencimentos</div>
       </div>
       <div class="topbar-meta">
         <div class="badge">V4 OPERAÇÃO</div>
-        <div class="badge">AUTOAVANÇO + IMPRESSÃO EM LOTE</div>
+        <div class="badge">DASHBOARD DE VENCIMENTOS</div>
       </div>
     </div>
   </div>
 
   <div class="tabs-bar">
     <div class="tabs-row">
-      <button class="tab-btn active" data-tab="operacao">Operação</button>
+      <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="operacao">Operação</button>
       <button class="tab-btn" data-tab="produtos">Produtos</button>
       <button class="tab-btn" data-tab="usuarios">Usuários</button>
       <button class="tab-btn" data-tab="unidades">Unidades</button>
@@ -132,11 +339,124 @@
 
   <div class="container">
     <div class="page-head">
-      <div class="page-title" id="pageTitle">Painel operacional de geração de etiquetas</div>
-      <div class="page-note">Agora o fluxo pode autoavançar e juntar vários itens antes de enviar tudo para a fila.</div>
+      <div class="page-title" id="pageTitle">Dashboard de etiquetas e vencimentos</div>
+      <div class="page-note">Acompanhe etiquetas vencidas, vencendo hoje e próximas do vencimento.</div>
     </div>
 
-    <section class="tab-panel active" id="panel-operacao">
+    <section class="tab-panel active" id="panel-dashboard">
+      <div class="layout-single">
+        <div class="card dashboard-hero">
+          <h2 class="card-title">Painel de vencimentos</h2>
+          <p class="card-text">Resumo operacional das etiquetas geradas com base na fila atual de impressão.</p>
+          <div class="dashboard-note">Os cards abaixo somam a quantidade total de etiquetas, não apenas o número de registros.</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Etiquetas vencidas</div>
+            <div class="stat-value" id="dashVencidas">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Vencem hoje</div>
+            <div class="stat-value" id="dashHoje">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Próximos 3 dias</div>
+            <div class="stat-value" id="dash3dias">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Próximos 7 dias</div>
+            <div class="stat-value" id="dash7dias">0</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <h2 class="card-title">Etiquetas vencidas</h2>
+            <p class="card-text">Itens que já passaram da validade final.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Grupo</th>
+                    <th>Produção</th>
+                    <th>Validade</th>
+                    <th>Qtd.</th>
+                    <th>Lote</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardVencidasBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Vencem hoje</h2>
+            <p class="card-text">Itens com prioridade operacional.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Grupo</th>
+                    <th>Produção</th>
+                    <th>Validade</th>
+                    <th>Qtd.</th>
+                    <th>Lote</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardHojeBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Próximas etiquetas a vencer</h2>
+          <p class="card-text">Lista ordenada pelas mais próximas do vencimento.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Filtrar por grupo</label>
+              <select id="filtroGrupoDashboard">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Filtrar por conservação</label>
+              <select id="filtroConservacaoDashboard">
+                <option value="">Todas</option>
+                <option value="Resfriado">Resfriado</option>
+                <option value="Congelado">Congelado</option>
+                <option value="Ambiente">Ambiente</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Grupo</th>
+                  <th>Responsável</th>
+                  <th>Produção</th>
+                  <th>Validade</th>
+                  <th>Dias restantes</th>
+                  <th>Qtd.</th>
+                  <th>Lote</th>
+                  <th>Conservação</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardProximasBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-operacao">
       <div class="layout">
         <div class="card">
           <div class="wizard-header">
@@ -207,6 +527,7 @@
               <div class="summary-title">Resumo do item atual</div>
               <div class="summary-product" id="pvProduto">-</div>
               <div class="summary-badge" id="pvBadge">-</div>
+
               <div class="summary-grid">
                 <div class="summary-box"><div class="summary-label">Responsável</div><div class="summary-value" id="pvResponsavel">-</div></div>
                 <div class="summary-box"><div class="summary-label">Grupo</div><div class="summary-value" id="pvGrupo">-</div></div>
@@ -215,6 +536,7 @@
                 <div class="summary-box"><div class="summary-label">Conservação</div><div class="summary-value" id="pvConservacao">-</div></div>
                 <div class="summary-box"><div class="summary-label">Validade final</div><div class="summary-value" id="pvValidade">-</div></div>
               </div>
+
               <div class="summary-extra">
                 <div class="summary-box"><div class="summary-label">Quantidade de etiquetas</div><div class="summary-value" id="pvQuantidade">1</div></div>
                 <div class="summary-box" id="pvLoteBox" style="display:none;"><div class="summary-label">Lote</div><div class="summary-value" id="pvLote">-</div></div>
@@ -260,24 +582,68 @@
         <div class="card">
           <h2 class="card-title">Admin de Produtos</h2>
           <p class="card-text">Cadastro interno de produtos, validade e conservação.</p>
+
           <div class="field-row">
             <div class="field"><label>Nome do produto</label><input id="produtoNome" type="text" placeholder="Ex.: Filé medalhão" /></div>
             <div class="field"><label>Grupo / categoria</label><input id="produtoGrupo" type="text" placeholder="Ex.: Fogão" /></div>
           </div>
+
           <div class="field-row">
             <div class="field"><label>Validade (dias)</label><input id="produtoValidade" type="number" min="1" placeholder="Ex.: 3" /></div>
-            <div class="field"><label>Conservação</label><select id="produtoConservacao"><option value="">Selecione</option><option>Resfriado</option><option>Congelado</option><option>Ambiente</option></select></div>
+            <div class="field">
+              <label>Conservação</label>
+              <select id="produtoConservacao">
+                <option value="">Selecione</option>
+                <option>Resfriado</option>
+                <option>Congelado</option>
+                <option>Ambiente</option>
+              </select>
+            </div>
           </div>
+
           <div class="field-row">
-            <div class="field"><label>Unidade disponível</label><select id="produtoUnidade"><option>CAIS</option><option>DINARTE</option><option>Ambas</option></select></div>
-            <div class="field"><label>Status</label><select id="produtoStatus"><option>Ativo</option><option>Inativo</option></select></div>
+            <div class="field">
+              <label>Unidade disponível</label>
+              <select id="produtoUnidade">
+                <option>CAIS</option>
+                <option>DINARTE</option>
+                <option>Ambas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="produtoStatus">
+                <option>Ativo</option>
+                <option>Inativo</option>
+              </select>
+            </div>
           </div>
-          <div class="actions"><div class="actions-left"><button class="btn light" onclick="limparFormProduto()">Limpar</button></div><div class="actions-right"><button class="btn primary" onclick="salvarProdutoReal()">Salvar produto</button></div></div>
+
+          <div class="actions">
+            <div class="actions-left"><button class="btn light" onclick="limparFormProduto()">Limpar</button></div>
+            <div class="actions-right"><button class="btn primary" onclick="salvarProdutoReal()">Salvar produto</button></div>
+          </div>
+
           <div id="statusProdutos" class="status-box"></div>
         </div>
+
         <div class="card">
           <h2 class="card-title">Produtos cadastrados</h2>
-          <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Grupo</th><th>Validade</th><th>Conservação</th><th>Unidade</th><th>Status</th></tr></thead><tbody id="produtosAdminBody"></tbody></table></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Grupo</th>
+                  <th>Validade</th>
+                  <th>Conservação</th>
+                  <th>Unidade</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="produtosAdminBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -287,21 +653,56 @@
         <div class="card">
           <h2 class="card-title">Admin de Usuários</h2>
           <p class="card-text">Usuários reais do banco.</p>
+
           <div class="field-row">
             <div class="field"><label>Nome</label><input id="usuarioNome" type="text" placeholder="Ex.: Marcelo" /></div>
             <div class="field"><label>E-mail</label><input id="usuarioEmail" type="email" placeholder="Ex.: nome@eatkitchen.com" /></div>
           </div>
+
           <div class="field-row">
-            <div class="field"><label>Perfil</label><select id="usuarioPerfil"><option>Admin geral</option><option>Admin da unidade</option><option>Operador</option></select></div>
+            <div class="field">
+              <label>Perfil</label>
+              <select id="usuarioPerfil">
+                <option>Admin geral</option>
+                <option>Admin da unidade</option>
+                <option>Operador</option>
+              </select>
+            </div>
             <div class="field"><label>Unidade</label><select id="usuarioUnidade"></select></div>
           </div>
-          <div class="field"><label>Status</label><select id="usuarioStatus"><option>Ativo</option><option>Inativo</option></select></div>
-          <div class="actions"><div class="actions-left"><button class="btn light" onclick="limparFormUsuario()">Limpar</button></div><div class="actions-right"><button class="btn primary" onclick="salvarUsuarioReal()">Salvar usuário</button></div></div>
+
+          <div class="field">
+            <label>Status</label>
+            <select id="usuarioStatus">
+              <option>Ativo</option>
+              <option>Inativo</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <div class="actions-left"><button class="btn light" onclick="limparFormUsuario()">Limpar</button></div>
+            <div class="actions-right"><button class="btn primary" onclick="salvarUsuarioReal()">Salvar usuário</button></div>
+          </div>
+
           <div id="statusUsuarios" class="status-box"></div>
         </div>
+
         <div class="card">
           <h2 class="card-title">Usuários cadastrados</h2>
-          <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Unidade</th><th>Status</th></tr></thead><tbody id="usuariosAdminBody"></tbody></table></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Perfil</th>
+                  <th>Unidade</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="usuariosAdminBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -311,20 +712,46 @@
         <div class="card">
           <h2 class="card-title">Admin de Unidades</h2>
           <p class="card-text">Unidades reais do banco.</p>
+
           <div class="field-row">
             <div class="field"><label>Nome da unidade</label><input id="unidadeNome" type="text" placeholder="Ex.: CAIS" /></div>
             <div class="field"><label>Código / Host</label><input id="unidadeHost" type="text" placeholder="Ex.: cais" /></div>
           </div>
+
           <div class="field-row">
-            <div class="field"><label>Status</label><select id="unidadeStatus"><option>Ativa</option><option>Inativa</option></select></div>
+            <div class="field">
+              <label>Status</label>
+              <select id="unidadeStatus">
+                <option>Ativa</option>
+                <option>Inativa</option>
+              </select>
+            </div>
             <div class="field"><label>Observação</label><input id="unidadeObs" type="text" placeholder="Visual por enquanto" /></div>
           </div>
-          <div class="actions"><div class="actions-left"><button class="btn light" onclick="limparFormUnidade()">Limpar</button></div><div class="actions-right"><button class="btn primary" onclick="salvarUnidadeReal()">Salvar unidade</button></div></div>
+
+          <div class="actions">
+            <div class="actions-left"><button class="btn light" onclick="limparFormUnidade()">Limpar</button></div>
+            <div class="actions-right"><button class="btn primary" onclick="salvarUnidadeReal()">Salvar unidade</button></div>
+          </div>
+
           <div id="statusUnidades" class="status-box"></div>
         </div>
+
         <div class="card">
           <h2 class="card-title">Unidades cadastradas</h2>
-          <div class="table-wrap"><table><thead><tr><th>Unidade</th><th>Código</th><th>ID</th><th>Status</th></tr></thead><tbody id="unidadesAdminBody"></tbody></table></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Unidade</th>
+                  <th>Código</th>
+                  <th>ID</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="unidadesAdminBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -333,10 +760,10 @@
       <div class="layout-single">
         <div class="card">
           <h2 class="card-title">Visão geral do sistema</h2>
-          <p class="card-text">Fluxo operacional com autoavanço e impressão em lote.</p>
+          <p class="card-text">Fluxo operacional com autoavanço, impressão em lote e dashboard de vencimentos.</p>
           <div class="stats-grid">
-            <div class="stat-box"><div class="stat-label">Fluxo atual</div><div class="stat-value">Operação em lote</div></div>
-            <div class="stat-box"><div class="stat-label">Próxima etapa</div><div class="stat-value">Amarrar fila à unidade do usuário logado</div></div>
+            <div class="stat-box"><div class="stat-label">Fluxo atual</div><div class="stat-value">Operação em lote + dashboard</div></div>
+            <div class="stat-box"><div class="stat-label">Próxima etapa</div><div class="stat-value">QR code e rastreabilidade</div></div>
             <div class="stat-box"><div class="stat-label">Banco</div><div class="stat-value">Supabase</div></div>
             <div class="stat-box"><div class="stat-label">Objetivo</div><div class="stat-value">Multiunidade com filas separadas</div></div>
           </div>
@@ -356,6 +783,7 @@
     let usuariosDB = [];
     let unidadesDB = [];
     let itensImpressao = [];
+    let etiquetasDashboard = [];
     let etapaAtual = 1;
 
     const estado = {
@@ -372,7 +800,9 @@
     };
 
     const responsaveis = ["Marcelo", "Operação CAIS", "Operação DINARTE"];
+
     const pageTitles = {
+      dashboard: "Dashboard de etiquetas e vencimentos",
       operacao: "Painel operacional de geração de etiquetas",
       produtos: "Cadastro interno de produtos",
       usuarios: "Gestão de usuários e perfis",
@@ -381,14 +811,34 @@
     };
 
     function qs(id) { return document.getElementById(id); }
-    function showStatus(id, type, message) { const box = qs(id); box.className = "status-box show " + type; box.textContent = message; }
-    function clearStatus(id) { const box = qs(id); if (!box) return; box.className = "status-box"; box.textContent = ""; }
+
+    function showStatus(id, type, message) {
+      const box = qs(id);
+      if (!box) return;
+      box.className = "status-box show " + type;
+      box.textContent = message;
+    }
+
+    function clearStatus(id) {
+      const box = qs(id);
+      if (!box) return;
+      box.className = "status-box";
+      box.textContent = "";
+    }
+
     function mostrarStatus(tipo, mensagem) { showStatus("statusBox", tipo, mensagem); }
     function limparStatus() { clearStatus("statusBox"); }
 
     function removerAcentos(texto) {
       if (!texto) return "";
-      const mapa = {"á":"a","à":"a","â":"a","ã":"a","ä":"a","Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A","é":"e","è":"e","ê":"e","ë":"e","É":"E","È":"E","Ê":"E","Ë":"E","í":"i","ì":"i","î":"i","ï":"i","Í":"I","Ì":"I","Î":"I","Ï":"I","ó":"o","ò":"o","ô":"o","õ":"o","ö":"o","Ó":"O","Ò":"O","Ô":"O","Õ":"O","Ö":"O","ú":"u","ù":"u","û":"u","ü":"u","Ú":"U","Ù":"U","Û":"U","Ü":"U","ç":"c","Ç":"C"};
+      const mapa = {
+        "á":"a","à":"a","â":"a","ã":"a","ä":"a","Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A",
+        "é":"e","è":"e","ê":"e","ë":"e","É":"E","È":"E","Ê":"E","Ë":"E",
+        "í":"i","ì":"i","î":"i","ï":"i","Í":"I","Ì":"I","Î":"I","Ï":"I",
+        "ó":"o","ò":"o","ô":"o","õ":"o","ö":"o","Ó":"O","Ò":"O","Ô":"O","Õ":"O","Ö":"O",
+        "ú":"u","ù":"u","û":"u","ü":"u","Ú":"U","Ù":"U","Û":"U","Ü":"U",
+        "ç":"c","Ç":"C"
+      };
       return String(texto).replace(/[^\u0000-\u007E]/g, letra => mapa[letra] || letra);
     }
 
@@ -399,8 +849,10 @@
       const dia = String(hoje.getDate()).padStart(2, "0");
       const horas = String(hoje.getHours()).padStart(2, "0");
       const minutos = String(hoje.getMinutes()).padStart(2, "0");
+
       estado.dataProducao = `${ano}-${mes}-${dia}`;
       estado.horaProducao = `${horas}:${minutos}`;
+
       qs("dataProducao").value = estado.dataProducao;
       qs("horaProducao").value = estado.horaProducao;
     }
@@ -418,31 +870,88 @@
       return `${String(data.getDate()).padStart(2, "0")}/${String(data.getMonth() + 1).padStart(2, "0")}/${data.getFullYear()}`;
     }
 
+    function calcularDataValidadeObj(dataISO, dias) {
+      if (!dataISO || !dias) return null;
+      const data = new Date(dataISO + "T00:00:00");
+      data.setDate(data.getDate() + Number(dias));
+      return data;
+    }
+
+    function formatarDataObjBR(data) {
+      if (!data) return "-";
+      return `${String(data.getDate()).padStart(2, "0")}/${String(data.getMonth() + 1).padStart(2, "0")}/${data.getFullYear()}`;
+    }
+
+    function diferencaDias(dataAlvo) {
+      if (!dataAlvo) return null;
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const alvo = new Date(dataAlvo);
+      alvo.setHours(0, 0, 0, 0);
+
+      return Math.round((alvo - hoje) / 86400000);
+    }
+
     function atualizarUIEtapa() {
       for (let i = 1; i <= 5; i++) {
         qs("step" + i).classList.toggle("active", i === etapaAtual);
         qs("progress" + i).classList.toggle("active", i <= etapaAtual);
       }
+
       qs("stepChip").textContent = `Etapa ${etapaAtual} de 5`;
       qs("btnVoltar").style.display = etapaAtual === 1 ? "none" : "inline-block";
       qs("btnProximo").style.display = etapaAtual === 5 ? "none" : "inline-block";
       qs("btnAdicionarItem").style.display = etapaAtual === 5 ? "inline-block" : "none";
       qs("btnImprimir").style.display = etapaAtual === 5 ? "inline-block" : "none";
+
       atualizarResumoLateral();
       atualizarPreviewFinal();
       renderListaItensImpressao();
     }
 
-    function autoAvancar() { if (etapaAtual < 5) { etapaAtual++; atualizarUIEtapa(); } }
+    function autoAvancar() {
+      if (etapaAtual < 5) {
+        etapaAtual++;
+        atualizarUIEtapa();
+      }
+    }
+
     function validarEtapaAtual() {
-      if (etapaAtual === 1 && !estado.responsavel) return mostrarStatus("error", "Selecione um responsável para continuar."), false;
-      if (etapaAtual === 2 && !estado.grupo) return mostrarStatus("error", "Selecione um grupo para continuar."), false;
-      if (etapaAtual === 3 && !estado.produto) return mostrarStatus("error", "Selecione um produto para continuar."), false;
-      if (etapaAtual === 4 && !estado.validadeDias) return mostrarStatus("error", "Selecione uma validade para continuar."), false;
+      if (etapaAtual === 1 && !estado.responsavel) {
+        mostrarStatus("error", "Selecione um responsável para continuar.");
+        return false;
+      }
+      if (etapaAtual === 2 && !estado.grupo) {
+        mostrarStatus("error", "Selecione um grupo para continuar.");
+        return false;
+      }
+      if (etapaAtual === 3 && !estado.produto) {
+        mostrarStatus("error", "Selecione um produto para continuar.");
+        return false;
+      }
+      if (etapaAtual === 4 && !estado.validadeDias) {
+        mostrarStatus("error", "Selecione uma validade para continuar.");
+        return false;
+      }
       return true;
     }
-    function proximaEtapa() { limparStatus(); if (validarEtapaAtual() && etapaAtual < 5) { etapaAtual++; atualizarUIEtapa(); } }
-    function voltarEtapa() { limparStatus(); if (etapaAtual > 1) { etapaAtual--; atualizarUIEtapa(); } }
+
+    function proximaEtapa() {
+      limparStatus();
+      if (validarEtapaAtual() && etapaAtual < 5) {
+        etapaAtual++;
+        atualizarUIEtapa();
+      }
+    }
+
+    function voltarEtapa() {
+      limparStatus();
+      if (etapaAtual > 1) {
+        etapaAtual--;
+        atualizarUIEtapa();
+      }
+    }
 
     function limparSelecaoAtual() {
       estado.grupo = "";
@@ -452,11 +961,13 @@
       estado.quantidade = "1";
       estado.lote = "";
       estado.observacao = "";
+
       qs("quantidade").value = "1";
       qs("lote").value = "";
       qs("observacao").value = "";
       qs("conservacao").value = "";
       qs("buscaProduto").value = "";
+
       etapaAtual = 2;
       renderGrupos();
       renderProdutos();
@@ -516,45 +1027,49 @@
       const container = qs("responsaveisCards");
       container.innerHTML = "";
       responsaveis.forEach(nome => {
-        container.appendChild(criarCard(nome, estado.responsavel === nome, () => {
-          estado.responsavel = nome;
-          renderResponsaveis();
-          atualizarResumoLateral();
-          limparStatus();
-          autoAvancar();
-        }));
+        container.appendChild(
+          criarCard(nome, estado.responsavel === nome, () => {
+            estado.responsavel = nome;
+            renderResponsaveis();
+            atualizarResumoLateral();
+            limparStatus();
+            autoAvancar();
+          })
+        );
       });
     }
 
     function getGruposUnicos() {
-      return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+      return [...new Set(produtosCache.map(item => item.categoria).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
     }
 
     function renderGrupos() {
       const container = qs("gruposCards");
       container.innerHTML = "";
       getGruposUnicos().forEach(grupo => {
-        container.appendChild(criarCard(grupo, estado.grupo === grupo, () => {
-          estado.grupo = grupo;
-          estado.produto = "";
-          estado.validadeDias = "";
-          estado.conservacao = "";
-          qs("conservacao").value = "";
-          qs("buscaProduto").value = "";
-          renderGrupos();
-          renderProdutos();
-          renderValidades();
-          atualizarResumoLateral();
-          limparStatus();
-          autoAvancar();
-        }));
+        container.appendChild(
+          criarCard(grupo, estado.grupo === grupo, () => {
+            estado.grupo = grupo;
+            estado.produto = "";
+            estado.validadeDias = "";
+            estado.conservacao = "";
+            qs("conservacao").value = "";
+            qs("buscaProduto").value = "";
+            renderGrupos();
+            renderProdutos();
+            renderValidades();
+            atualizarResumoLateral();
+            limparStatus();
+            autoAvancar();
+          })
+        );
       });
     }
 
     function getProdutosFiltrados() {
       let lista = produtosCache;
       if (estado.grupo) lista = lista.filter(item => item.categoria === estado.grupo);
-      const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+      const nomes = [...new Set(lista.map(item => item.nome_produto).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
       const busca = qs("buscaProduto").value.trim().toLowerCase();
       return !busca ? nomes : nomes.filter(nome => nome.toLowerCase().includes(busca));
     }
@@ -562,21 +1077,32 @@
     function renderProdutos() {
       const container = qs("produtosCards");
       container.innerHTML = "";
+
       const produtos = getProdutosFiltrados();
-      if (!estado.grupo) return container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
-      if (!produtos.length) return container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
+      if (!estado.grupo) {
+        container.innerHTML = "<div class='empty'>Selecione um grupo antes de escolher o produto.</div>";
+        return;
+      }
+
+      if (!produtos.length) {
+        container.innerHTML = "<div class='empty'>Nenhum produto encontrado para este filtro.</div>";
+        return;
+      }
+
       produtos.forEach(produto => {
-        container.appendChild(criarCard(produto, estado.produto === produto, () => {
-          estado.produto = produto;
-          estado.validadeDias = "";
-          estado.conservacao = "";
-          qs("conservacao").value = "";
-          renderProdutos();
-          renderValidades();
-          atualizarResumoLateral();
-          limparStatus();
-          autoAvancar();
-        }));
+        container.appendChild(
+          criarCard(produto, estado.produto === produto, () => {
+            estado.produto = produto;
+            estado.validadeDias = "";
+            estado.conservacao = "";
+            qs("conservacao").value = "";
+            renderProdutos();
+            renderValidades();
+            atualizarResumoLateral();
+            limparStatus();
+            autoAvancar();
+          })
+        );
       });
     }
 
@@ -584,14 +1110,22 @@
       if (!estado.produto) return [];
       let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
       if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
-      return [...new Set(encontrados.map(item => item.validade_dias).filter(v => v !== null && v !== undefined && v !== "").map(v => String(v).trim()))].sort((a,b) => Number(a) - Number(b));
+
+      return [...new Set(
+        encontrados
+          .map(item => item.validade_dias)
+          .filter(v => v !== null && v !== undefined && v !== "")
+          .map(v => String(v).trim())
+      )].sort((a, b) => Number(a) - Number(b));
     }
 
     function buscarConservacaoAtual() {
       if (!estado.produto || !estado.validadeDias) return "";
+
       let encontrados = produtosCache.filter(item => String(item.nome_produto) === String(estado.produto));
       if (estado.grupo) encontrados = encontrados.filter(item => String(item.categoria) === String(estado.grupo));
       encontrados = encontrados.filter(item => String(item.validade_dias).trim() === String(estado.validadeDias).trim());
+
       return encontrados.length ? (encontrados[0].conservacao || "") : "";
     }
 
@@ -600,22 +1134,36 @@
       const hint = qs("conservacaoHint");
       container.innerHTML = "";
       hint.textContent = "";
-      if (!estado.produto) return container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
+
+      if (!estado.produto) {
+        container.innerHTML = "<div class='empty'>Selecione um produto antes de escolher a validade.</div>";
+        return;
+      }
+
       const validades = getValidadesDoProduto();
-      if (!validades.length) return container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
+      if (!validades.length) {
+        container.innerHTML = "<div class='empty'>Nenhuma validade disponível para este produto.</div>";
+        return;
+      }
+
       validades.forEach(validade => {
-        container.appendChild(criarCard(`${validade} dia(s)`, estado.validadeDias === validade, () => {
-          estado.validadeDias = validade;
-          estado.conservacao = buscarConservacaoAtual();
-          qs("conservacao").value = estado.conservacao;
-          renderValidades();
-          atualizarResumoLateral();
-          atualizarPreviewFinal();
-          limparStatus();
-          autoAvancar();
-        }));
+        container.appendChild(
+          criarCard(`${validade} dia(s)`, estado.validadeDias === validade, () => {
+            estado.validadeDias = validade;
+            estado.conservacao = buscarConservacaoAtual();
+            qs("conservacao").value = estado.conservacao;
+            renderValidades();
+            atualizarResumoLateral();
+            atualizarPreviewFinal();
+            limparStatus();
+            autoAvancar();
+          })
+        );
       });
-      if (estado.conservacao) hint.textContent = `Conservação selecionada automaticamente: ${estado.conservacao}`;
+
+      if (estado.conservacao) {
+        hint.textContent = `Conservação selecionada automaticamente: ${estado.conservacao}`;
+      }
     }
 
     function montarItemAtual() {
@@ -625,10 +1173,12 @@
       estado.lote = qs("lote").value;
       estado.observacao = qs("observacao").value;
       estado.conservacao = qs("conservacao").value;
+
       if (!estado.responsavel || !estado.grupo || !estado.produto || !estado.validadeDias || !estado.dataProducao || !estado.horaProducao) {
         mostrarStatus("error", "Preencha seleção, data e hora antes de adicionar à lista.");
         return null;
       }
+
       return {
         responsavel: estado.responsavel,
         grupo: estado.grupo,
@@ -647,6 +1197,7 @@
       limparStatus();
       const item = montarItemAtual();
       if (!item) return;
+
       itensImpressao.push(item);
       renderListaItensImpressao();
       mostrarStatus("success", "Item adicionado à lista. Pode selecionar outro produto.");
@@ -661,10 +1212,12 @@
     function renderListaItensImpressao() {
       const box = qs("listaItensImpressao");
       if (!box) return;
+
       if (!itensImpressao.length) {
         box.innerHTML = "<div class='empty'>Nenhum item adicionado ainda.</div>";
         return;
       }
+
       box.innerHTML = itensImpressao.map((item, index) => `
         <div class="list-item">
           <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
@@ -679,19 +1232,153 @@
       `).join("");
     }
 
+    function preencherFiltroGrupoDashboard() {
+      const select = qs("filtroGrupoDashboard");
+      if (!select) return;
+
+      const valorAtual = select.value;
+      const grupos = [...new Set(etiquetasDashboard.map(item => item.grupo_produto).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+      select.innerHTML = `<option value="">Todos</option>` + grupos.map(grupo => `<option value="${grupo}">${grupo}</option>`).join("");
+
+      if (grupos.includes(valorAtual)) {
+        select.value = valorAtual;
+      }
+    }
+
+    function preencherTabelaDashboard(bodyId, lista) {
+      const body = qs(bodyId);
+      if (!body) return;
+
+      if (!lista.length) {
+        body.innerHTML = `<tr><td colspan="6">Nenhuma etiqueta encontrada.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = lista.map(item => `
+        <tr>
+          <td>${item.nome_produto || "-"}</td>
+          <td>${item.grupo_produto || "-"}</td>
+          <td>${formatarDataBR(item.data_producao)}</td>
+          <td>${item.validade_formatada || "-"}</td>
+          <td>${item.quantidade_etiquetas || 0}</td>
+          <td>${item.lote_manual || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    function preencherTabelaProximas() {
+      const body = qs("dashboardProximasBody");
+      if (!body) return;
+
+      const grupo = qs("filtroGrupoDashboard")?.value || "";
+      const conservacao = qs("filtroConservacaoDashboard")?.value || "";
+
+      let lista = [...etiquetasDashboard];
+
+      if (grupo) lista = lista.filter(item => item.grupo_produto === grupo);
+      if (conservacao) lista = lista.filter(item => item.conservacao === conservacao);
+
+      lista = lista
+        .filter(item => item.dias_restantes !== null)
+        .sort((a, b) => a.dias_restantes - b.dias_restantes);
+
+      if (!lista.length) {
+        body.innerHTML = `<tr><td colspan="9">Nenhuma etiqueta encontrada.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = lista.map(item => `
+        <tr>
+          <td>${item.nome_produto || "-"}</td>
+          <td>${item.grupo_produto || "-"}</td>
+          <td>${item.responsavel || "-"}</td>
+          <td>${formatarDataBR(item.data_producao)}</td>
+          <td>${item.validade_formatada || "-"}</td>
+          <td>${item.dias_restantes}</td>
+          <td>${item.quantidade_etiquetas || 0}</td>
+          <td>${item.lote_manual || "-"}</td>
+          <td>${item.conservacao || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderDashboard() {
+      const vencidas = etiquetasDashboard.filter(item => item.dias_restantes !== null && item.dias_restantes < 0);
+      const hoje = etiquetasDashboard.filter(item => item.dias_restantes === 0);
+      const prox3 = etiquetasDashboard.filter(item => item.dias_restantes >= 1 && item.dias_restantes <= 3);
+      const prox7 = etiquetasDashboard.filter(item => item.dias_restantes >= 1 && item.dias_restantes <= 7);
+
+      qs("dashVencidas").textContent = vencidas.reduce((soma, item) => soma + Number(item.quantidade_etiquetas || 0), 0);
+      qs("dashHoje").textContent = hoje.reduce((soma, item) => soma + Number(item.quantidade_etiquetas || 0), 0);
+      qs("dash3dias").textContent = prox3.reduce((soma, item) => soma + Number(item.quantidade_etiquetas || 0), 0);
+      qs("dash7dias").textContent = prox7.reduce((soma, item) => soma + Number(item.quantidade_etiquetas || 0), 0);
+
+      preencherFiltroGrupoDashboard();
+      preencherTabelaDashboard("dashboardVencidasBody", vencidas);
+      preencherTabelaDashboard("dashboardHojeBody", hoje);
+      preencherTabelaProximas();
+    }
+
+    async function carregarDashboardEtiquetas() {
+      const { data, error } = await supabaseClient
+        .from("solicitacoes_impressao")
+        .select("*")
+        .order("data_producao", { ascending: false });
+
+      if (error) {
+        console.error("Erro ao carregar dashboard:", error);
+        return;
+      }
+
+      etiquetasDashboard = (data || []).map(item => {
+        const validadeObj = calcularDataValidadeObj(item.data_producao, item.opcao_validade);
+        const diasRestantes = diferencaDias(validadeObj);
+
+        return {
+          ...item,
+          validade_obj: validadeObj,
+          validade_formatada: formatarDataObjBR(validadeObj),
+          dias_restantes: diasRestantes
+        };
+      });
+
+      renderDashboard();
+    }
+
     async function carregarProdutosOperacao() {
-      const { data, error } = await supabaseClient.from("produtos_admin").select(`id,nome_produto,categoria,status,unidade,produto_validades ( id, validade_dias, conservacao )`).eq("status", "Ativo").order("nome_produto", { ascending: true });
+      const { data, error } = await supabaseClient
+        .from("produtos_admin")
+        .select(`
+          id,
+          nome_produto,
+          categoria,
+          status,
+          unidade,
+          produto_validades ( id, validade_dias, conservacao )
+        `)
+        .eq("status", "Ativo")
+        .order("nome_produto", { ascending: true });
+
       if (error) {
         console.error("Erro ao carregar produtos da operação:", error);
         mostrarStatus("error", "Erro ao carregar produtos.");
         return;
       }
+
       const listaAchatada = [];
       (data || []).forEach(produto => {
         (produto.produto_validades || []).forEach(validade => {
-          listaAchatada.push({ categoria: produto.categoria, nome_produto: produto.nome_produto, validade_dias: validade.validade_dias, conservacao: validade.conservacao, unidade: produto.unidade });
+          listaAchatada.push({
+            categoria: produto.categoria,
+            nome_produto: produto.nome_produto,
+            validade_dias: validade.validade_dias,
+            conservacao: validade.conservacao,
+            unidade: produto.unidade
+          });
         });
       });
+
       produtosCache = listaAchatada;
       renderGrupos();
       renderProdutos();
@@ -700,14 +1387,18 @@
 
     async function gerarImpressao() {
       limparStatus();
+
       let fila = [...itensImpressao];
       const itemAtual = montarItemAtual();
       if (itemAtual && !fila.length) fila.push(itemAtual);
+
       if (!fila.length) {
         mostrarStatus("error", "Adicione pelo menos um item à lista ou finalize um item atual para imprimir.");
         return;
       }
+
       const payload = fila.map(item => ({
+        responsavel: removerAcentos(item.responsavel) || null,
         grupo_produto: removerAcentos(item.grupo),
         nome_produto: removerAcentos(item.produto),
         opcao_validade: Number(item.validadeDias),
@@ -719,8 +1410,15 @@
         observacao_padrao: removerAcentos(item.observacao) || null,
         status_impressao: "pendente"
       }));
+
       const { error } = await supabaseClient.from("solicitacoes_impressao").insert(payload);
-      if (error) return mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
+      if (error) {
+        mostrarStatus("error", "Erro ao gerar impressão: " + error.message);
+        return;
+      }
+
+      await carregarDashboardEtiquetas();
+
       itensImpressao = [];
       renderListaItensImpressao();
       mostrarStatus("success", `${payload.length} item(ns) enviado(s) para a fila com sucesso.`);
@@ -729,26 +1427,76 @@
 
     async function carregarProdutosAdmin() {
       clearStatus("statusProdutos");
-      const { data, error } = await supabaseClient.from("produtos_admin").select(`id,nome_produto,categoria,status,unidade,produto_validades ( id, validade_dias, conservacao )`).order("nome_produto", { ascending: true });
+
+      const { data, error } = await supabaseClient
+        .from("produtos_admin")
+        .select(`
+          id,
+          nome_produto,
+          categoria,
+          status,
+          unidade,
+          produto_validades ( id, validade_dias, conservacao )
+        `)
+        .order("nome_produto", { ascending: true });
+
       if (error) return showStatus("statusProdutos", "error", "Erro ao carregar produtos.");
+
       produtosAdminDB = data || [];
       const body = qs("produtosAdminBody");
-      body.innerHTML = !produtosAdminDB.length ? `<tr><td colspan="6">Nenhum produto cadastrado.</td></tr>` : produtosAdminDB.map(item => { const primeira = item.produto_validades?.[0]; return `<tr><td>${item.nome_produto}</td><td>${item.categoria}</td><td>${primeira ? primeira.validade_dias + " dia(s)" : "-"}</td><td>${primeira ? primeira.conservacao : "-"}</td><td>${item.unidade}</td><td><span class="chip ${item.status === 'Ativo' ? 'dark' : ''}">${item.status}</span></td></tr>`; }).join("");
+
+      body.innerHTML = !produtosAdminDB.length
+        ? `<tr><td colspan="6">Nenhum produto cadastrado.</td></tr>`
+        : produtosAdminDB.map(item => {
+            const primeira = item.produto_validades?.[0];
+            return `
+              <tr>
+                <td>${item.nome_produto}</td>
+                <td>${item.categoria}</td>
+                <td>${primeira ? primeira.validade_dias + " dia(s)" : "-"}</td>
+                <td>${primeira ? primeira.conservacao : "-"}</td>
+                <td>${item.unidade}</td>
+                <td><span class="chip ${item.status === "Ativo" ? "dark" : ""}">${item.status}</span></td>
+              </tr>
+            `;
+          }).join("");
     }
 
     async function salvarProdutoReal() {
       clearStatus("statusProdutos");
+
       const nome = qs("produtoNome").value.trim();
       const grupo = qs("produtoGrupo").value.trim();
       const validade = qs("produtoValidade").value.trim();
       const conservacao = qs("produtoConservacao").value;
       const unidade = qs("produtoUnidade").value;
       const status = qs("produtoStatus").value;
-      if (!nome || !grupo || !validade || !conservacao) return showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
-      const { data: produtoCriado, error: erroProduto } = await supabaseClient.from("produtos_admin").insert([{ nome_produto: nome, categoria: grupo, status, unidade }]).select().single();
-      if (erroProduto) return showStatus("statusProdutos", "error", "Erro ao salvar produto.");
-      const { error: erroValidade } = await supabaseClient.from("produto_validades").insert([{ produto_id: produtoCriado.id, validade_dias: Number(validade), conservacao }]);
-      if (erroValidade) return showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
+
+      if (!nome || !grupo || !validade || !conservacao) {
+        showStatus("statusProdutos", "error", "Preencha os campos obrigatórios do produto.");
+        return;
+      }
+
+      const { data: produtoCriado, error: erroProduto } = await supabaseClient
+        .from("produtos_admin")
+        .insert([{ nome_produto: nome, categoria: grupo, status, unidade }])
+        .select()
+        .single();
+
+      if (erroProduto) {
+        showStatus("statusProdutos", "error", "Erro ao salvar produto.");
+        return;
+      }
+
+      const { error: erroValidade } = await supabaseClient
+        .from("produto_validades")
+        .insert([{ produto_id: produtoCriado.id, validade_dias: Number(validade), conservacao }]);
+
+      if (erroValidade) {
+        showStatus("statusProdutos", "error", "Produto criado, mas houve erro ao salvar validade.");
+        return;
+      }
+
       limparFormProduto();
       showStatus("statusProdutos", "success", "Produto salvo com sucesso.");
       carregarProdutosAdmin();
@@ -757,54 +1505,148 @@
 
     async function carregarUsuariosDB() {
       clearStatus("statusUsuarios");
-      const { data, error } = await supabaseClient.from("usuarios").select(`id,nome,email,perfil,unidade_id,ativo,created_at,unidades ( nome )`).order("nome", { ascending: true });
+
+      const { data, error } = await supabaseClient
+        .from("usuarios")
+        .select(`
+          id,
+          nome,
+          email,
+          perfil,
+          unidade_id,
+          ativo,
+          created_at,
+          unidades ( nome )
+        `)
+        .order("nome", { ascending: true });
+
       if (error) return showStatus("statusUsuarios", "error", "Erro ao carregar usuários.");
+
       usuariosDB = data || [];
       const body = qs("usuariosAdminBody");
-      body.innerHTML = !usuariosDB.length ? `<tr><td colspan="5">Nenhum usuário cadastrado.</td></tr>` : usuariosDB.map(item => `<tr><td>${item.nome}</td><td>${item.email}</td><td>${item.perfil}</td><td>${item.unidades?.nome || "-"}</td><td><span class="chip ${item.ativo ? 'dark' : ''}">${item.ativo ? 'Ativo' : 'Inativo'}</span></td></tr>`).join("");
+
+      body.innerHTML = !usuariosDB.length
+        ? `<tr><td colspan="5">Nenhum usuário cadastrado.</td></tr>`
+        : usuariosDB.map(item => `
+            <tr>
+              <td>${item.nome}</td>
+              <td>${item.email}</td>
+              <td>${item.perfil}</td>
+              <td>${item.unidades?.nome || "-"}</td>
+              <td><span class="chip ${item.ativo ? "dark" : ""}">${item.ativo ? "Ativo" : "Inativo"}</span></td>
+            </tr>
+          `).join("");
     }
 
     async function carregarUnidadesDB() {
       clearStatus("statusUnidades");
-      const { data, error } = await supabaseClient.from("unidades").select("id, nome, codigo, ativa, created_at").order("nome", { ascending: true });
+
+      const { data, error } = await supabaseClient
+        .from("unidades")
+        .select("id, nome, codigo, ativa, created_at")
+        .order("nome", { ascending: true });
+
       if (error) return showStatus("statusUnidades", "error", "Erro ao carregar unidades.");
+
       unidadesDB = data || [];
       const body = qs("unidadesAdminBody");
-      body.innerHTML = !unidadesDB.length ? `<tr><td colspan="4">Nenhuma unidade cadastrada.</td></tr>` : unidadesDB.map(item => `<tr><td>${item.nome}</td><td>${item.codigo || "-"}</td><td>${item.id}</td><td><span class="chip ${item.ativa ? 'dark' : ''}">${item.ativa ? 'Ativa' : 'Inativa'}</span></td></tr>`).join("");
+
+      body.innerHTML = !unidadesDB.length
+        ? `<tr><td colspan="4">Nenhuma unidade cadastrada.</td></tr>`
+        : unidadesDB.map(item => `
+            <tr>
+              <td>${item.nome}</td>
+              <td>${item.codigo || "-"}</td>
+              <td>${item.id}</td>
+              <td><span class="chip ${item.ativa ? "dark" : ""}">${item.ativa ? "Ativa" : "Inativa"}</span></td>
+            </tr>
+          `).join("");
+
       preencherSelectUnidades();
     }
 
     function preencherSelectUnidades() {
       const select = qs("usuarioUnidade");
       if (!select) return;
+
       const valorAtual = select.value;
       select.innerHTML = "";
-      if (!unidadesDB.length) return select.innerHTML = `<option value="">Nenhuma unidade</option>`;
+
+      if (!unidadesDB.length) {
+        select.innerHTML = `<option value="">Nenhuma unidade</option>`;
+        return;
+      }
+
       unidadesDB.forEach(unidade => {
         const option = document.createElement("option");
         option.value = unidade.id;
         option.textContent = unidade.nome;
         select.appendChild(option);
       });
-      if (unidadesDB.some(item => item.id === valorAtual)) select.value = valorAtual;
+
+      if (unidadesDB.some(item => item.id === valorAtual)) {
+        select.value = valorAtual;
+      }
     }
 
-    function limparFormProduto() { qs("produtoNome").value = ""; qs("produtoGrupo").value = ""; qs("produtoValidade").value = ""; qs("produtoConservacao").value = ""; qs("produtoUnidade").value = "CAIS"; qs("produtoStatus").value = "Ativo"; clearStatus("statusProdutos"); }
-    function limparFormUsuario() { qs("usuarioNome").value = ""; qs("usuarioEmail").value = ""; qs("usuarioPerfil").value = "Admin geral"; if (qs("usuarioUnidade").options.length) qs("usuarioUnidade").selectedIndex = 0; qs("usuarioStatus").value = "Ativo"; clearStatus("statusUsuarios"); }
-    function limparFormUnidade() { qs("unidadeNome").value = ""; qs("unidadeHost").value = ""; qs("unidadeStatus").value = "Ativa"; qs("unidadeObs").value = ""; clearStatus("statusUnidades"); }
+    function limparFormProduto() {
+      qs("produtoNome").value = "";
+      qs("produtoGrupo").value = "";
+      qs("produtoValidade").value = "";
+      qs("produtoConservacao").value = "";
+      qs("produtoUnidade").value = "CAIS";
+      qs("produtoStatus").value = "Ativo";
+      clearStatus("statusProdutos");
+    }
+
+    function limparFormUsuario() {
+      qs("usuarioNome").value = "";
+      qs("usuarioEmail").value = "";
+      qs("usuarioPerfil").value = "Admin geral";
+      if (qs("usuarioUnidade").options.length) qs("usuarioUnidade").selectedIndex = 0;
+      qs("usuarioStatus").value = "Ativo";
+      clearStatus("statusUsuarios");
+    }
+
+    function limparFormUnidade() {
+      qs("unidadeNome").value = "";
+      qs("unidadeHost").value = "";
+      qs("unidadeStatus").value = "Ativa";
+      qs("unidadeObs").value = "";
+      clearStatus("statusUnidades");
+    }
 
     async function salvarUsuarioReal() {
       clearStatus("statusUsuarios");
+
       const nome = qs("usuarioNome").value.trim();
       const email = qs("usuarioEmail").value.trim();
       const perfilFront = qs("usuarioPerfil").value;
       const unidadeId = qs("usuarioUnidade").value;
       const ativo = qs("usuarioStatus").value === "Ativo";
-      const perfilMap = { "Admin geral": "admin_geral", "Admin da unidade": "admin_unidade", "Operador": "operacao" };
+
+      const perfilMap = {
+        "Admin geral": "admin_geral",
+        "Admin da unidade": "admin_unidade",
+        "Operador": "operacao"
+      };
+
       const perfil = perfilMap[perfilFront] || "operacao";
-      if (!nome || !email || !perfil || !unidadeId) return showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
-      const { error } = await supabaseClient.from("usuarios").insert([{ nome, email, perfil, unidade_id: unidadeId, ativo }]);
-      if (error) return showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
+
+      if (!nome || !email || !perfil || !unidadeId) {
+        showStatus("statusUsuarios", "error", "Preencha nome, e-mail, perfil e unidade.");
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from("usuarios")
+        .insert([{ nome, email, perfil, unidade_id: unidadeId, ativo }]);
+
+      if (error) {
+        showStatus("statusUsuarios", "error", "Erro ao salvar usuário: " + error.message);
+        return;
+      }
+
       limparFormUsuario();
       showStatus("statusUsuarios", "success", "Usuário salvo com sucesso.");
       carregarUsuariosDB();
@@ -812,13 +1654,27 @@
 
     async function salvarUnidadeReal() {
       clearStatus("statusUnidades");
+
       const nome = qs("unidadeNome").value.trim();
       const codigoManual = qs("unidadeHost").value.trim();
       const ativa = qs("unidadeStatus").value === "Ativa";
-      if (!nome) return showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
+
+      if (!nome) {
+        showStatus("statusUnidades", "error", "Preencha o nome da unidade.");
+        return;
+      }
+
       const codigo = (codigoManual || nome).toLowerCase().trim().replace(/\s+/g, "_");
-      const { error } = await supabaseClient.from("unidades").insert([{ nome, codigo, ativa }]);
-      if (error) return showStatus("statusUnidades", "error", "Erro ao salvar unidade: " + error.message);
+
+      const { error } = await supabaseClient
+        .from("unidades")
+        .insert([{ nome, codigo, ativa }]);
+
+      if (error) {
+        showStatus("statusUnidades", "error", "Erro ao salvar unidade: " + error.message);
+        return;
+      }
+
       limparFormUnidade();
       showStatus("statusUnidades", "success", "Unidade salva com sucesso.");
       carregarUnidadesDB();
@@ -826,19 +1682,23 @@
     }
 
     function setActiveTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-      qs('panel-' + tab).classList.add('active');
-      qs('pageTitle').textContent = pageTitles[tab] || 'Sistema de Etiquetas Eat Kitchen';
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
+      qs("panel-" + tab).classList.add("active");
+      qs("pageTitle").textContent = pageTitles[tab] || "Sistema de Etiquetas Eat Kitchen";
     }
 
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.tab)));
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => setActiveTab(btn.dataset.tab)));
+
     qs("buscaProduto").addEventListener("input", renderProdutos);
     qs("dataProducao").addEventListener("change", e => { estado.dataProducao = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
     qs("horaProducao").addEventListener("change", e => { estado.horaProducao = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
     qs("quantidade").addEventListener("input", e => { estado.quantidade = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
     qs("lote").addEventListener("input", e => { estado.lote = e.target.value; atualizarResumoLateral(); atualizarPreviewFinal(); });
     qs("observacao").addEventListener("input", e => { estado.observacao = e.target.value; atualizarPreviewFinal(); });
+
+    qs("filtroGrupoDashboard")?.addEventListener("change", preencherTabelaProximas);
+    qs("filtroConservacaoDashboard")?.addEventListener("change", preencherTabelaProximas);
 
     preencherDataHoraAtual();
     renderResponsaveis();
@@ -848,6 +1708,8 @@
     carregarUnidadesDB();
     carregarUsuariosDB();
     renderListaItensImpressao();
+    carregarDashboardEtiquetas();
+    setActiveTab("dashboard");
   </script>
 </body>
 </html>
